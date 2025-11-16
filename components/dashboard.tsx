@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 
 export interface DashboardData {
   totalRequests: number;
+  totalQueries: number;
   totalErrors: number;
   avgResponse: number;
   p50Ms: number;
@@ -50,6 +51,7 @@ export function Dashboard() {
     p99Ms: 0,
     totalErrors: 0,
     totalRequests: 0,
+    totalQueries: 0,
     topRequests: [],
     requestPerTimeSeries: [],
     slowestRequests: [],
@@ -58,9 +60,9 @@ export function Dashboard() {
   async function fetchData() {
     const response = await api.get("/dashboard");
 
-    console.log(response.data);
+    console.log(response.data.data);
 
-    setDasboardData(response.data);
+    setDasboardData(response.data.data);
   }
 
   useEffect(() => {
@@ -72,9 +74,9 @@ export function Dashboard() {
       <Header />
       <div className="flex-1 overflow-auto">
         <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6">
-          <StatsCards  />
+          <StatsCards {...dasboardData} />
           <MetricsCharts />
-          <RequestsTable />
+          <RequestsTable topRequests={dasboardData.topRequests} />
         </div>
       </div>
     </div>

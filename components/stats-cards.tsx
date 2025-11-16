@@ -1,6 +1,7 @@
 "use client";
 
 import { Card } from "@/components/ui/card";
+import { formatValueToK } from "@/lib/utils";
 import { TrendingUp, AlertTriangle, Zap, Activity } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -36,17 +37,52 @@ const DEFAULT_STATS = [
 ];
 
 export function StatsCards({
-  statsData,
+  totalRequests,
+  totalErrors,
+  avgResponse,
+  totalQueries,
 }: {
-  statsData?: typeof DEFAULT_STATS;
+  totalRequests: number;
+  totalErrors: number;
+  avgResponse: number;
+  totalQueries: number;
 }) {
   const [stats, setStats] = useState(DEFAULT_STATS);
 
   useEffect(() => {
-    if (statsData) {
-      setStats(statsData);
-    }
-  }, [statsData]);
+    setStats([
+      {
+        label: "Requests",
+        value: formatValueToK(totalRequests.toString()),
+        change: "",
+        icon: Activity,
+        color: "text-blue-400",
+      },
+      {
+        label: "Errors",
+        value: formatValueToK(totalErrors.toString()),
+        change: "",
+        icon: AlertTriangle,
+        color: "text-red-400",
+      },
+      {
+        label: "Avg Response",
+        value: avgResponse.toFixed(2),
+        change: "",
+        icon: Zap,
+        color: "text-yellow-400",
+      },
+      {
+        label: "Queries",
+        value: formatValueToK(totalQueries.toString()),
+        change: "",
+        icon: Activity,
+        color: "text-green-400",
+      },
+    ]);
+  }, [totalRequests, totalErrors, avgResponse]);
+
+  
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
