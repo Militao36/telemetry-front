@@ -19,6 +19,7 @@ export interface DashboardData {
   topRequests: TopRequest[];
   requestPerTimeSeries: RequestPerTimeSery[];
   slowestRequests: SlowestRequest[];
+  queriesPerTimeSeries: QueriesPerTimeSery[];
 }
 
 export interface TopRequest {
@@ -31,6 +32,12 @@ export interface TopRequest {
 export interface RequestPerTimeSery {
   time: string;
   totalRequests: number;
+  avgMs: number;
+}
+
+export interface QueriesPerTimeSery {
+  time: string;
+  totalQueries: number;
   avgMs: number;
 }
 
@@ -55,18 +62,45 @@ export function Dashboard() {
     topRequests: [],
     requestPerTimeSeries: [],
     slowestRequests: [],
+    queriesPerTimeSeries: [],
   });
 
-  async function fetchData() {
+  async function fetchDataRequests() {
     const response = await api.get("/dashboard");
 
-    console.log(response.data.data);
+    setDasboardData((state) => {
+      return {
+        ...state,
+        avgResponse: response.data.avgResponse,
+        p50Ms: response.data.p50Ms,
+        p90Ms: response.data.p90Ms,
+        p95Ms: response.data.p95Ms,
+        p99Ms: response.data.p99Ms,
+        totalErrors: response.data.totalErrors,
+        totalRequests: response.data.totalRequests,
+        topRequests: response.data.topRequests,
+        requestPerTimeSeries: response.data.requestPerTimeSeries,
+        slowestRequests: response.data.slowestRequests,
+      };
+    });
+  }
 
-    setDasboardData(response.data.data);
+  async function fetchDataQueries() {
+    const response = await api.get("/queries/dashboard");
+
+    console.log(response.data.queriesPerTimeSeries);
+    
+    setDasboardData((state) => {
+      return {
+        ...state,
+        queriesPerTimeSeries: response.data.queriesPerTimeSeries,
+      };
+    });
   }
 
   useEffect(() => {
-    fetchData();
+    fetchDataRequests();
+    fetchDataQueries();
   }, []);
 
   return (
@@ -75,7 +109,10 @@ export function Dashboard() {
       <div className="flex-1 overflow-auto">
         <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6">
           <StatsCards {...dasboardData} />
-          <MetricsCharts requestsData={dasboardData.requestPerTimeSeries} />
+          <MetricsCharts
+            requestsData={dasboardData.requestPerTimeSeries}
+            queriesData={dasboardData.queriesPerTimeSeries}
+          />
           <RequestsTable topRequests={dasboardData.topRequests} />
         </div>
       </div>

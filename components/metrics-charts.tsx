@@ -13,33 +13,15 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { RequestPerTimeSery } from "./dashboard";
+import { QueriesPerTimeSery, RequestPerTimeSery } from "./dashboard";
 
 export function MetricsCharts({
   requestsData = [{ time: "00:00", totalRequests: 0, avgMs: 0 }],
+  queriesData = [{ time: "00:00", totalQueries: 0, avgMs: 0 }],
 }: {
   requestsData?: RequestPerTimeSery[];
+  queriesData?: QueriesPerTimeSery[];
 }) {
-  const errorData = [
-    { time: "00:00", errors: 2 },
-    { time: "04:00", errors: 1 },
-    { time: "08:00", errors: 3 },
-    { time: "12:00", errors: 5 },
-    { time: "16:00", errors: 2 },
-    { time: "20:00", errors: 1 },
-    { time: "23:59", errors: 0 },
-  ];
-
-  const responseTimeData = [
-    { time: "00:00", ms: 120 },
-    { time: "04:00", ms: 140 },
-    { time: "08:00", ms: 180 },
-    { time: "12:00", ms: 200 },
-    { time: "16:00", ms: 150 },
-    { time: "20:00", ms: 110 },
-    { time: "23:59", ms: 95 },
-  ];
-
   function formatRequestsData(data: RequestPerTimeSery[]) {
     return data.map((item) => ({
       time: DateTime.fromSQL(item.time, { zone: "utc" })
@@ -50,6 +32,24 @@ export function MetricsCharts({
   }
 
   function formatResponseTimeData(data: RequestPerTimeSery[]) {
+    return data.map((item) => ({
+      time: DateTime.fromSQL(item.time, { zone: "utc" })
+        .toLocal()
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      ms: item.avgMs,
+    }));
+  }
+
+  function formatQueriesData(data: QueriesPerTimeSery[]) {
+    return data.map((item) => ({
+      time: DateTime.fromSQL(item.time, { zone: "utc" })
+        .toLocal()
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      ms: item.totalQueries,
+    }));
+  }
+
+  function formatQueryTimeData(data: QueriesPerTimeSery[]) {
     return data.map((item) => ({
       time: DateTime.fromSQL(item.time, { zone: "utc" })
         .toLocal()
@@ -101,39 +101,6 @@ export function MetricsCharts({
 
       <Card className="bg-card border-border p-4 md:p-6">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
-          Error Rate
-        </h3>
-        <ResponsiveContainer width="100%" height={250} minHeight={200}>
-          <LineChart data={errorData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
-            />
-            <XAxis
-              dataKey="time"
-              stroke="rgba(255,255,255,0.5)"
-              tick={{ fontSize: 12 }}
-            />
-            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "#1e1e2e",
-                border: "1px solid rgba(255,255,255,0.1)",
-              }}
-            />
-            <Line
-              type="monotone"
-              dataKey="errors"
-              stroke="#ef4444"
-              strokeWidth={2}
-              dot={false}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </Card>
-
-      <Card className="bg-card border-border p-4 md:p-6">
-        <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Response Time
         </h3>
         <ResponsiveContainer width="100%" height={250} minHeight={200}>
@@ -150,14 +117,14 @@ export function MetricsCharts({
             <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#1e1e2e",
+                backgroundColor: "#fff",
                 border: "1px solid rgba(255,255,255,0.1)",
               }}
             />
             <Line
               type="monotone"
               dataKey="ms"
-              stroke="#fbbf24"
+              stroke="#8b5cf6"
               strokeWidth={2}
               dot={false}
             />
@@ -167,10 +134,10 @@ export function MetricsCharts({
 
       <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
-          Response Time
+          Queries Over Time
         </h3>
         <ResponsiveContainer width="100%" height={250} minHeight={200}>
-          <AreaChart data={formatResponseTimeData(requestsData)}>
+          <AreaChart data={formatQueriesData(queriesData)}>
             <defs>
               <linearGradient id="colorMs" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.8} />
@@ -201,6 +168,39 @@ export function MetricsCharts({
               fill="url(#colorMs)"
             />
           </AreaChart>
+        </ResponsiveContainer>
+      </Card>
+
+      <Card className="bg-card border-border p-4 md:p-6">
+        <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
+          Query time
+        </h3>
+        <ResponsiveContainer width="100%" height={250} minHeight={200}>
+          <LineChart data={formatQueryTimeData(queriesData)}>
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="rgba(255,255,255,0.1)"
+            />
+            <XAxis
+              dataKey="time"
+              stroke="rgba(255,255,255,0.5)"
+              tick={{ fontSize: 12 }}
+            />
+            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#fff",
+                border: "1px solid rgba(255,255,255,0.1)",
+              }}
+            />
+            <Line
+              type="monotone"
+              dataKey="ms"
+              stroke="#fbbf24"
+              strokeWidth={2}
+              dot={false}
+            />
+          </LineChart>
         </ResponsiveContainer>
       </Card>
     </div>
