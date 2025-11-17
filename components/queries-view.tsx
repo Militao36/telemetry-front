@@ -1,15 +1,83 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { api } from "@/api/api"
+
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { QueriesChart } from "./queries-chart"
 import { QueriesTable } from "./queries-table"
+
 import { RefreshCw } from "lucide-react"
+import { convertToHours } from "@/utils"
+import { DateTime } from "luxon"
+
+interface IMetrecs {
+  metrics: {
+    totalQueries: string
+    avgMs: number
+    p50Ms: number
+    p90Ms: number
+    p95Ms: number
+    p99Ms: number
+  }
+  slowesTypeTSelect: {
+    traceId: string
+    spanId: string
+    parentSpanId: string
+    serviceName: string
+    serviceVersion: string
+    serviceEnvironment: string
+    startTime: DateTime
+    endTime: DateTime
+    durationMs: number
+    dbStatement: string
+    dbTable: string
+    dbName: string
+  }[]
+  slowesTypeInsert: {
+    traceId: string
+    spanId: string
+    parentSpanId: string
+    serviceName: string
+    serviceVersion: string
+    serviceEnvironment: string
+    startTime: DateTime
+    endTime: DateTime
+    durationMs: number
+    dbStatement: string
+    dbTable: string
+    dbName: string
+  }[]
+  queryVolumeByType: {
+    queryType: string
+    total: string
+  }[]
+  queryVolumeByFourHours: {
+    interval: DateTime
+    selects: string
+    inserts: string
+    updates: string
+    deletes: string
+  }
+}
 
 export function QueriesView() {
   const [queryType, setQueryType] = useState("all")
   const [timeRange, setTimeRange] = useState("24h")
+  const [queries, setQueries] = useState<IMetrecs>()
+
+  const list = async () => {
+    const { data } = await api.get(`/queries?queryTy=${queryType}&hour=${convertToHours(timeRange)}`)
+
+    if (!!data.data) {
+      setQueries(data.data)
+    }
+  }
+
+  useEffect(() => {
+    list()
+  }, [queryType, timeRange])
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -38,11 +106,10 @@ export function QueriesView() {
                     <button
                       key={type}
                       onClick={() => setQueryType(type)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${
-                        queryType === type
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${queryType === type
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        }`}
                     >
                       {type}
                     </button>
@@ -57,11 +124,10 @@ export function QueriesView() {
                     <button
                       key={range}
                       onClick={() => setTimeRange(range)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                        timeRange === range
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${timeRange === range
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        }`}
                     >
                       {range}
                     </button>
@@ -75,12 +141,12 @@ export function QueriesView() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-card border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">Total Queries</p>
-              <p className="text-3xl font-bold">284,567</p>
+              <p className="text-3xl font-bold">{(Number(queries?.metrics?.totalQueries || 0)).toLocaleString("en-US")}</p>
               <p className="text-xs text-green-400 mt-2">+12.5% from yesterday</p>
             </Card>
             <Card className="bg-card border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">Avg Query Time</p>
-              <p className="text-3xl font-bold">245ms</p>
+              <p className="text-3xl font-bold">{(queries?.metrics?.avgMs || 0).toLocaleString("en-US")}ms</p>
               <p className="text-xs text-yellow-400 mt-2">+8% slower than last week</p>
             </Card>
             <Card className="bg-card border-border p-6">
