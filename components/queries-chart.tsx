@@ -13,17 +13,35 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts"
+import { IMetrics, QueriesVolumeByHours } from "./queries-view";
+import { DateTime } from "luxon";
 
-export function QueriesChart({ queryType, timeRange }: { queryType: string; timeRange: string }) {
-  const data = [
-    { time: "00:00", select: 45, insert: 12, update: 8, delete: 2 },
-    { time: "04:00", select: 52, insert: 18, update: 10, delete: 3 },
-    { time: "08:00", select: 78, insert: 25, update: 14, delete: 5 },
-    { time: "12:00", select: 92, insert: 35, update: 18, delete: 7 },
-    { time: "16:00", select: 68, insert: 28, update: 15, delete: 4 },
-    { time: "20:00", select: 55, insert: 20, update: 12, delete: 3 },
-    { time: "23:59", select: 48, insert: 15, update: 9, delete: 2 },
-  ]
+export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { queryVolumeByHours: QueriesVolumeByHours[]; avgQueryTimeByHour: IMetrics[] }) {
+  const formatterAvgQueryTimeByHour = (avgQueryTimeByHour: IMetrics[]) => {
+    return avgQueryTimeByHour.map(item => {
+      return {
+        avgMs: +item.avgMs.toFixed(2),
+        p50Ms: +item.p50Ms.toFixed(2),
+        p90Ms: +item.p90Ms.toFixed(2),
+        p95Ms: +item.p95Ms.toFixed(2),
+        p99Ms: +item.p99Ms.toFixed(2),
+        intervalHour: DateTime.fromSQL(item.intervalHour, { zone: "utc" })
+          .toLocal()
+          .toFormat("yyyy-MM-dd HH:mm:ss"),
+      }
+    })
+  }
+
+  const formatterQueryVolumeByHours = (queryVolumeByHours: QueriesVolumeByHours[]) => {
+    return queryVolumeByHours.map(item => {
+      return {
+        ...item,
+        interval: DateTime.fromSQL(item.interval, { zone: "utc" })
+          .toLocal()
+          .toFormat("yyyy-MM-dd HH:mm:ss"),
+      }
+    })
+  }
 
   const performanceData = [
     { time: "00:00", avgTime: 120, p95: 250, p99: 450 },
@@ -40,16 +58,16 @@ export function QueriesChart({ queryType, timeRange }: { queryType: string; time
       <Card className="bg-card border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Query Volume by Type</h3>
         <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={data}>
+          <BarChart data={formatterQueryVolumeByHours(queryVolumeByHours)}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
+            <XAxis dataKey="interval" stroke="rgba(255,255,255,0.5)" />
             <YAxis stroke="rgba(255,255,255,0.5)" />
-            <Tooltip contentStyle={{ backgroundColor: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Tooltip contentStyle={{ backgroundColor: "#fff", border: "1px solid rgba(255,255,255,0.1)" }} />
             <Legend />
-            <Bar dataKey="select" stackId="a" fill="#8b5cf6" />
-            <Bar dataKey="insert" stackId="a" fill="#3b82f6" />
-            <Bar dataKey="update" stackId="a" fill="#ec4899" />
-            <Bar dataKey="delete" stackId="a" fill="#ef4444" />
+            <Bar dataKey="selects" stackId="a" fill="#8b5cf6" />
+            <Bar dataKey="inserts" stackId="a" fill="#3b82f6" />
+            <Bar dataKey="updates" stackId="a" fill="#ec4899" />
+            <Bar dataKey="deletes" stackId="a" fill="#ef4444" />
           </BarChart>
         </ResponsiveContainer>
       </Card>
@@ -57,15 +75,15 @@ export function QueriesChart({ queryType, timeRange }: { queryType: string; time
       <Card className="bg-card border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Response Time Percentiles</h3>
         <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={performanceData}>
+          <LineChart data={formatterAvgQueryTimeByHour(avgQueryTimeByHour)}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
+            <XAxis dataKey="intervalHour" stroke="rgba(255,255,255,0.5)" />
             <YAxis stroke="rgba(255,255,255,0.5)" />
-            <Tooltip contentStyle={{ backgroundColor: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Tooltip contentStyle={{ backgroundColor: "#fff", border: "1px solid rgba(255,255,255,0.1)" }} />
             <Legend />
-            <Line type="monotone" dataKey="avgTime" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Average" />
-            <Line type="monotone" dataKey="p95" stroke="#fbbf24" strokeWidth={2} dot={false} name="P95" />
-            <Line type="monotone" dataKey="p99" stroke="#ef4444" strokeWidth={2} dot={false} name="P99" />
+            <Line type="monotone" dataKey="avgMs" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Average" />
+            <Line type="monotone" dataKey="p95Ms" stroke="#fbbf24" strokeWidth={2} dot={false} name="P95" />
+            <Line type="monotone" dataKey="p99Ms" stroke="#ef4444" strokeWidth={2} dot={false} name="P99" />
           </LineChart>
         </ResponsiveContainer>
       </Card>

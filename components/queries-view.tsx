@@ -19,23 +19,35 @@ interface DefaultSlowestQuery {
   serviceName: string
   serviceVersion: string
   serviceEnvironment: string
-  startTime: DateTime
-  endTime: DateTime
+  startTime: string
+  endTime: string
   durationMs: number
   dbStatement: string
   dbTable: string
   dbName: string
 }
 
-interface IMetrecs {
-  metrics: {
-    totalQueries: string
-    avgMs: number
-    p50Ms: number
-    p90Ms: number
-    p95Ms: number
-    p99Ms: number
-  }
+export interface QueriesVolumeByHours {
+  interval: string
+  selects: string
+  inserts: string
+  updates: string
+  deletes: string
+}
+
+export interface IMetrics {
+  totalQueries: string
+  avgMs: number
+  p50Ms: number
+  p90Ms: number
+  p95Ms: number
+  p99Ms: number
+  intervalHour: string
+}
+
+interface IQueries {
+  avgQueryTimeByHour: IMetrics[]
+  metrics: IMetrics
   slowesTypeTSelect: DefaultSlowestQuery[]
   slowesTypeInsert: DefaultSlowestQuery[]
   slowestQuery: DefaultSlowestQuery[]
@@ -43,26 +55,18 @@ interface IMetrecs {
     queryType: string
     total: string
   }[]
-  queryVolumeByFourHours: {
-    interval: DateTime
-    selects: string
-    inserts: string
-    updates: string
-    deletes: string
-  }
+  queryVolumeByHours: QueriesVolumeByHours[]
 }
 
 export function QueriesView() {
   const [queryType, setQueryType] = useState("all")
   const [timeRange, setTimeRange] = useState("24h")
-  const [queries, setQueries] = useState<IMetrecs>()
+  const [queries, setQueries] = useState<IQueries>()
 
   const list = async () => {
     const { data } = await api.get(`/queries?queryTy=${queryType}&hour=${convertToHours(timeRange)}`)
 
-    if (Object.keys(data).length) {
-      setQueries(data)
-    }
+    setQueries(data)
   }
 
   useEffect(() => {
@@ -132,22 +136,22 @@ export function QueriesView() {
             <Card className="bg-card border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">Total Queries</p>
               <p className="text-3xl font-bold">{(Number(queries?.metrics?.totalQueries || 0)).toLocaleString("en-US")}</p>
-              <p className="text-xs text-green-400 mt-2">+12.5% from yesterday</p>
+              {/* <p className="text-xs text-green-400 mt-2">+12.5% from yesterday</p> */}
             </Card>
             <Card className="bg-card border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">Avg Query Time</p>
               <p className="text-3xl font-bold">{(queries?.metrics?.avgMs || 0).toLocaleString("en-US")}ms</p>
-              <p className="text-xs text-yellow-400 mt-2">+8% slower than last week</p>
+              {/* <p className="text-xs text-yellow-400 mt-2">+8% slower than last week</p> */}
             </Card>
             <Card className="bg-card border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">Slowest Query</p>
               <p className="text-3xl font-bold">{((queries?.slowestQuery[0]?.durationMs || 0) / 1000).toLocaleString("en-US")}s</p>
-              <p className="text-xs text-red-400 mt-2">Unindexed join detected</p>
+              {/* <p className="text-xs text-red-400 mt-2">Unindexed join detected</p> */}
             </Card>
           </div>
 
           {/* Charts */}
-          <QueriesChart queryType={queryType} timeRange={timeRange} />
+          <QueriesChart queryVolumeByHours={queries?.queryVolumeByHours || []} avgQueryTimeByHour={queries?.avgQueryTimeByHour || []} />
 
           {/* Tables */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
