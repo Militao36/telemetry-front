@@ -12,7 +12,7 @@ import { RefreshCw } from "lucide-react"
 import { convertToHours } from "@/utils"
 import { DateTime } from "luxon"
 
-interface DefaultSlowestQuery {
+export interface DefaultSlowestQuery {
   traceId: string
   spanId: string
   parentSpanId: string
@@ -25,6 +25,8 @@ interface DefaultSlowestQuery {
   dbStatement: string
   dbTable: string
   dbName: string
+  avgDurationMs: number
+  executions: number
 }
 
 export interface QueriesVolumeByHours {
@@ -48,8 +50,10 @@ export interface IMetrics {
 interface IQueries {
   avgQueryTimeByHour: IMetrics[]
   metrics: IMetrics
-  slowesTypeTSelect: DefaultSlowestQuery[]
+  slowesTypeDelete: DefaultSlowestQuery[]
   slowesTypeInsert: DefaultSlowestQuery[]
+  slowesTypeSelect: DefaultSlowestQuery[]
+  slowesTypeUpdate: DefaultSlowestQuery[]
   slowestQuery: DefaultSlowestQuery[]
   queryVolumeByType: {
     queryType: string
@@ -155,8 +159,10 @@ export function QueriesView() {
 
           {/* Tables */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <QueriesTable title="Slowest SELECT Queries" type="select" />
-            <QueriesTable title="Slowest INSERT Queries" type="insert" />
+            <QueriesTable title="Slowest SELECT Queries" slowesType={queries?.slowesTypeSelect || []} />
+            <QueriesTable title="Slowest INSERT Queries" slowesType={queries?.slowesTypeInsert || []} />
+            <QueriesTable title="Slowest DELETE Queries" slowesType={queries?.slowesTypeDelete || []} />
+            <QueriesTable title="Slowest UPDATE Queries" slowesType={queries?.slowesTypeUpdate || []} />
           </div>
         </div>
       </div>
