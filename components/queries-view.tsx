@@ -12,6 +12,21 @@ import { RefreshCw } from "lucide-react"
 import { convertToHours } from "@/utils"
 import { DateTime } from "luxon"
 
+interface DefaultSlowestQuery {
+  traceId: string
+  spanId: string
+  parentSpanId: string
+  serviceName: string
+  serviceVersion: string
+  serviceEnvironment: string
+  startTime: DateTime
+  endTime: DateTime
+  durationMs: number
+  dbStatement: string
+  dbTable: string
+  dbName: string
+}
+
 interface IMetrecs {
   metrics: {
     totalQueries: string
@@ -21,34 +36,9 @@ interface IMetrecs {
     p95Ms: number
     p99Ms: number
   }
-  slowesTypeTSelect: {
-    traceId: string
-    spanId: string
-    parentSpanId: string
-    serviceName: string
-    serviceVersion: string
-    serviceEnvironment: string
-    startTime: DateTime
-    endTime: DateTime
-    durationMs: number
-    dbStatement: string
-    dbTable: string
-    dbName: string
-  }[]
-  slowesTypeInsert: {
-    traceId: string
-    spanId: string
-    parentSpanId: string
-    serviceName: string
-    serviceVersion: string
-    serviceEnvironment: string
-    startTime: DateTime
-    endTime: DateTime
-    durationMs: number
-    dbStatement: string
-    dbTable: string
-    dbName: string
-  }[]
+  slowesTypeTSelect: DefaultSlowestQuery[]
+  slowesTypeInsert: DefaultSlowestQuery[]
+  slowestQuery: DefaultSlowestQuery[]
   queryVolumeByType: {
     queryType: string
     total: string
@@ -70,8 +60,8 @@ export function QueriesView() {
   const list = async () => {
     const { data } = await api.get(`/queries?queryTy=${queryType}&hour=${convertToHours(timeRange)}`)
 
-    if (!!data.data) {
-      setQueries(data.data)
+    if (Object.keys(data).length) {
+      setQueries(data)
     }
   }
 
@@ -151,7 +141,7 @@ export function QueriesView() {
             </Card>
             <Card className="bg-card border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">Slowest Query</p>
-              <p className="text-3xl font-bold">12.5s</p>
+              <p className="text-3xl font-bold">{((queries?.slowestQuery[0]?.durationMs || 0) / 1000).toLocaleString("en-US")}s</p>
               <p className="text-xs text-red-400 mt-2">Unindexed join detected</p>
             </Card>
           </div>
