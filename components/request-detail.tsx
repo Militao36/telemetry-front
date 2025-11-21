@@ -1,19 +1,25 @@
-"use client"
+"use client";
 
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { X, Copy } from "lucide-react"
-import { useState } from "react"
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { X, Copy } from "lucide-react";
+import { useState } from "react";
 
-export function RequestDetail({ requestId, onClose }: { requestId: string; onClose: () => void }) {
-  const [copiedField, setCopiedField] = useState<string | null>(null)
+export function RequestDetail({
+  requestId,
+  onClose,
+}: {
+  requestId: string;
+  onClose: () => void;
+}) {
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const copyToClipboard = (text: string, field: string) => {
-    navigator.clipboard.writeText(text)
-    setCopiedField(field)
-    setTimeout(() => setCopiedField(null), 2000)
-  }
+    navigator.clipboard.writeText(text);
+    setCopiedField(field);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   return (
     <div className="w-96 border-l border-border bg-card flex flex-col h-full overflow-hidden">
@@ -25,9 +31,10 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
-        {/* Request Line */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-3">REQUEST LINE</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            REQUEST LINE
+          </p>
           <Card className="bg-background/50 border-border p-3">
             <div className="flex items-center justify-between gap-2">
               <p className="font-mono text-sm">
@@ -36,7 +43,11 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
                 </Badge>
                 /api/users/123
               </p>
-              <Button variant="ghost" size="sm" onClick={() => copyToClipboard("GET /api/users/123", "method")}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => copyToClipboard("GET /api/users/123", "method")}
+              >
                 <Copy size={14} />
               </Button>
             </div>
@@ -45,7 +56,9 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
 
         {/* Response Status */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-3">RESPONSE</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            RESPONSE
+          </p>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm">Status Code</span>
@@ -64,7 +77,9 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
 
         {/* Headers */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-3">REQUEST HEADERS</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            REQUEST HEADERS
+          </p>
           <Card className="bg-background/50 border-border p-3 text-xs font-mono space-y-1">
             {[
               "Host: api.example.com",
@@ -74,7 +89,11 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
               "Content-Type: application/json",
               "X-Request-ID: req_12345",
             ].map((header, i) => (
-              <div key={i} className="text-muted-foreground truncate" title={header}>
+              <div
+                key={i}
+                className="text-muted-foreground truncate"
+                title={header}
+              >
                 {header}
               </div>
             ))}
@@ -83,7 +102,9 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
 
         {/* Response Headers */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-3">RESPONSE HEADERS</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            RESPONSE HEADERS
+          </p>
           <Card className="bg-background/50 border-border p-3 text-xs font-mono space-y-1">
             {[
               "Server: nginx/1.19.0",
@@ -93,7 +114,11 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
               "X-Response-Time: 145ms",
               "Vary: Accept-Encoding",
             ].map((header, i) => (
-              <div key={i} className="text-muted-foreground truncate" title={header}>
+              <div
+                key={i}
+                className="text-muted-foreground truncate"
+                title={header}
+              >
                 {header}
               </div>
             ))}
@@ -102,7 +127,9 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
 
         {/* Response Body */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-3">RESPONSE BODY</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            RESPONSE BODY
+          </p>
           <Card className="bg-background/50 border-border p-3 text-xs font-mono max-h-40 overflow-auto">
             <pre className="text-muted-foreground">{`{
   "id": "123",
@@ -117,7 +144,9 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
 
         {/* Timing Breakdown */}
         <div>
-          <p className="text-xs font-semibold text-muted-foreground mb-3">TIMING BREAKDOWN</p>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            TIMING BREAKDOWN
+          </p>
           <div className="space-y-2 text-xs">
             <div className="flex justify-between">
               <span>DNS Lookup</span>
@@ -151,5 +180,5 @@ export function RequestDetail({ requestId, onClose }: { requestId: string; onClo
         </div>
       </div>
     </div>
-  )
+  );
 }

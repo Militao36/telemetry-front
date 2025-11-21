@@ -4,10 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ChevronRight } from "lucide-react";
-import { api } from "@/api/api";
-import { useEffect, useState } from "react";
+import { formatNsToMsOrSeconds } from "@/lib/utils";
 
-interface Request {
+export interface IRequest {
   traceId: string;
   spanId: string;
   parentSpanId: string;
@@ -31,13 +30,15 @@ export function RequestsTable({
   searchQuery,
   statusFilter,
   onSelectRequest,
+  dataRequests,
+  title,
 }: {
   searchQuery: string;
   statusFilter: string;
   onSelectRequest: (id: string) => void;
+  dataRequests: IRequest[];
+  title: string;
 }) {
-  const [requests, setRequests] = useState<Request[]>([]);
-
   const getStatusColor = (status: number) => {
     if (status >= 200 && status < 300) return "bg-green-500/20 text-green-400";
     if (status >= 300 && status < 400) return "bg-blue-500/20 text-blue-400";
@@ -55,20 +56,10 @@ export function RequestsTable({
     return "all";
   };
 
-  async function fetchRequests(): Promise<Request[]> {
-    const response = await api.get("/requests/recent");
-
-    return response.data as Request[];
-  }
-
-  useEffect(() => {
-    fetchRequests().then((data) => setRequests(data));
-  }, []);
-
   return (
     <Card className="bg-card border-border overflow-hidden">
       <div className="p-6 border-b border-border">
-        <h3 className="text-lg font-semibold">Recent Requests</h3>
+        <h3 className="text-lg font-semibold">{title}</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -78,22 +69,19 @@ export function RequestsTable({
                 Method
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground">
-                Enviroment
-              </th>
-              <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground">
                 Endpoint
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground">
                 Status
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground">
-                Duration/ms
+                Duration ms/s
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground"></th>
             </tr>
           </thead>
           <tbody>
-            {requests.map((req) => (
+            {dataRequests.map((req) => (
               <tr
                 key={req.spanId}
                 className="border-b border-border/50 hover:bg-card/50 transition-colors cursor-pointer"
@@ -104,10 +92,7 @@ export function RequestsTable({
                   </Badge>
                 </td>
                 <td className="px-6 py-4 text-sm font-mono text-muted-foreground">
-                  {req.serviceEnvironment}
-                </td>
-                <td className="px-6 py-4 text-sm font-mono text-muted-foreground">
-                  {req.httpTarget}
+                  {req.httpTarget.split("?")[0].substring(0, 50)}
                 </td>
                 <td className="px-6 py-4">
                   <Badge
@@ -119,7 +104,7 @@ export function RequestsTable({
                   </Badge>
                 </td>
                 <td className="px-6 py-4 text-sm font-semibold">
-                  {+req.durationNs / 1e6}ms
+                  {formatNsToMsOrSeconds(+req.durationNs)}
                 </td>
 
                 <td className="px-6 py-4">

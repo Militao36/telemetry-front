@@ -1,24 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { RequestsChart } from "./requests-chart"
-import { RequestsTable } from "./requests-detailed-table"
-import { RequestDetail } from "./request-detail"
-import { Search } from "lucide-react"
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { RequestsChart } from "./requests-chart";
+import { IRequest, RequestsTable } from "./requests-detailed-table";
+import { RequestDetail } from "./request-detail";
+import { Search } from "lucide-react";
+import { api } from "@/api/api";
 
 export function RequestsView() {
-  const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [selectedRequest, setSelectedRequest] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
+
+  const [requestsRecents, setRequestsRecents] = useState<IRequest[]>([]);
+  const [requestsSlowest, setRequestsSlowest] = useState<IRequest[]>([]);
+
+  async function fetchRequests(): Promise<IRequest[]> {
+    const response = await api.get("/requests/recent");
+
+    return response.data as IRequest[];
+  }
+
+  async function fetchSlowestRequests(): Promise<IRequest[]> {
+    const response = await api.get("/requests/slowest");
+
+    return response.data as IRequest[];
+  }
+
+  useEffect(() => {
+    fetchRequests().then((data) => setRequestsRecents(data));
+    fetchSlowestRequests().then((data) => setRequestsSlowest(data));
+  }, []);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="border-b border-border bg-card px-6 py-4">
         <div>
           <h1 className="text-2xl font-bold">Requests</h1>
-          <p className="text-sm text-muted-foreground mt-1">Detailed analysis of HTTP requests and responses</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Detailed analysis of HTTP requests and responses
+          </p>
         </div>
       </div>
 
@@ -30,9 +53,14 @@ export function RequestsView() {
               <Card className="bg-card border-border p-4">
                 <div className="space-y-4">
                   <div>
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">Search Requests</label>
+                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
+                      Search Requests
+                    </label>
                     <div className="relative">
-                      <Search size={18} className="absolute left-3 top-3 text-muted-foreground" />
+                      <Search
+                        size={18}
+                        className="absolute left-3 top-3 text-muted-foreground"
+                      />
                       <Input
                         placeholder="Search by endpoint, method, status..."
                         value={searchQuery}
@@ -64,18 +92,39 @@ export function RequestsView() {
               <RequestsChart />
 
               {/* Table */}
-              <RequestsTable
-                searchQuery={searchQuery}
-                statusFilter={statusFilter}
-                onSelectRequest={setSelectedRequest}
-              />
+              <div className="columns-2xl">
+                <div>
+                  <RequestsTable
+                    searchQuery={searchQuery}
+                    statusFilter={statusFilter}
+                    onSelectRequest={setSelectedRequest}
+                    dataRequests={requestsSlowest}
+                    title="Slowest Requests"
+                  />
+                </div>
+
+                <div>
+                  <RequestsTable
+                    searchQuery={searchQuery}
+                    statusFilter={statusFilter}
+                    onSelectRequest={setSelectedRequest}
+                    dataRequests={requestsRecents}
+                    title="Recent Requests"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Detail Panel */}
-        {selectedRequest && <RequestDetail requestId={selectedRequest} onClose={() => setSelectedRequest(null)} />}
+        {selectedRequest && (
+          <RequestDetail
+            requestId={selectedRequest}
+            onClose={() => setSelectedRequest(null)}
+          />
+        )}
       </div>
     </div>
-  )
+  );
 }

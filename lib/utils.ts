@@ -1,8 +1,8 @@
-import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
 export function formatValueToK(value: string) {
@@ -13,10 +13,13 @@ export function formatValueToK(value: string) {
   return `${value.substring(0, value.length - 3) || 0}k`;
 }
 
-export function formatMsToSecondsWhenGratherThan1s(value: number) {
-  if (parseInt(value.toFixed(0)) > 1000) {
-    return `${(value / 1000).toFixed(1)} ms`
+export function formatNsToMsOrSeconds(value: number) {
+  const seconds = value / 1_000_000_000;
+
+  if (seconds >= 1) {
+    return `${seconds.toFixed(2)}s`;
   }
 
-  return `${value.toFixed(1)}s`
+  const milliseconds = value / 1_000_000;
+  return `${milliseconds.toFixed(2)}ms`;
 }
