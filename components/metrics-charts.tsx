@@ -29,6 +29,7 @@ export function MetricsCharts({
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Requests Over Time
         </h3>
+        
         <ResponsiveContainer width="100%" height={250} minHeight={200}>
           <AreaChart data={formatRequestsData(requestsData)}>
             <defs>

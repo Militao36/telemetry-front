@@ -57,6 +57,7 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="bg-card border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Query Volume by Type</h3>
+
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={formatterQueryVolumeByHours(queryVolumeByHours)}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />

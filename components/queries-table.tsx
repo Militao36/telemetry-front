@@ -44,8 +44,6 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                           {query.dbStatement}
                         </p>
 
-
-
                         <TooltipContent>
                           {query.dbStatement}
                         </TooltipContent>

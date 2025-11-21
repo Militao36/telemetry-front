@@ -36,16 +36,18 @@ export function RequestsChart({
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <Card className="bg-card border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Requests Timeline</h3>
+
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={requestData}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="rgba(255,255,255,0.1)"
+              color="black"
             />
-            <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
-            <YAxis stroke="rgba(255,255,255,0.5)" yAxisId="left" />
+            <XAxis dataKey="time" stroke="lab(54 0 -0.01)" />
+            <YAxis stroke="lab(54 0 -0.01)" yAxisId="left" />
             <YAxis
-              stroke="rgba(255,255,255,0.5)"
+              stroke="lab(54 0 -0.01)"
               yAxisId="right"
               orientation="right"
             />
@@ -82,14 +84,15 @@ export function RequestsChart({
         <h3 className="text-lg font-semibold mb-4">
           Response Status Distribution
         </h3>
+
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={statusData}>
             <CartesianGrid
               strokeDasharray="3 3"
               stroke="rgba(255,255,255,0.1)"
             />
-            <XAxis dataKey="status" stroke="rgba(255,255,255,0.5)" />
-            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <XAxis dataKey="status" stroke="lab(54 0 -0.01)" />
+            <YAxis stroke="lab(54 0 -0.01)" />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#fff",
