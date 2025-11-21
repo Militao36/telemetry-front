@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Calendar, Filter, MoreHorizontal, Download } from "lucide-react"
+import { Calendar, MoreHorizontal } from "lucide-react"
 
 export function Header() {
   return (
@@ -15,12 +15,6 @@ export function Header() {
           <Button variant="outline" size="sm" className="gap-1 sm:gap-2 bg-transparent text-xs sm:text-sm">
             <Calendar size={16} className="sm:size-5" />
             <span className="hidden sm:inline">Last 24h</span>
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-            <Filter size={16} />
-          </Button>
-          <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-            <Download size={16} />
           </Button>
           <Button variant="ghost" size="sm">
             <MoreHorizontal size={16} />

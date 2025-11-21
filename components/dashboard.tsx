@@ -30,7 +30,7 @@ export interface TopRequest {
 }
 
 export interface RequestPerTimeSery {
-  time: string;
+  time: q;
   totalRequests: number;
   avgMs: number;
 }

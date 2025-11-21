@@ -55,7 +55,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                 </td>
                 <td className="px-6 py-4 text-sm font-semibold">{((query?.avgDurationMs || 0).toFixed(2))}ms</td>
                 <td className="px-6 py-4 text-sm text-red-400 font-semibold">{(query.durationMs || 0).toFixed(2)}ms</td>
-                <td className="px-6 py-4 text-sm">{query.executions.toLocaleString("en-US")}</td>
+                <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
                 <td className="px-6 py-4">
                   <Badge
                     className={`text-xs bg-green-300/20 text-green-400`}
