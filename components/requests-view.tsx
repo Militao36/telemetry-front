@@ -6,33 +6,69 @@ import { Input } from "@/components/ui/input";
 import { RequestsChart } from "./requests-chart";
 import { IRequest, RequestsTable } from "./requests-detailed-table";
 import { RequestDetail } from "./request-detail";
-import { Search } from "lucide-react";
 import { api } from "@/api/api";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { formatRequestsData, formatResponseTimeData } from "@/lib/utils";
+import { DateTime } from "luxon";
 
 export function RequestsView() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [methodFilter, setMethodFilter] = useState("all");
+  const [hourFilter, setHourFilter] = useState("1hr");
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
+  const [requestsData, setRequestsData] = useState<any[]>([]);
+  const [responseStatusDistribution, setResponseStatusDistribution] = useState<
+    any[]
+  >([]);
 
   const [requestsRecents, setRequestsRecents] = useState<IRequest[]>([]);
   const [requestsSlowest, setRequestsSlowest] = useState<IRequest[]>([]);
 
+  const hour = hourFilter.includes("d")
+    ? (+hourFilter.replace("d", "") * 24).toString()
+    : hourFilter.replace("hr", "");
+
   async function fetchRequests(): Promise<IRequest[]> {
-    const response = await api.get("/requests/recent");
+    const response = await api.get(
+      `/requests/recent?httpMethod=${methodFilter}&hour=${hour}`
+    );
 
     return response.data as IRequest[];
   }
 
   async function fetchSlowestRequests(): Promise<IRequest[]> {
-    const response = await api.get("/requests/slowest");
+    const response = await api.get(
+      `/requests/slowest?httpMethod=${methodFilter}&hour=${hour}`
+    );
 
     return response.data as IRequest[];
+  }
+
+  async function fetchMetricsData() {
+    const response = await api.get(
+      `/requests/metrics?hour=${hour}&httpMethod=${methodFilter}`
+    );
+
+    return response.data;
   }
 
   useEffect(() => {
     fetchRequests().then((data) => setRequestsRecents(data));
     fetchSlowestRequests().then((data) => setRequestsSlowest(data));
-  }, []);
+    fetchMetricsData().then((data) => {
+      setRequestsData(data.requestPerTimeSeries);
+      setResponseStatusDistribution(data.responseStatusDistribution);
+    });
+  }, [methodFilter, hourFilter]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -52,51 +88,130 @@ export function RequestsView() {
               {/* Search and Filters */}
               <Card className="bg-card border-border p-4">
                 <div className="space-y-4">
-                  <div>
-                    <label className="text-sm font-medium text-muted-foreground mb-2 block">
-                      Search Requests
-                    </label>
-                    <div className="relative">
-                      <Search
-                        size={18}
-                        className="absolute left-3 top-3 text-muted-foreground"
-                      />
-                      <Input
-                        placeholder="Search by endpoint, method, status..."
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="pl-10 bg-input border-border"
-                      />
+                  <div className=" flex gap-2 justify-between">
+                    <div className="flex gap-2 flex-wrap">
+                      {["all", "GET", "POST", "PATCH", "PUT", "DELETE"].map(
+                        (method) => (
+                          <button
+                            key={method}
+                            onClick={() => setMethodFilter(method)}
+                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                              methodFilter === method
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            }`}
+                          >
+                            {method === "all" ? "All Methods" : `${method}`}
+                          </button>
+                        )
+                      )}
                     </div>
-                  </div>
-
-                  <div className="flex gap-2 flex-wrap">
-                    {["all", "2xx", "3xx", "4xx", "5xx"].map((status) => (
-                      <button
-                        key={status}
-                        onClick={() => setStatusFilter(status)}
-                        className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                          statusFilter === status
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-muted-foreground hover:bg-muted/80"
-                        }`}
-                      >
-                        {status === "all" ? "All Status" : `Status ${status}`}
-                      </button>
-                    ))}
+                    <div className="flex gap-2 flex-wrap">
+                      {["1hr", "6hr", "24hr", "7d", "15d", "30d"].map(
+                        (hour) => (
+                          <button
+                            key={hour}
+                            onClick={() => setHourFilter(hour)}
+                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                              hourFilter === hour
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            }`}
+                          >
+                            {hour}
+                          </button>
+                        )
+                      )}
+                    </div>
                   </div>
                 </div>
               </Card>
 
               {/* Charts */}
-              <RequestsChart />
+              <RequestsChart
+                statusData={responseStatusDistribution.map((e) => {
+                  return {
+                    status: e.httpStatus,
+                    count: e.count,
+                  };
+                })}
+                requestData={requestsData.map((e) => {
+                  return {
+                    time: DateTime.fromSQL(e.time, { zone: "utc" })
+                      .toLocal()
+                      .toFormat("yyyy-MM-dd HH:mm:ss"),
+                    avgTime: +e.avgMs.toFixed(2),
+                    requests: e.totalRequests,
+                  };
+                })}
+              />
 
-              {/* Table */}
-              <div className="columns-2xl">
+              <div className="columns-2xl gap-2">
+                <div>
+                  <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2  mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
+                      Requests Over Time
+                    </h3>
+                    <ResponsiveContainer
+                      width="100%"
+                      height={250}
+                      minHeight={200}
+                    >
+                      <AreaChart data={formatRequestsData(requestsData)}>
+                        <defs>
+                          <linearGradient
+                            id="colorValue"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="5%"
+                              stopColor="#8b5cf6"
+                              stopOpacity={0.8}
+                            />
+                            <stop
+                              offset="95%"
+                              stopColor="#8b5cf6"
+                              stopOpacity={0}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="rgba(255,255,255,0.1)"
+                        />
+                        <XAxis
+                          dataKey="time"
+                          stroke="rgba(255,255,255,0.5)"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis
+                          stroke="rgba(255,255,255,0.5)"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#fff",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="value"
+                          stroke="#8b5cf6"
+                          fillOpacity={1}
+                          fill="url(#colorValue)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </div>
+
                 <div>
                   <RequestsTable
-                    searchQuery={searchQuery}
-                    statusFilter={statusFilter}
+                    methodFilter={methodFilter}
                     onSelectRequest={setSelectedRequest}
                     dataRequests={requestsSlowest}
                     title="Slowest Requests"
@@ -104,9 +219,50 @@ export function RequestsView() {
                 </div>
 
                 <div>
+                  <Card className="bg-card border-border p-4 md:p-6  mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
+                      Response Time
+                    </h3>
+                    <ResponsiveContainer
+                      width="100%"
+                      height={250}
+                      minHeight={200}
+                    >
+                      <LineChart data={formatResponseTimeData(requestsData)}>
+                        <CartesianGrid
+                          strokeDasharray="3 3"
+                          stroke="rgba(255,255,255,0.1)"
+                        />
+                        <XAxis
+                          dataKey="time"
+                          stroke="rgba(255,255,255,0.5)"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis
+                          stroke="rgba(255,255,255,0.5)"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: "#fff",
+                            border: "1px solid rgba(255,255,255,0.1)",
+                          }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="ms"
+                          stroke="#8b5cf6"
+                          strokeWidth={2}
+                          dot={false}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </Card>
+                </div>
+
+                <div>
                   <RequestsTable
-                    searchQuery={searchQuery}
-                    statusFilter={statusFilter}
+                    methodFilter={methodFilter}
                     onSelectRequest={setSelectedRequest}
                     dataRequests={requestsRecents}
                     title="Recent Requests"

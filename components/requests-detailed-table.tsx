@@ -28,13 +28,13 @@ export interface IRequest {
 
 export function RequestsTable({
   searchQuery,
-  statusFilter,
+  methodFilter,
   onSelectRequest,
   dataRequests,
   title,
 }: {
-  searchQuery: string;
-  statusFilter: string;
+  searchQuery?: string;
+  methodFilter?: string;
   onSelectRequest: (id: string) => void;
   dataRequests: IRequest[];
   title: string;
@@ -75,7 +75,7 @@ export function RequestsTable({
                 Status
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground">
-                Duration ms/s
+                ms/s
               </th>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground"></th>
             </tr>

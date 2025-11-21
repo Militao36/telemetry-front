@@ -1,5 +1,4 @@
 "use client";
-import { DateTime } from "luxon";
 
 import { Card } from "@/components/ui/card";
 import {
@@ -14,6 +13,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { QueriesPerTimeSery, RequestPerTimeSery } from "./dashboard";
+import { formatQueriesData, formatQueryTimeData, formatRequestsData, formatResponseTimeData } from "@/lib/utils";
 
 export function MetricsCharts({
   requestsData = [{ time: "00:00", totalRequests: 0, avgMs: 0 }],
@@ -22,42 +22,7 @@ export function MetricsCharts({
   requestsData?: RequestPerTimeSery[];
   queriesData?: QueriesPerTimeSery[];
 }) {
-  function formatRequestsData(data: RequestPerTimeSery[]) {
-    return data.map((item) => ({
-      time: DateTime.fromSQL(item.time, { zone: "utc" })
-        .toLocal()
-        .toFormat("yyyy-MM-dd HH:mm:ss"),
-      value: item.totalRequests,
-    }));
-  }
-
-  function formatResponseTimeData(data: RequestPerTimeSery[]) {
-    return data.map((item) => ({
-      time: DateTime.fromSQL(item.time, { zone: "utc" })
-        .toLocal()
-        .toFormat("yyyy-MM-dd HH:mm:ss"),
-      ms: item.avgMs,
-    }));
-  }
-
-  function formatQueriesData(data: QueriesPerTimeSery[]) {
-    return data.map((item) => ({
-      time: DateTime.fromSQL(item.time, { zone: "utc" })
-        .toLocal()
-        .toFormat("yyyy-MM-dd HH:mm:ss"),
-      ms: item.totalQueries,
-    }));
-  }
-
-  function formatQueryTimeData(data: QueriesPerTimeSery[]) {
-    return data.map((item) => ({
-      time: DateTime.fromSQL(item.time, { zone: "utc" })
-        .toLocal()
-        .toFormat("yyyy-MM-dd HH:mm:ss"),
-      ms: item.avgMs,
-    }));
-  }
-
+ 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-4">
       <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2">
