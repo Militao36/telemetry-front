@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { BarChart3, FileText, AlertCircle, Database, Settings, Menu, X, Layout } from "lucide-react"
+import { Search, BarChart3, FileText, AlertCircle, Database, Settings, Menu, X, Layout } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 
@@ -15,6 +15,7 @@ export function Sidebar() {
     { icon: AlertCircle, label: "Errors", href: "/errors" },
     { icon: Database, label: "Queries", href: "/queries" },
     { icon: BarChart3, label: "Requests", href: "/requests" },
+    { icon: Search, label: "Search", href: "/search" },
     { icon: Settings, label: "Projects", href: "/projects" },
   ]
 
