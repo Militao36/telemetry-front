@@ -5,11 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent } from "@/components/ui/card"
-import { Search, Clock, Activity, Database, ChevronRight, AlertCircle, CheckCircle, Info, XCircle } from "lucide-react"
+import { Search, Clock, Activity, Database, ChevronRight, AlertCircle, CheckCircle, Info, XCircle, BarChart3 } from "lucide-react"
 import { useEffect, useState } from "react"
 
 type LogType = "all" | "error" | "warning" | "info" | "success"
 type DataType = "logs" | "queries" | "requests"
+type Methods = "POST" | "GET" | "PUT" | "DELETE" | "PATCH"
 
 interface LogEntry {
   id: string
@@ -21,6 +22,27 @@ interface LogEntry {
   status?: number
   message: string
   queryTime?: number
+}
+
+interface SearchFilters {
+  type: 'HTTP' | 'DATABASE' | 'CACHE';
+  httpFilter: {
+    method?: Methods;
+    statusCode?: number | null;
+    pathContains?: string;
+  };
+
+  databaseFilter: {
+    queryContains?: string;
+    tableName?: string;
+  };
+
+  environment?: string;
+  startTimeFrom?: string;
+  startTimeTo?: string;
+  traceId?: string;
+  limit?: number;
+  offset?: number;
 }
 
 const mockLogs: LogEntry[] = [
@@ -70,12 +92,33 @@ const mockLogs: LogEntry[] = [
   },
 ]
 
+const allMethods = ["GET", "POST", "PUT", "DELETE", "PATCH"]
+
 export function SearchView() {
   const [searchTerm, setSearchTerm] = useState("")
   const [logType, setLogType] = useState<LogType>("all")
-  const [dataType, setDataType] = useState<DataType>("logs")
+  const [dataType, setDataType] = useState<DataType>("requests")
   const [timeRange, setTimeRange] = useState("12h")
+  const [httpTypeFilter, setHttpTypeFilter] = useState<"method" | "statusCode" | "pathContains">("method")
   const [selectedLog, setSelectedLog] = useState<LogEntry | null>(null)
+  const [filters, setFilters] = useState<SearchFilters>({
+    type: 'HTTP',
+    httpFilter: {
+      method: "GET",
+      statusCode: null,
+      pathContains: "",
+    },
+    databaseFilter: {
+      queryContains: "",
+      tableName: "",
+    },
+    environment: "",
+    startTimeFrom: "",
+    startTimeTo: "",
+    traceId: "",
+    limit: 9,
+    offset: 9,
+  })
 
   const filteredLogs = mockLogs.filter((log) => {
     const matchesSearch =
@@ -141,6 +184,7 @@ export function SearchView() {
               {/* Busca */}
               <div className="relative lg:col-span-2">
                 <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+
                 <Input
                   placeholder="Buscar por path, mensagem..."
                   value={searchTerm}
@@ -149,19 +193,97 @@ export function SearchView() {
                 />
               </div>
 
-              <Select value={dataType} onValueChange={(value) => setDataType(value as DataType)}>
-                <SelectTrigger>
-                  <Database className="mr-2 size-4" />
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="logs">Logs</SelectItem>
-                  <SelectItem value="queries">Queries</SelectItem>
-                  <SelectItem value="requests">Requests</SelectItem>
-                </SelectContent>
-              </Select>
+              <div className="flex flex-wrap gap-4 lg:col-span-2">
+                <Select value={dataType} onValueChange={(value) => setDataType(value as DataType)}>
+                  <SelectTrigger>
+                    {dataType === 'requests' ? <BarChart3 className="mr-2 size-4" /> : <Database className="mr-2 size-4" />}
+                    <SelectValue />
+                  </SelectTrigger>
 
-              {/* Período */}
+                  <SelectContent>
+                    {/* <SelectItem value="logs">Logs</SelectItem> */}
+                    <SelectItem value="requests">Requests</SelectItem>
+                    <SelectItem value="queries">Queries</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                {/* {dataType === 'requests' && (
+                  <Select value={filters.httpFilter.method} onValueChange={(value) => setFilters({ ...filters, httpFilter: { ...filters.httpFilter, method: value as Methods } })}>
+                    <SelectTrigger>
+                      <Database className="mr-2 size-4" />
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="POST">POST</SelectItem>
+                      <SelectItem value="GET">GET</SelectItem>
+                      <SelectItem value="PUT">PUT</SelectItem>
+                      <SelectItem value="DELETE">DELETE</SelectItem>
+                      <SelectItem value="PATCH">PATCH</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )} */}
+
+                {dataType === 'requests' && (
+                  <Select value={httpTypeFilter} onValueChange={(value) => setHttpTypeFilter(value as "method" | "statusCode" | "pathContains")}>
+                    <SelectTrigger>
+                      <Database className="mr-2 size-4" />
+                      <SelectValue />
+                    </SelectTrigger>
+
+                    <SelectContent>
+                      <SelectItem value="method">Method</SelectItem>
+                      <SelectItem value="statusCode">Status Code</SelectItem>
+                      <SelectItem value="pathContains">Path Contains</SelectItem>
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            </div>
+
+            {/* Filtros de Status */}
+            <div className="flex flex-wrap justify-between items-center gap-4 mt-4">
+              {httpTypeFilter === 'method' && (
+                <div className="flex flex-wrap gap-2">
+                  {allMethods.map(m => (
+                    <Button style={{ cursor: 'pointer' }} key={m} variant={filters.httpFilter.method === m ? "default" : "outline"} size="sm" onClick={() => setFilters({ ...filters, httpFilter: { ...filters.httpFilter, method: m as Methods } })}>
+                      {m}
+                    </Button>
+                  ))}
+                </div>
+              )}
+
+              {/* <div className="flex flex-wrap gap-2">
+                <Button variant={logType === "all" ? "default" : "outline"} size="sm" onClick={() => setLogType("all")}>
+                  <Activity className="mr-2 size-4" />
+                  All
+                </Button>
+                <Button variant={logType === "error" ? "default" : "outline"} size="sm" onClick={() => setLogType("error")}>
+                  <XCircle className="mr-2 size-4" />
+                  Errors
+                </Button>
+                <Button
+                  variant={logType === "warning" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLogType("warning")}
+                >
+                  <AlertCircle className="mr-2 size-4" />
+                  Warnings
+                </Button>
+                <Button
+                  variant={logType === "success" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => setLogType("success")}
+                >
+                  <CheckCircle className="mr-2 size-4" />
+                  Success
+                </Button>
+                <Button variant={logType === "info" ? "default" : "outline"} size="sm" onClick={() => setLogType("info")}>
+                  <Info className="mr-2 size-4" />
+                  Info
+                </Button>
+              </div> */}
+
               <Select value={timeRange} onValueChange={setTimeRange}>
                 <SelectTrigger>
                   <Clock className="mr-2 size-4" />
@@ -174,38 +296,6 @@ export function SearchView() {
                   <SelectItem value="7d">Last 7 days</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
-
-            {/* Filtros de Status */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Button variant={logType === "all" ? "default" : "outline"} size="sm" onClick={() => setLogType("all")}>
-                <Activity className="mr-2 size-4" />
-                All
-              </Button>
-              <Button variant={logType === "error" ? "default" : "outline"} size="sm" onClick={() => setLogType("error")}>
-                <XCircle className="mr-2 size-4" />
-                Errors
-              </Button>
-              <Button
-                variant={logType === "warning" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setLogType("warning")}
-              >
-                <AlertCircle className="mr-2 size-4" />
-                Warnings
-              </Button>
-              <Button
-                variant={logType === "success" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setLogType("success")}
-              >
-                <CheckCircle className="mr-2 size-4" />
-                Success
-              </Button>
-              <Button variant={logType === "info" ? "default" : "outline"} size="sm" onClick={() => setLogType("info")}>
-                <Info className="mr-2 size-4" />
-                Info
-              </Button>
             </div>
           </CardContent>
         </Card>
