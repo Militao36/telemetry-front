@@ -53,36 +53,34 @@ export function StatsCards({
     setStats([
       {
         label: "Requests",
-        value: formatValueToK(totalRequests.toString()),
+        value: formatValueToK(totalRequests?.toString()),
         change: "",
         icon: Activity,
         color: "text-blue-400",
       },
       {
         label: "Errors",
-        value: formatValueToK(totalErrors.toString()),
+        value: formatValueToK(totalErrors?.toString()),
         change: "",
         icon: AlertTriangle,
         color: "text-red-400",
       },
       {
         label: "Avg Response",
-        value: avgResponse.toFixed(2),
+        value: avgResponse?.toFixed(2) ?? "0",
         change: "",
         icon: Zap,
         color: "text-yellow-400",
       },
       {
         label: "Queries",
-        value: formatValueToK(totalQueries.toString()),
+        value: formatValueToK(totalQueries?.toString()),
         change: "",
         icon: Activity,
         color: "text-green-400",
       },
     ]);
   }, [totalRequests, totalErrors, avgResponse]);
-
-  
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
