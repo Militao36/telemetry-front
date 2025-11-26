@@ -92,7 +92,7 @@ export function RequestsTable({
                   </Badge>
                 </td>
                 <td className="px-6 py-4 text-sm font-mono text-muted-foreground">
-                  {req.httpTarget.split("?")[0].substring(0, 50)}
+                  {req.httpTarget}
                 </td>
                 <td className="px-6 py-4">
                   <Badge
