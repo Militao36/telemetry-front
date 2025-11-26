@@ -13,7 +13,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { QueriesPerTimeSery, RequestPerTimeSery } from "./dashboard";
-import { formatQueriesData, formatQueryTimeData, formatRequestsData, formatResponseTimeData } from "@/lib/utils";
+import {
+  formatQueriesData,
+  formatQueryTimeData,
+  formatRequestsData,
+  formatResponseTimeData,
+} from "@/lib/utils";
 
 export function MetricsCharts({
   requestsData = [{ time: "00:00", totalRequests: 0, avgMs: 0 }],
@@ -22,14 +27,13 @@ export function MetricsCharts({
   requestsData?: RequestPerTimeSery[];
   queriesData?: QueriesPerTimeSery[];
 }) {
- 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-4">
       <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Requests Over Time
         </h3>
-        
+
         <ResponsiveContainer width="100%" height={250} minHeight={200}>
           <AreaChart data={formatRequestsData(requestsData)}>
             <defs>

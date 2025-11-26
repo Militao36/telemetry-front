@@ -107,7 +107,7 @@ export function RequestsView() {
                       )}
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                      {["1hr", "6hr", "24hr", "7d", "15d", "30d"].map(
+                      {["3hr", "6hr", "24hr", "7d", "15d", "30d"].map(
                         (hour) => (
                           <button
                             key={hour}
