@@ -23,7 +23,7 @@ import { DateTime } from "luxon";
 
 export function RequestsView() {
   const [methodFilter, setMethodFilter] = useState("all");
-  const [hourFilter, setHourFilter] = useState("1hr");
+  const [hourFilter, setHourFilter] = useState("3hr");
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [requestsData, setRequestsData] = useState<any[]>([]);
   const [responseStatusDistribution, setResponseStatusDistribution] = useState<
