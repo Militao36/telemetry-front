@@ -1,49 +1,38 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Search, BarChart3, FileText, AlertCircle, Database, Settings, Menu, X, Layout } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
+import { useState } from "react";
+import { Search, BarChart3, FileText, AlertCircle, Database, Settings, Menu, X, Layout } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function Sidebar() {
-  const [collapsed, setCollapsed] = useState(false)
-  const [mobileOpen, setMobileOpen] = useState(false)
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navItems = [
-    { icon: Layout, label: "Dashboard", href: "/" },
+    { icon: Layout, label: "Dashboard", href: "/dashboard" },
     { icon: FileText, label: "Logs", href: "/logs" },
     { icon: AlertCircle, label: "Errors", href: "/errors" },
     { icon: Database, label: "Queries", href: "/queries" },
     { icon: BarChart3, label: "Requests", href: "/requests" },
     { icon: Search, label: "Search", href: "/search" },
     { icon: Settings, label: "Projects", href: "/projects" },
-  ]
+  ];
 
   return (
     <>
       {/* Mobile menu button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="bg-card border border-sidebar-border"
-        >
+        <Button variant="ghost" size="sm" onClick={() => setMobileOpen(!mobileOpen)} className="bg-card border border-sidebar-border">
           {mobileOpen ? <X size={20} /> : <Menu size={20} />}
         </Button>
       </div>
 
       {/* Sidebar - hidden on mobile, visible on tablet and up */}
-      <div
-        className={`${
-          collapsed ? "w-20" : "w-64"
-        } bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex`}
-      >
+      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex`}>
         <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
           <div className={`flex items-center gap-2 ${collapsed ? "justify-center w-full" : ""}`}>
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">
-              ML
-            </div>
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">ML</div>
             {!collapsed && <span className="font-bold text-lg">Monitor</span>}
           </div>
         </div>
@@ -74,15 +63,10 @@ export function Sidebar() {
       {/* Mobile drawer - appears on mobile when menu is open */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
-          <div
-            className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">
-                  ML
-                </div>
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">ML</div>
                 <span className="font-bold text-lg">Monitor</span>
               </div>
               <Button variant="ghost" size="sm" onClick={() => setMobileOpen(false)}>
@@ -107,5 +91,5 @@ export function Sidebar() {
         </div>
       )}
     </>
-  )
+  );
 }
