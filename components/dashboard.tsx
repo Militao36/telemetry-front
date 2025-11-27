@@ -50,7 +50,7 @@ export interface SlowestRequest {
 }
 
 export function Dashboard() {
-  const [dasboardData, setDasboardData] = useState<DashboardData>({
+  const [dashboardData, setDashboardData] = useState<DashboardData>({
     avgResponse: 0,
     p50Ms: 0,
     p90Ms: 0,
@@ -68,7 +68,7 @@ export function Dashboard() {
   async function fetchDataRequests() {
     const response = await api.get("/dashboard");
 
-    setDasboardData((state) => {
+    setDashboardData((state) => {
       return {
         ...state,
         avgResponse: response.data.avgResponse,
@@ -81,6 +81,7 @@ export function Dashboard() {
         topRequests: response.data.topRequests,
         requestPerTimeSeries: response.data.requestPerTimeSeries,
         slowestRequests: response.data.slowestRequests,
+        totalQueries: response.data.totalQueries,
       };
     });
   }
@@ -89,8 +90,8 @@ export function Dashboard() {
     const response = await api.get("/queries/dashboard");
 
     console.log(response.data.queriesPerTimeSeries);
-    
-    setDasboardData((state) => {
+
+    setDashboardData((state) => {
       return {
         ...state,
         queriesPerTimeSeries: response.data.queriesPerTimeSeries,
@@ -108,12 +109,12 @@ export function Dashboard() {
       <Header />
       <div className="flex-1 overflow-auto">
         <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6">
-          <StatsCards {...dasboardData} />
+          <StatsCards {...dashboardData} />
           <MetricsCharts
-            requestsData={dasboardData.requestPerTimeSeries}
-            queriesData={dasboardData.queriesPerTimeSeries}
+            requestsData={dashboardData.requestPerTimeSeries}
+            queriesData={dashboardData.queriesPerTimeSeries}
           />
-          <RequestsTable topRequests={dasboardData.topRequests} />
+          <RequestsTable topRequests={dashboardData.topRequests} />
         </div>
       </div>
     </div>
