@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, Command } from 'lucide-react';
+
 import { api } from '@/api/api';
+import { useAuthCheck } from '@/hooks/use-auth-check';
+
 
 export enum AuthMode {
   LOGIN = 'LOGIN',
@@ -20,6 +23,11 @@ export function AuthForm() {
   });
 
   const router = useRouter();
+
+  useAuthCheck({
+    redirectIfAuthenticated: '/dashboard',
+    redirectIfNotAuthenticated: '/'
+  })
 
   const validate = () => {
     const newErrors: { [key: string]: string } = {};
