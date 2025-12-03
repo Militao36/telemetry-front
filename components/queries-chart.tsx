@@ -36,22 +36,16 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
     return queryVolumeByHours.map(item => {
       return {
         ...item,
+        inserts: +item.inserts,
+        selects: +item.selects,
+        updates: +item.updates,
+        deletes: +item.deletes,
         interval: DateTime.fromSQL(item.interval, { zone: "utc" })
           .toLocal()
           .toFormat("yyyy-MM-dd HH:mm:ss"),
       }
     })
   }
-
-  const performanceData = [
-    { time: "00:00", avgTime: 120, p95: 250, p99: 450 },
-    { time: "04:00", avgTime: 135, p95: 280, p99: 520 },
-    { time: "08:00", avgTime: 180, p95: 380, p99: 720 },
-    { time: "12:00", avgTime: 245, p95: 520, p99: 950 },
-    { time: "16:00", avgTime: 200, p95: 420, p99: 780 },
-    { time: "20:00", avgTime: 160, p95: 320, p99: 600 },
-    { time: "23:59", avgTime: 140, p95: 280, p99: 520 },
-  ]
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

@@ -4,19 +4,12 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { DefaultSlowestQuery } from "./queries-view"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
+import { toast } from 'react-toastify';
+import { format } from "sql-formatter";
+import { formatMsToMsOrSeconds } from "@/lib/utils"
 
 
 export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowestQuery[], title: string }) {
-  const teste = {
-    id: 2,
-    query: "SELECT * FROM orders LEFT JOIN items ON orders.id = items.order_id",
-    avgTime: "1.8s",
-    maxTime: "8.2s",
-    executions: 890,
-    indexes: "OK",
-    issue: "Unindexed join",
-  }
-
   return (
     <Card className="bg-card border-border overflow-hidden">
       <div className="p-6 border-b border-border">
@@ -34,35 +27,46 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
             </tr>
           </thead>
           <tbody>
-            {slowesType.map((query, idx) => (
-              <tr key={idx} className="border-b border-border/50 hover:bg-card/50 transition-colors">
-                <td className="px-6 py-4">
-                  <Tooltip>
-                    <div>
-                      <TooltipTrigger>
-                        <p className="text-xs font-mono text-muted-foreground mb-1 line-clamp-2">
-                          {query.dbStatement}
-                        </p>
+            {slowesType.map((query, idx) => {
 
-                        <TooltipContent>
-                          {query.dbStatement}
-                        </TooltipContent>
-                      </TooltipTrigger>
-                    </div>
-                  </Tooltip>
-                </td>
-                <td className="px-6 py-4 text-sm font-semibold">{((query?.avgDurationMs || 0).toFixed(2))}ms</td>
-                <td className="px-6 py-4 text-sm text-red-400 font-semibold">{(query.durationMs || 0).toFixed(2)}ms</td>
-                <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
-                <td className="px-6 py-4">
-                  <Badge
-                    className={`text-xs bg-green-300/20 text-green-400`}
-                  >
-                    {`${query.dbName}/${query.dbTable}`}
-                  </Badge>
-                </td>
-              </tr>
-            ))}
+              return (
+                <tr key={idx} className="border-b border-border/50 hover:bg-card/50 transition-colors">
+                  <td className="px-6 py-4">
+                    <Tooltip>
+                      <div>
+                        <TooltipTrigger>
+                          <p onClick={() => {
+                            let sqlFormatted = ''
+                            try {
+                              sqlFormatted = query.dbStatement ? format(query.dbStatement, { language: "postgresql" }).toString() : '';
+                            } catch (error) { }
+
+                            toast.info("Query copied to clipboard!");
+                            navigator.clipboard.writeText(sqlFormatted || query.dbStatement)
+                          }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-blue-700 hover:weight-semibold">
+                            {query.dbStatement.trim().trimEnd().trimStart().substring(0, 50)}
+                          </p>
+
+                          <TooltipContent>
+                            {query.dbStatement}
+                          </TooltipContent>
+                        </TooltipTrigger>
+                      </div>
+                    </Tooltip>
+                  </td>
+                  <td className="px-6 py-4 text-sm font-semibold">{formatMsToMsOrSeconds(query?.avgDurationMs)}</td>
+                  <td className="px-6 py-4 text-sm text-red-400 font-semibold">{formatMsToMsOrSeconds(query?.durationMs)}</td>
+                  <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
+                  <td className="px-6 py-4">
+                    <Badge
+                      className={`text-xs bg-green-300/20 text-green-400`}
+                    >
+                      {`${query.dbTable}`}
+                    </Badge>
+                  </td>
+                </tr>
+              )
+            })}
           </tbody>
         </table>
       </div>

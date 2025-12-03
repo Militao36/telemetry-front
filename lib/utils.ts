@@ -26,6 +26,16 @@ export function formatNsToMsOrSeconds(value: number) {
   return `${milliseconds.toFixed(2)} ms`;
 }
 
+export function formatMsToMsOrSeconds(value: number) {
+  const seconds = value / 1000;
+
+  if (seconds >= 1) {
+    return `${seconds.toFixed(2)} s`;
+  }
+
+  return `${value.toFixed(2)} ms`;
+}
+
 export function formatRequestsData(data: RequestPerTimeSery[]) {
   return data.map((item) => ({
     time: DateTime.fromSQL(item.time, { zone: "utc" })

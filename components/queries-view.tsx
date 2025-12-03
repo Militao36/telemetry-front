@@ -10,6 +10,7 @@ import { QueriesTable } from "./queries-table";
 
 import { RefreshCw } from "lucide-react";
 import { convertToHours } from "@/utils";
+import { formatMsToMsOrSeconds } from "@/lib/utils";
 
 export interface DefaultSlowestQuery {
   traceId: string;
@@ -108,11 +109,10 @@ export function QueriesView() {
                       <button
                         key={type}
                         onClick={() => setQueryType(type)}
-                        className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${
-                          queryType === type
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted text-muted-foreground hover:bg-muted/80"
-                        }`}
+                        className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${queryType === type
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-muted-foreground hover:bg-muted/80"
+                          }`}
                       >
                         {type}
                       </button>
@@ -128,11 +128,10 @@ export function QueriesView() {
                     <button
                       key={range}
                       onClick={() => setTimeRange(range)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                        timeRange === range
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${timeRange === range
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        }`}
                     >
                       {range}
                     </button>
@@ -170,8 +169,8 @@ export function QueriesView() {
               </p>
               <p className="text-3xl font-bold">
                 {(
-                  (queries?.slowestQuery[0]?.durationMs || 0) / 1000
-                ).toLocaleString("en-US")}
+                  formatMsToMsOrSeconds(queries?.slowestQuery[0]?.durationMs || 0)
+                )}
                 s
               </p>
               {/* <p className="text-xs text-red-400 mt-2">Unindexed join detected</p> */}
