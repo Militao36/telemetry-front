@@ -20,6 +20,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
           <thead className="bg-card/50 border-b border-border">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Query</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Db Params</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Avg Time</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Duration</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Executions</th>
@@ -54,6 +55,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                       </div>
                     </Tooltip>
                   </td>
+                  <td className="px-6 py-4 text-sm font-semibold">{query.dbParams}</td>
                   <td className="px-6 py-4 text-sm font-semibold">{formatMsToMsOrSeconds(query?.avgDurationMs)}</td>
                   <td className="px-6 py-4 text-sm text-red-400 font-semibold">{formatMsToMsOrSeconds(query?.durationMs)}</td>
                   <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>

@@ -23,6 +23,7 @@ export interface DefaultSlowestQuery {
   endTime: string;
   durationMs: number;
   dbStatement: string;
+  dbParams: string;
   dbTable: string;
   dbName: string;
   avgDurationMs: number;
