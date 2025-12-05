@@ -55,7 +55,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                       </div>
                     </Tooltip>
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold">{query.dbParams}</td>
+                  <td className="px-6 py-4 text-sm font-semibold">{JSON.parse(query.dbParams)}</td>
                   <td className="px-6 py-4 text-sm font-semibold">{formatMsToMsOrSeconds(query?.avgDurationMs)}</td>
                   <td className="px-6 py-4 text-sm text-red-400 font-semibold">{formatMsToMsOrSeconds(query?.durationMs)}</td>
                   <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
