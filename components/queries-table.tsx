@@ -63,7 +63,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                             toast.info("Query copied to clipboard!");
                             navigator.clipboard.writeText(query.dbParams || query.dbParams)
                           }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-blue-700 hover:weight-semibold">
-                            {JSON.stringify(JSON.parse(query.dbParams), null, 2).trim().trimEnd().trimStart().substring(0, 50)}
+                            {query.dbParams.trim().trimEnd().trimStart().substring(0, 50)}
                           </p>
 
                           <TooltipContent>
