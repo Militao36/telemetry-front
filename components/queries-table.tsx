@@ -55,7 +55,24 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                       </div>
                     </Tooltip>
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold">{JSON.parse(query.dbParams)}</td>
+                  <td className="px-6 py-4 text-sm font-semibold">
+                    <Tooltip>
+                      <div>
+                        <TooltipTrigger>
+                          <p onClick={() => {
+                            toast.info("Query copied to clipboard!");
+                            navigator.clipboard.writeText(query.dbParams || query.dbParams)
+                          }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-blue-700 hover:weight-semibold">
+                            {JSON.stringify(JSON.parse(query.dbParams), null, 2).trim().trimEnd().trimStart().substring(0, 50)}
+                          </p>
+
+                          <TooltipContent>
+                            {query.dbParams}
+                          </TooltipContent>
+                        </TooltipTrigger>
+                      </div>
+                    </Tooltip>
+                    </td>
                   <td className="px-6 py-4 text-sm font-semibold">{formatMsToMsOrSeconds(query?.avgDurationMs)}</td>
                   <td className="px-6 py-4 text-sm text-red-400 font-semibold">{formatMsToMsOrSeconds(query?.durationMs)}</td>
                   <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
