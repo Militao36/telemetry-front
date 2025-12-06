@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, BarChart3, FileText, Database, Settings, Menu, X, Layout } from "lucide-react";
+import { Search, BarChart3, FileText, Database, User2Icon, Settings, Menu, X, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SignupModal } from "./company";
@@ -19,7 +19,7 @@ export function Sidebar() {
     { icon: BarChart3, label: "Requests", href: "/requests" },
     { icon: Search, label: "Search", href: "/search" },
     { icon: Settings, label: "Projects", href: "/projects" },
-    { icon: Settings, label: "Settings", href: null },
+    { icon: User2Icon, label: "Settings", href: null },
   ];
 
   return (
