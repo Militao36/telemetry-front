@@ -27,7 +27,7 @@ export function AuthForm() {
 
   useAuthCheck({
     redirectIfAuthenticated: '/dashboard',
-    redirectIfNotAuthenticated: '/'
+    redirectIfNotAuthenticated: '/login'
   })
 
   const validate = () => {

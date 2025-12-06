@@ -28,7 +28,9 @@ export function useAuthCheck({
 
   useEffect(() => {
     async function validateToken() {
-      const token = localStorage.getItem("token");
+      const stringTokens = localStorage.getItem("tokens");
+      const tokens = stringTokens ? JSON.parse(stringTokens) : null;
+      const token = tokens ? tokens[0] : null;
 
       if (!token) {
         handleNotAuthenticated()
