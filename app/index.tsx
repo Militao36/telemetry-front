@@ -379,7 +379,7 @@ export default function SitePage() {
               <ul className="space-y-4">
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                  <span>500.000 métricas/logs por mês</span>
+                  <span>250.000 métricas/logs por mês</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
