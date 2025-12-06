@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
-import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, Command } from 'lucide-react';
+import { User as UserIcon, ArrowRight, Loader2, Command } from 'lucide-react';
 
 import { api } from '@/api/api';
 import { useAuthCheck } from '@/hooks/use-auth-check';
@@ -103,7 +103,7 @@ export function AuthForm() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form className="space-y-4">
           {mode === AuthMode.SIGNUP && (
             <div className="animate-fade-in-down">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">Name</label>
@@ -150,6 +150,7 @@ export function AuthForm() {
           <button
             type="submit"
             disabled={isLoading}
+            onClick={handleSubmit}
             className={`
               w-full py-2.5 px-4 mt-6
               bg-gray-600 hover:bg-gray-700
