@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Search, BarChart3, FileText, AlertCircle, Database, Settings, Menu, X, Layout } from "lucide-react";
+import { Search, BarChart3, FileText, Database, Settings, Menu, X, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { SignupModal } from "./company";
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isSignupOpen, setIsSignupOpen] = useState(false);
 
   const navItems = [
     { icon: Layout, label: "Dashboard", href: "/dashboard" },
@@ -17,10 +19,12 @@ export function Sidebar() {
     { icon: BarChart3, label: "Requests", href: "/requests" },
     { icon: Search, label: "Search", href: "/search" },
     { icon: Settings, label: "Projects", href: "/projects" },
+    { icon: Settings, label: "Settings", href: null },
   ];
 
   return (
     <>
+      <SignupModal isOpen={isSignupOpen} onClose={() => setIsSignupOpen(false)} />
       {/* Mobile menu button */}
       <div className="md:hidden fixed top-4 left-4 z-50">
         <Button variant="ghost" size="sm" onClick={() => setMobileOpen(!mobileOpen)} className="bg-card border border-sidebar-border">
@@ -38,18 +42,33 @@ export function Sidebar() {
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${collapsed ? "justify-center" : ""
-                } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
-              title={item.label}
-            >
-              <item.icon size={20} />
-              {!collapsed && <span className="text-sm">{item.label}</span>}
-            </Link>
-          ))}
+          {navItems.map((item) => {
+            if (item.href === null) {
+              return (
+                <button
+                  key={item.label}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground"
+                  onClick={() => setIsSignupOpen(true)}
+                >
+                  <item.icon size={20} />
+                  {!collapsed && <span className="text-sm">{item.label}</span>}
+                </button>
+              )
+            }
+
+            return (
+              <Link
+                key={item.label}
+                href={item.href}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${collapsed ? "justify-center" : ""
+                  } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
+                title={item.label}
+              >
+                <item.icon size={20} />
+                {!collapsed && <span className="text-sm">{item.label}</span>}
+              </Link>
+            )
+          })}
         </nav>
 
         <div className="p-4 border-t border-sidebar-border">
@@ -74,17 +93,35 @@ export function Sidebar() {
             </div>
 
             <nav className="flex-1 p-4 space-y-2">
-              {navItems.map((item) => (
-                <Link
-                  key={item.label}
-                  href={item.href}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  <item.icon size={20} />
-                  <span className="text-sm">{item.label}</span>
-                </Link>
-              ))}
+              {navItems.map((item) => {
+                if (item.href === null) {
+                  return (
+                    <button
+                      key={item.label}
+                      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground"
+                      onClick={() => {
+                        setIsSignupOpen(true);
+                        setMobileOpen(false);
+                      }}
+                    >
+                      <item.icon size={20} />
+                      <span className="text-sm">{item.label}</span>
+                    </button>
+                  )
+                }
+
+                return (
+                  <Link
+                    key={item.label}
+                    href={item.href as string}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <item.icon size={20} />
+                    <span className="text-sm">{item.label}</span>
+                  </Link>
+                )
+              })}
             </nav>
           </div>
         </div>
