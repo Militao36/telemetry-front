@@ -12,7 +12,7 @@ export function Sidebar() {
   const navItems = [
     { icon: Layout, label: "Dashboard", href: "/dashboard" },
     { icon: FileText, label: "Logs", href: "/logs" },
-    { icon: AlertCircle, label: "Errors", href: "/errors" },
+    // { icon: AlertCircle, label: "Errors", href: "/errors" },
     { icon: Database, label: "Queries", href: "/queries" },
     { icon: BarChart3, label: "Requests", href: "/requests" },
     { icon: Search, label: "Search", href: "/search" },
@@ -42,9 +42,8 @@ export function Sidebar() {
             <Link
               key={item.label}
               href={item.href}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                collapsed ? "justify-center" : ""
-              } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${collapsed ? "justify-center" : ""
+                } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
               title={item.label}
             >
               <item.icon size={20} />

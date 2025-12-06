@@ -4,7 +4,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { X, Copy } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "@/api/api";
+import { formatNsToMsOrSeconds } from "@/lib/utils";
 
 export function RequestDetail({
   requestId,
@@ -13,13 +15,62 @@ export function RequestDetail({
   requestId: string;
   onClose: () => void;
 }) {
-  const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [requestDetails, setRequestDetails] = useState<{
+    traceId: string;
+    spanId: string;
+    parentSpanId: string;
+    serviceName: string;
+    serviceVersion: string;
+    serviceEnvironment: string;
+    kind: string;
+    name: string;
+    startTime: string;
+    endTime: string;
+    durationNs: string;
+    httpUrl: string;
+    httpMethod: string;
+    httpTarget: string;
+    httpStatus: string;
+    attributes: Array<{ key: string; value: { stringValue?: string; intValue?: number } }>;
+    ingestionTime: string;
+    typeTrace: string;
+  }>({} as any);
 
   const copyToClipboard = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
-    setCopiedField(field);
-    setTimeout(() => setCopiedField(null), 2000);
   };
+
+  async function fetchRequestDetails(id: string) {
+    const response = await api.get(`/traces/${id}`);
+
+    const data = response.data[0]
+
+    setRequestDetails({
+      traceId: data.traceId,
+      spanId: data.spanId,
+      parentSpanId: data.parentSpanId,
+      serviceName: data.serviceName,
+      serviceVersion: data.serviceVersion,
+      serviceEnvironment: data.serviceEnvironment,
+      kind: data.kind,
+      name: data.name,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      durationNs: data.durationNs,
+      httpUrl: data.httpUrl,
+      httpMethod: data.httpMethod,
+      httpTarget: data.httpTarget,
+      httpStatus: data.httpStatus,
+      attributes: JSON.parse(data.attributes || "[]"),
+      ingestionTime: data.ingestionTime,
+      typeTrace: data.typeTrace,
+    })
+  }
+
+  useEffect(() => {
+    if (requestId)
+      fetchRequestDetails(requestId)
+  }, [requestId])
 
   return (
     <div className="w-96 border-l border-border bg-card flex flex-col h-full overflow-hidden">
@@ -35,18 +86,18 @@ export function RequestDetail({
           <p className="text-xs font-semibold text-muted-foreground mb-3">
             REQUEST LINE
           </p>
-          <Card className="bg-background/50 border-border p-3">
+          <Card className="bg-background/50 border-border p-3 overflow-auto">
             <div className="flex items-center justify-between gap-2">
               <p className="font-mono text-sm">
                 <Badge variant="outline" className="font-mono text-xs mr-2">
-                  GET
+                  {requestDetails.httpMethod || "UNKNOWN"}
                 </Badge>
-                /api/users/123
+                {requestDetails.httpUrl || ""}
               </p>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => copyToClipboard("GET /api/users/123", "method")}
+                onClick={() => copyToClipboard(requestDetails.httpMethod + " " + requestDetails.httpUrl, "method")}
               >
                 <Copy size={14} />
               </Button>
@@ -62,21 +113,21 @@ export function RequestDetail({
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm">Status Code</span>
-              <Badge className="bg-green-500/20 text-green-400">200 OK</Badge>
+              <Badge className="bg-green-500/20 text-green-400">{requestDetails.httpStatus || "UNKNOWN"}</Badge>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm">Response Time</span>
-              <span className="font-semibold">145ms</span>
+              <span className="text-sm">Request Time</span>
+              <span className="font-semibold">{formatNsToMsOrSeconds(+requestDetails.durationNs)}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-sm">Response Size</span>
-              <span className="font-semibold">12.5KB</span>
+              <span className="text-sm">Request Size</span>
+              <span className="font-semibold">{requestDetails?.attributes?.find(attr => attr.key === "http.request_content_length_uncompressed")?.value.intValue || "UNKNOWN"}</span>
             </div>
           </div>
         </div>
 
         {/* Headers */}
-        <div>
+        {/* <div>
           <p className="text-xs font-semibold text-muted-foreground mb-3">
             REQUEST HEADERS
           </p>
@@ -98,10 +149,10 @@ export function RequestDetail({
               </div>
             ))}
           </Card>
-        </div>
+        </div> */}
 
         {/* Response Headers */}
-        <div>
+        {/* <div>
           <p className="text-xs font-semibold text-muted-foreground mb-3">
             RESPONSE HEADERS
           </p>
@@ -123,7 +174,7 @@ export function RequestDetail({
               </div>
             ))}
           </Card>
-        </div>
+        </div> */}
 
         {/* Response Body */}
         <div>
@@ -131,19 +182,16 @@ export function RequestDetail({
             RESPONSE BODY
           </p>
           <Card className="bg-background/50 border-border p-3 text-xs font-mono max-h-40 overflow-auto">
-            <pre className="text-muted-foreground">{`{
-  "id": "123",
-  "name": "John Doe",
-  "email": "john@example.com",
-  "status": "active",
-  "created_at": "2024-01-15T10:30:00Z",
-  "last_login": "2024-11-10T14:32:00Z"
-}`}</pre>
+            <pre className="text-muted-foreground">{
+              requestDetails?.attributes?.find(attr => attr.key === "http.response_body")?.value?.stringValue ||
+              requestDetails?.attributes?.find(e => e.key === 'status_text')?.value?.stringValue ||
+              "No response body available"
+            }</pre>
           </Card>
         </div>
 
         {/* Timing Breakdown */}
-        <div>
+        {/* <div>
           <p className="text-xs font-semibold text-muted-foreground mb-3">
             TIMING BREAKDOWN
           </p>
@@ -177,7 +225,7 @@ export function RequestDetail({
               <span>145ms</span>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

@@ -40,7 +40,7 @@ export function LogsView() {
                     />
                   </div>
                 </div>
-                <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+                {/* <Button variant="outline" size="sm" className="gap-2 bg-transparent">
                   <Download size={16} />
                   Export
                 </Button>
@@ -52,14 +52,13 @@ export function LogsView() {
                 >
                   <RefreshCw size={16} className={autoRefresh ? "animate-spin" : ""} />
                   Auto
-                </Button>
+                </Button> */}
               </div>
 
               <LogsFilter selectedLevel={selectedLevel} onChange={setSelectedLevel} />
             </div>
           </Card>
 
-          {/* Logs Table */}
           <LogsTable searchQuery={searchQuery} selectedLevel={selectedLevel} />
         </div>
       </div>

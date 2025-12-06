@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 
 export function ProjectsView() {
-  const [showNewProject, setShowNewProject] = useState(false)
-
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       <div className="border-b border-border bg-card px-4 sm:px-6 py-4">

@@ -95,11 +95,10 @@ export function RequestsView() {
                           <button
                             key={method}
                             onClick={() => setMethodFilter(method)}
-                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                              methodFilter === method
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                            }`}
+                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${methodFilter === method
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                              }`}
                           >
                             {method === "all" ? "All Methods" : `${method}`}
                           </button>
@@ -112,11 +111,10 @@ export function RequestsView() {
                           <button
                             key={hour}
                             onClick={() => setHourFilter(hour)}
-                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                              hourFilter === hour
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
-                            }`}
+                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${hourFilter === hour
+                              ? "bg-primary text-primary-foreground"
+                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                              }`}
                           >
                             {hour}
                           </button>
@@ -146,126 +144,127 @@ export function RequestsView() {
                 })}
               />
 
-              <div className="columns-2xl gap-2">
-                <div>
-                  <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2  mb-2">
-                    <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
-                      Requests Over Time
-                    </h3>
-                    <ResponsiveContainer
-                      width="100%"
-                      height={250}
-                      minHeight={200}
-                    >
-                      <AreaChart data={formatRequestsData(requestsData)}>
-                        <defs>
-                          <linearGradient
-                            id="colorValue"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#8b5cf6"
-                              stopOpacity={0.8}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#8b5cf6"
-                              stopOpacity={0}
-                            />
-                          </linearGradient>
-                        </defs>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="rgba(255,255,255,0.1)"
-                        />
-                        <XAxis
-                          dataKey="time"
-                          stroke="rgba(255,255,255,0.5)"
-                          tick={{ fontSize: 12 }}
-                        />
-                        <YAxis
-                          stroke="rgba(255,255,255,0.5)"
-                          tick={{ fontSize: 12 }}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "#fff",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                          }}
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="value"
-                          stroke="#8b5cf6"
-                          fillOpacity={1}
-                          fill="url(#colorValue)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </Card>
+              <div>
+                <div className="columns-2xl gap-2">
+                  <div>
+                    <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2 mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
+                        Requests Over Time
+                      </h3>
+                      <ResponsiveContainer
+                        width="100%"
+                        height={250}
+                        minHeight={200}
+                      >
+                        <AreaChart data={formatRequestsData(requestsData)}>
+                          <defs>
+                            <linearGradient
+                              id="colorValue"
+                              x1="0"
+                              y1="0"
+                              x2="0"
+                              y2="1"
+                            >
+                              <stop
+                                offset="5%"
+                                stopColor="#8b5cf6"
+                                stopOpacity={0.8}
+                              />
+                              <stop
+                                offset="95%"
+                                stopColor="#8b5cf6"
+                                stopOpacity={0}
+                              />
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="rgba(255,255,255,0.1)"
+                          />
+                          <XAxis
+                            dataKey="time"
+                            stroke="rgba(255,255,255,0.5)"
+                            tick={{ fontSize: 12 }}
+                          />
+                          <YAxis
+                            stroke="rgba(255,255,255,0.5)"
+                            tick={{ fontSize: 12 }}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "#fff",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                            }}
+                          />
+                          <Area
+                            type="monotone"
+                            dataKey="value"
+                            stroke="#8b5cf6"
+                            fillOpacity={1}
+                            fill="url(#colorValue)"
+                          />
+                        </AreaChart>
+                      </ResponsiveContainer>
+                    </Card>
+                  </div>
+
+
+                  <div>
+                    <Card className="bg-card border-border p-4 md:p-6  mb-2">
+                      <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
+                        Response Time
+                      </h3>
+                      <ResponsiveContainer
+                        width="100%"
+                        height={250}
+                        minHeight={200}
+                      >
+                        <LineChart data={formatResponseTimeData(requestsData)}>
+                          <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="rgba(255,255,255,0.1)"
+                          />
+                          <XAxis
+                            dataKey="time"
+                            stroke="rgba(255,255,255,0.5)"
+                            tick={{ fontSize: 12 }}
+                          />
+                          <YAxis
+                            stroke="rgba(255,255,255,0.5)"
+                            tick={{ fontSize: 12 }}
+                          />
+                          <Tooltip
+                            contentStyle={{
+                              backgroundColor: "#fff",
+                              border: "1px solid rgba(255,255,255,0.1)",
+                            }}
+                          />
+                          <Line
+                            type="monotone"
+                            dataKey="ms"
+                            stroke="#8b5cf6"
+                            strokeWidth={2}
+                            dot={false}
+                          />
+                        </LineChart>
+                      </ResponsiveContainer>
+                    </Card>
+                  </div>
                 </div>
 
-                <div>
-                  <RequestsTable
-                    methodFilter={methodFilter}
-                    onSelectRequest={setSelectedRequest}
-                    dataRequests={requestsSlowest}
-                    title="Slowest Requests"
-                  />
-                </div>
-
-                <div>
-                  <Card className="bg-card border-border p-4 md:p-6  mb-2">
-                    <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
-                      Response Time
-                    </h3>
-                    <ResponsiveContainer
-                      width="100%"
-                      height={250}
-                      minHeight={200}
-                    >
-                      <LineChart data={formatResponseTimeData(requestsData)}>
-                        <CartesianGrid
-                          strokeDasharray="3 3"
-                          stroke="rgba(255,255,255,0.1)"
-                        />
-                        <XAxis
-                          dataKey="time"
-                          stroke="rgba(255,255,255,0.5)"
-                          tick={{ fontSize: 12 }}
-                        />
-                        <YAxis
-                          stroke="rgba(255,255,255,0.5)"
-                          tick={{ fontSize: 12 }}
-                        />
-                        <Tooltip
-                          contentStyle={{
-                            backgroundColor: "#fff",
-                            border: "1px solid rgba(255,255,255,0.1)",
-                          }}
-                        />
-                        <Line
-                          type="monotone"
-                          dataKey="ms"
-                          stroke="#8b5cf6"
-                          strokeWidth={2}
-                          dot={false}
-                        />
-                      </LineChart>
-                    </ResponsiveContainer>
-                  </Card>
-                </div>
-
-                <div>
+                <div className="flex flex-col gap-2">
                   <RequestsTable
                     methodFilter={methodFilter}
                     onSelectRequest={setSelectedRequest}
                     dataRequests={requestsRecents}
                     title="Recent Requests"
+                  />
+
+                  <RequestsTable
+                    methodFilter={methodFilter}
+                    onSelectRequest={setSelectedRequest}
+                    dataRequests={requestsSlowest}
+                    title="Slowest Requests"
                   />
                 </div>
               </div>

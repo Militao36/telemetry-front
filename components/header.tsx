@@ -1,7 +1,7 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
-import { Calendar, MoreHorizontal } from "lucide-react"
+// import { Button } from "@/components/ui/button"
+// import { Calendar, MoreHorizontal } from "lucide-react"
 
 export function Header() {
   return (
@@ -12,13 +12,13 @@ export function Header() {
           <p className="text-xs sm:text-sm text-muted-foreground mt-1">Real-time monitoring of your applications</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          <Button variant="outline" size="sm" className="gap-1 sm:gap-2 bg-transparent text-xs sm:text-sm">
+          {/* <Button variant="outline" size="sm" className="gap-1 sm:gap-2 bg-transparent text-xs sm:text-sm">
             <Calendar size={16} className="sm:size-5" />
             <span className="hidden sm:inline">Last 24h</span>
-          </Button>
-          <Button variant="ghost" size="sm">
+          </Button> */}
+          {/* <Button variant="ghost" size="sm">
             <MoreHorizontal size={16} />
-          </Button>
+          </Button> */}
         </div>
       </div>
     </div>

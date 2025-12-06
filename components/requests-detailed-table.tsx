@@ -48,13 +48,6 @@ export function RequestsTable({
     return "bg-gray-500/20 text-gray-400";
   };
 
-  const getStatusCategory = (status: number) => {
-    if (status >= 200 && status < 300) return "2xx";
-    if (status >= 300 && status < 400) return "3xx";
-    if (status >= 400 && status < 500) return "4xx";
-    if (status >= 500) return "5xx";
-    return "all";
-  };
 
   return (
     <Card className="bg-card border-border overflow-hidden">

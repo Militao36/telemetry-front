@@ -1,102 +1,36 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ChevronRight } from "lucide-react"
+import { api } from "@/api/api"
 
 interface Log {
   id: number
-  timestamp: string
-  level: "info" | "warning" | "error" | "critical" | "debug"
-  project: string
-  endpoint: string
-  message: string
-  userId: string
-  statusCode?: number
-  duration?: string
-  details?: string
+  timestamp: string;
+  trace_id: string;
+  span_id: string;
+  severity_text: "info" | "warning" | "error" | "critical" | "debug";
+  severity_number: number;
+  service_name: string;
+  environment: string;
+  host: string;
+  app_version: string;
+  logger_name: string;
+  message: string;
+  attributes: string | Record<string, any>;
+  body: string | Record<string, any>;
+  exception_type: string;
+  exception_message: string;
+  exception_stacktrace: string;
 }
 
 export function LogsTable({ searchQuery, selectedLevel }: { searchQuery: string; selectedLevel: string }) {
   const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [logs, setLogs] = useState<Log[]>([])
 
-  const logs: Log[] = [
-    {
-      id: 1,
-      timestamp: "2024-11-10 14:32:15.245",
-      level: "info",
-      project: "E-Commerce API",
-      endpoint: "POST /api/orders",
-      message: "Order created successfully",
-      userId: "user_123",
-      statusCode: 201,
-      duration: "145ms",
-      details: "Order ID: 89234 | Items: 3 | Total: $250.00",
-    },
-    {
-      id: 2,
-      timestamp: "2024-11-10 14:32:08.892",
-      level: "error",
-      project: "Payment Service",
-      endpoint: "POST /api/charge",
-      message: "Payment gateway timeout",
-      userId: "user_456",
-      statusCode: 504,
-      duration: "30000ms",
-      details: "Gateway: Stripe | Attempt: 3/3 | Retry queue added",
-    },
-    {
-      id: 3,
-      timestamp: "2024-11-10 14:31:45.123",
-      level: "warning",
-      project: "Mobile App API",
-      endpoint: "GET /api/users/profile",
-      message: "Slow query detected",
-      userId: "user_789",
-      statusCode: 200,
-      duration: "2850ms",
-      details: "Query time: 2.8s | Index scan | Cache: MISS",
-    },
-    {
-      id: 4,
-      timestamp: "2024-11-10 14:31:23.456",
-      level: "info",
-      project: "Analytics Dashboard",
-      endpoint: "GET /api/metrics",
-      message: "Metrics aggregation completed",
-      userId: "system",
-      statusCode: 200,
-      duration: "1250ms",
-      details: "Records processed: 50000 | Cache: HIT",
-    },
-    {
-      id: 5,
-      timestamp: "2024-11-10 14:30:12.789",
-      level: "critical",
-      project: "Real-Time Chat",
-      endpoint: "WS /chat/connect",
-      message: "WebSocket connection pool exhausted",
-      userId: "N/A",
-      statusCode: 503,
-      duration: "N/A",
-      details: "Active connections: 10000/10000 | Scaling triggered",
-    },
-    {
-      id: 6,
-      timestamp: "2024-11-10 14:29:45.234",
-      level: "debug",
-      project: "E-Commerce API",
-      endpoint: "GET /api/products/search",
-      message: "Search query parameters validated",
-      userId: "user_321",
-      statusCode: 200,
-      duration: "45ms",
-      details: 'Query: "laptop" | Filters: category,price | Results: 342',
-    },
-  ]
-
-  const getLevelColor = (level: Log["level"]) => {
+  const getLevelColor = (level: Log["severity_text"]) => {
     const colors = {
       info: "bg-blue-500/20 text-blue-400",
       warning: "bg-yellow-500/20 text-yellow-400",
@@ -107,21 +41,18 @@ export function LogsTable({ searchQuery, selectedLevel }: { searchQuery: string;
     return colors[level]
   }
 
-  const filteredLogs = logs.filter((log) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      log.message.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.endpoint.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      log.userId.toLowerCase().includes(searchQuery.toLowerCase())
+  async function findLogs() {
+    const response = await api.get(`/logs?severityText=${selectedLevel}&message=${searchQuery}`)
+    setLogs(response.data as Log[])
+  }
 
-    const matchesLevel = selectedLevel === "all" || log.level === selectedLevel
-
-    return matchesSearch && matchesLevel
-  })
+  useEffect(() => {
+    findLogs()
+  }, [searchQuery, selectedLevel])
 
   return (
     <div className="space-y-2">
-      {filteredLogs.map((log) => (
+      {logs.map((log) => (
         <Card
           key={log.id}
           className="bg-card border-border hover:border-primary/50 transition-colors cursor-pointer overflow-hidden"
@@ -131,17 +62,17 @@ export function LogsTable({ searchQuery, selectedLevel }: { searchQuery: string;
             <div className="flex items-start justify-between gap-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-2">
-                  <Badge className={`${getLevelColor(log.level)} flex-shrink-0 text-xs uppercase`}>{log.level}</Badge>
+                  <Badge className={`${getLevelColor(log.severity_text)} flex-shrink-0 text-xs uppercase`}>{log.severity_text}</Badge>
                   <span className="text-xs text-muted-foreground">{log.timestamp}</span>
-                  <span className="text-xs text-muted-foreground">{log.project}</span>
+                  <span className="text-xs text-muted-foreground">{log.service_name}</span>
                 </div>
-                <p className="font-mono text-sm text-muted-foreground mb-2">{log.endpoint}</p>
+                <p className="font-mono text-sm text-muted-foreground mb-2">{typeof log.attributes === "string" ? log.attributes : JSON.stringify(log.attributes)}</p>
                 <p className="text-sm text-foreground">{log.message}</p>
               </div>
               <ChevronRight size={20} className="flex-shrink-0 text-muted-foreground" />
             </div>
 
-            {expandedId === log.id && (
+            {/* {expandedId === log.id && (
               <div className="mt-4 pt-4 border-t border-border/50 space-y-3">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
                   <div>
@@ -170,12 +101,12 @@ export function LogsTable({ searchQuery, selectedLevel }: { searchQuery: string;
                   </div>
                 )}
               </div>
-            )}
+            )} */}
           </div>
         </Card>
       ))}
 
-      {filteredLogs.length === 0 && (
+      {logs.length === 0 && (
         <Card className="bg-card border-border p-12 text-center">
           <p className="text-muted-foreground">No logs found matching your filters</p>
         </Card>
