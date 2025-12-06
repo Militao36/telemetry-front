@@ -368,7 +368,7 @@ export default function SitePage() {
               <div className="mb-8">
                 <div className="space-y-2 mb-4">
                   <div>
-                    <span className="text-5xl font-bold">R$ 99,90</span>
+                    <span className="text-5xl font-bold">R$ 139,90</span>
                     <span className="text-muted-foreground ml-2">/mês</span>
                   </div>
                 </div>
