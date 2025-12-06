@@ -55,12 +55,12 @@ export function AuthForm() {
       if (mode === AuthMode.SIGNUP) {
         const { data } = await api.post('/users', auth)
 
-        localStorage.setItem("tokens", data.tokens);
+        localStorage.setItem("tokens", JSON.stringify(data.tokens));
         localStorage.setItem("user", JSON.stringify(data.user));
       } else {
         const { data } = await api.post('/users/auth', { email: auth.email, password: auth.password })
         console.log(data)
-        localStorage.setItem("tokens", data.tokens);
+        localStorage.setItem("tokens", JSON.stringify(data.tokens));
         localStorage.setItem("user", JSON.stringify(data.user));
       }
 
