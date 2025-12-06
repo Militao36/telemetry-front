@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+"use client"
+
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, Command } from 'lucide-react';
 
 import { api } from '@/api/api';
 import { useAuthCheck } from '@/hooks/use-auth-check';
-
 
 export enum AuthMode {
   LOGIN = 'LOGIN',
@@ -92,9 +93,6 @@ export function AuthForm() {
 
       <div className="glass-panel w-full max-w-md p-8 rounded-2xl shadow-2xl border border-white/60 relative z-10 transition-all duration-500 ease-in-out">
         <div className="flex flex-col items-center mb-8">
-          <div className="bg-indigo-600 p-3 rounded-xl shadow-lg shadow-indigo-600/30 mb-4">
-            <Command className="text-white w-6 h-6" />
-          </div>
           <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
             {mode === AuthMode.LOGIN ? 'Welcome Back' : 'Create Account'}
           </h2>
@@ -143,7 +141,7 @@ export function AuthForm() {
 
           {mode === AuthMode.LOGIN && (
             <div className="flex justify-end">
-              <button type="button" className="text-xs font-medium text-indigo-600 hover:text-indigo-500 transition-colors">
+              <button type="button" className="text-xs font-medium text-gray-700 hover:text-gray-500 transition-colors">
                 Forgot password?
               </button>
             </div>
@@ -153,11 +151,11 @@ export function AuthForm() {
             type="submit"
             disabled={isLoading}
             className={`
-              w-full py-2.5 px-4 mt-6 
-              bg-indigo-600 hover:bg-indigo-700 
-              text-white font-medium rounded-lg 
-              shadow-lg shadow-indigo-600/30 
-              transition-all duration-200 
+              w-full py-2.5 px-4 mt-6
+              bg-gray-600 hover:bg-gray-700
+              text-white font-medium rounded-lg
+              shadow-lg shadow-gray-600/30
+              transition-all duration-200
               flex items-center justify-center gap-2
               disabled:opacity-70 disabled:cursor-not-allowed
               active:scale-[0.98]
@@ -183,7 +181,7 @@ export function AuthForm() {
             {mode === AuthMode.LOGIN ? "Don't have an account?" : "Already have an account?"}
             <button
               onClick={toggleMode}
-              className="ml-2 font-semibold text-indigo-600 hover:text-indigo-500 hover:underline transition-all focus:outline-none"
+              className="ml-2 font-semibold text-gray-700 hover:text-gray-500 hover:underline transition-all focus:outline-none"
             >
               {mode === AuthMode.LOGIN ? 'Sign up' : 'Log in'}
             </button>

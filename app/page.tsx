@@ -1,8 +1,9 @@
 'use client'
-import { AuthForm } from "@/components/auth-form"
+import SitePage from "."
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <AuthForm />
+    <SitePage />
+    // <AuthForm />
   )
 }
