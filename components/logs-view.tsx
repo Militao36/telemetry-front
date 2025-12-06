@@ -36,7 +36,7 @@ export function LogsView() {
                       placeholder="Search by message, user, endpoint..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="pl-10 bg-input border-border"
+                      className="yarnpl-10 bg-input border-border"
                     />
                   </div>
                 </div>
