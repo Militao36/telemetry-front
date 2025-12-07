@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Search, BarChart3, FileText, Database, User2Icon, Settings, Menu, X, Layout } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -10,6 +10,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
+  const [projectSelected, setProjectSelected] = useState<string | null>(null);
 
   const navItems = [
     { icon: Layout, label: "Dashboard", href: "/dashboard" },
@@ -72,6 +73,12 @@ export function Sidebar() {
         </nav>
 
         <div className="p-4 border-t border-sidebar-border">
+          <select
+            name="enviroment"
+            className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            <option value="production">Selecionar projeto</option>
+          </select>
           <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="w-full justify-center">
             <Menu size={20} />
           </Button>
