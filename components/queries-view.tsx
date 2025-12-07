@@ -90,7 +90,7 @@ export function QueriesView() {
               Monitor query performance
             </p>
           </div>
-          <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+          <Button onClick={() => list()} variant="outline" size="sm" className="gap-2 bg-transparent">
             <RefreshCw size={18} />
             Refresh
           </Button>
