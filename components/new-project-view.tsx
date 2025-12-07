@@ -18,7 +18,7 @@ export function NewProjectView() {
     name: "",
     description: "",
     enviroment: "production",
-    language: "nodejs",
+    languageOrFramework: "nodejs",
     token: "",
   })
 
@@ -50,7 +50,7 @@ export function NewProjectView() {
           name: response.data.name,
           description: response.data.description,
           enviroment: response.data.enviroment,
-          language: response.data.language,
+          languageOrFramework: response.data.languageOrFramework,
           token: response.data.token,
         })
       })()
@@ -128,8 +128,8 @@ export function NewProjectView() {
               <div>
                 <label className="block text-sm font-semibold mb-2">Language / Framework</label>
                 <select
-                  name="language"
-                  value={formData.language}
+                  name="languageOrFramework"
+                  value={formData.languageOrFramework}
                   onChange={handleInputChange}
                   className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
                 >

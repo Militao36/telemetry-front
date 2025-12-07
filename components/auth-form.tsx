@@ -56,12 +56,13 @@ export function AuthForm() {
         const { data } = await api.post('/users', auth)
 
         localStorage.setItem("tokens", JSON.stringify(data.tokens));
-        localStorage.setItem("user", JSON.stringify(data.user));
       } else {
         const { data } = await api.post('/users/auth', { email: auth.email, password: auth.password })
-        console.log(data)
         localStorage.setItem("tokens", JSON.stringify(data.tokens));
-        localStorage.setItem("user", JSON.stringify(data.user));
+
+        if (!localStorage.getItem("tokenSelected")) {
+          localStorage.setItem("tokenSelected", JSON.stringify(data.tokens[0]));
+        }
       }
 
       router.push('/dashboard');

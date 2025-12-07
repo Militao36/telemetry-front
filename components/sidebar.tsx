@@ -10,7 +10,7 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
-  const [projectSelected, setProjectSelected] = useState<string | null>(null);
+  const [tokens, setTokens] = useState([] as Array<{ token: string, project: Record<string, any> }>);
 
   const navItems = [
     { icon: Layout, label: "Dashboard", href: "/dashboard" },
@@ -22,6 +22,11 @@ export function Sidebar() {
     { icon: Settings, label: "Projects", href: "/projects" },
     { icon: User2Icon, label: "Settings", href: null },
   ];
+
+  useEffect(() => {
+    if (typeof window !== 'undefined')
+      setTokens(JSON.parse(localStorage.getItem("tokens") || "{}"))
+  }, [])
 
   return (
     <>
@@ -76,8 +81,16 @@ export function Sidebar() {
           <select
             name="enviroment"
             className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            onChange={(e) => {
+              localStorage.setItem('tokenSelected', JSON.stringify(tokens.find(token => token.project.id === e.target.value)));
+              window.location.reload();
+            }}
+            value={typeof window !== 'undefined' ? JSON.parse(localStorage.getItem("tokenSelected") || "{}").project?.id || "-1" : "-1"}
           >
-            <option value="production">Selecionar projeto</option>
+            {tokens.map((token: { token: string, project: Record<string, any> }) => (
+              <option key={token.project.id} value={token.project.id}>{token.project.name}</option>
+            ))}
+            <option value="-1">Selecionar projeto</option>
           </select>
           <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="w-full justify-center">
             <Menu size={20} />
