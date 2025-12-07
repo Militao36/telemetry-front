@@ -28,14 +28,14 @@ const plans: Plan[] = [
   {
     id: "basic",
     name: "Basic",
-    price: "R$ 79,90",
+    price: "R$ 59,90",
     description: "Para pequenos projetos",
     limit: "100k métricas/logs",
   },
   {
     id: "complete",
     name: "Complete",
-    price: "R$ 139,90",
+    price: "R$ 99,90",
     description: "Para empresas",
     limit: "250k métricas/logs",
   },
