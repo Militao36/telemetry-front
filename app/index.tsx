@@ -1,5 +1,6 @@
 import { ArrowRight, Database, Radio, Zap, Code2, BarChart3, Shield, Check } from "lucide-react"
 import Link from "next/link"
+import Image from 'next/image'
 
 export default function SitePage() {
   return (
@@ -8,10 +9,9 @@ export default function SitePage() {
       <nav className="border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Radio className="w-5 h-5 text-primary-foreground" />
+            <div className="rounded-lg flex items-center justify-center">
+              <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={120} />
             </div>
-            <span className="text-xl font-bold">UnTelemetry</span>
           </div>
           <div className="hidden md:flex items-center gap-8">
             <a href="#features" className="text-muted-foreground hover:text-foreground transition">

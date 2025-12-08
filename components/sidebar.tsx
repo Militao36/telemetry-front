@@ -5,6 +5,7 @@ import { Search, BarChart3, FileText, Database, User2Icon, Settings, Menu, X, La
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SignupModal } from "./company";
+import Image from "next/image";
 
 export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
@@ -40,11 +41,8 @@ export function Sidebar() {
 
       {/* Sidebar - hidden on mobile, visible on tablet and up */}
       <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex`}>
-        <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
-          <div className={`flex items-center gap-2 ${collapsed ? "justify-center w-full" : ""}`}>
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">ML</div>
-            {!collapsed && <span className="font-bold text-lg">Monitor</span>}
-          </div>
+        <div className="p-4 border-b border-sidebar-border flex items-center justify-center h-22 px-5">
+          <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={80} />
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
