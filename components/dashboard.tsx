@@ -102,7 +102,7 @@ export function Dashboard() {
   useEffect(() => {
     fetchDataRequests();
     fetchDataQueries();
-  }, []);
+  }, [timeRange]);
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden w-full">
