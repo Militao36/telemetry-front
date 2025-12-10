@@ -6,6 +6,7 @@ import { RequestsTable } from "./requests-table";
 import { Header } from "./header";
 import { api } from "@/api/api";
 import { useEffect, useState } from "react";
+import { convertToHours } from "@/utils";
 
 export interface DashboardData {
   totalRequests: number;
@@ -67,7 +68,7 @@ export function Dashboard() {
   });
 
   async function fetchDataRequests() {
-    const response = await api.get(`/dashboard?hour=${timeRange}`);
+    const response = await api.get(`/dashboard?hour=${convertToHours(timeRange)}`);
 
     setDashboardData((state) => {
       return {
@@ -88,7 +89,7 @@ export function Dashboard() {
   }
 
   async function fetchDataQueries() {
-    const response = await api.get(`/queries/dashboard?hour=${timeRange}`);
+    const response = await api.get(`/queries/dashboard?hour=${convertToHours(timeRange)}`);
 
     setDashboardData((state) => {
       return {
