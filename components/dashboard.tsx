@@ -50,6 +50,7 @@ export interface SlowestRequest {
 }
 
 export function Dashboard() {
+  const [timeRange, setTimeRange] = useState("24h");
   const [dashboardData, setDashboardData] = useState<DashboardData>({
     avgResponse: 0,
     p50Ms: 0,
@@ -66,7 +67,7 @@ export function Dashboard() {
   });
 
   async function fetchDataRequests() {
-    const response = await api.get("/dashboard");
+    const response = await api.get(`/dashboard?hour=${timeRange}`);
 
     setDashboardData((state) => {
       return {
@@ -87,9 +88,7 @@ export function Dashboard() {
   }
 
   async function fetchDataQueries() {
-    const response = await api.get("/queries/dashboard");
-
-    console.log(response.data.queriesPerTimeSeries);
+    const response = await api.get(`/queries/dashboard?hour=${timeRange}`);
 
     setDashboardData((state) => {
       return {
@@ -106,7 +105,7 @@ export function Dashboard() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden w-full">
-      <Header />
+      <Header timeRange={timeRange} setTimeRange={setTimeRange} />
       <div className="flex-1 overflow-auto">
         <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6">
           <StatsCards {...dashboardData} />
