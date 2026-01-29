@@ -26,6 +26,13 @@ const plans: Plan[] = [
     limit: "5k métricas/logs",
   },
   {
+    id: "paga-oque-usar",
+    name: "Paga oque usar",
+    price: "R$ 0,99 por cada 1k",
+    description: "Ideal para começar",
+    limit: "5k métricas/logs",
+  },
+  {
     id: "basic",
     name: "Basic",
     price: "R$ 59,90",
@@ -254,14 +261,12 @@ export function SignupModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 >
                   Cancelar
                 </button>
-                {selectedPlan !== 'free' && (
-                  <button
-                    onClick={() => window.open('https://api.whatsapp.com/send?phone=5531989554735', '_blank')}
-                    className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
-                  >
-                    Entrar em contato
-                  </button>
-                )}
+                <button
+                  onClick={() => window.open('https://api.whatsapp.com/send?phone=5531989554735', '_blank')}
+                  className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
+                >
+                  Entrar em contato
+                </button>
 
               </div>
             </div>
