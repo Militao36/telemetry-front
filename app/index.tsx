@@ -303,12 +303,57 @@ export default function SitePage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Starter Plan */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Used Plan */}
             <div className="border-2 border-primary rounded-2xl p-8 bg-background relative overflow-hidden">
               <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-sm font-bold rounded-bl-lg">
                 MAIS POPULAR
               </div>
+              <div className="mb-6">
+                <h3 className="text-2xl font-bold mb-2">Plano por uso</h3>
+                <p className="text-muted-foreground">Perfeito para começar</p>
+              </div>
+
+              <div className="mb-8">
+                <span className="text-5xl font-bold">R$ 0,99</span>
+                <span className="text-muted-foreground ml-2">/por cada 1k</span>
+                <p className="text-sm text-muted-foreground mt-2">
+                  Até <span className="font-semibold text-foreground">30.000 métricas</span> e{" "}
+                  <span className="font-semibold text-foreground">30.000 logs</span>
+                </p>
+              </div>
+
+              <Link href="/login">
+                <button className="cursor-pointer w-full bg-primary text-primary-foreground py-3 rounded-lg font-semibold mb-8 hover:opacity-90 transition">
+                  Começar Agora
+                </button>
+              </Link>
+
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Pague apenas oque usar</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Dashboard em tempo real</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>Suporte por email</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>1 usuário</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <span>15 dias de retenção de dados</span>
+                </li>
+              </ul>
+            </div>
+            {/* Starter Plan */}
+            <div className="border-2 border-primary rounded-2xl p-8 bg-background relative overflow-hidden">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold mb-2">Plano Base</h3>
                 <p className="text-muted-foreground">Perfeito para começar</p>
@@ -366,9 +411,13 @@ export default function SitePage() {
                   <div>
                     <span className="text-5xl font-bold">R$ 139,90</span>
                     <span className="text-muted-foreground ml-2">/mês</span>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      Até <span className="font-semibold text-foreground">125.000 métricas</span> e{" "}
+                      <span className="font-semibold text-foreground">125.000 logs</span>
+                    </p>
                   </div>
+
                 </div>
-                <p className="text-sm text-muted-foreground">Escale sem limites. Adicione mais conforme cresce.</p>
               </div>
 
               <Link href="/login">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Search, BarChart3, FileText, Database, User2Icon, Settings, Menu, X, Layout } from "lucide-react";
+import { Search, BarChart3, FileText, Database, User2Icon, Settings, Menu, X, Layout, LogOutIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { SignupModal } from "./company";
@@ -22,6 +22,7 @@ export function Sidebar() {
     { icon: Search, label: "Search", href: "/search" },
     { icon: Settings, label: "Projects", href: "/projects" },
     { icon: User2Icon, label: "Settings", href: null },
+    { icon: LogOutIcon, label: "Close", href: '/login' },
   ];
 
   useEffect(() => {
@@ -57,6 +58,25 @@ export function Sidebar() {
                   <item.icon size={20} />
                   {!collapsed && <span className="text-sm">{item.label}</span>}
                 </button>
+              )
+            }
+
+            if (item.href == '/login') {
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${collapsed ? "justify-center" : ""
+                    } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
+                  title={item.label}
+                  onClick={() => {
+                    localStorage.clear()
+                    window.location.href = '/login'
+                  }}
+                >
+                  <item.icon size={20} />
+                  {!collapsed && <span className="text-sm">{item.label}</span>}
+                </Link>
               )
             }
 

@@ -256,10 +256,10 @@ export function SignupModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 </button>
                 {selectedPlan !== 'free' && (
                   <button
-                    onClick={handleSubmit}
+                    onClick={() => window.open('https://api.whatsapp.com/send?phone=5531989554735', '_blank')}
                     className="flex-1 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:opacity-90 transition"
                   >
-                    Gerar QR Code
+                    Entrar em contato
                   </button>
                 )}
 

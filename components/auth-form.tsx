@@ -7,6 +7,7 @@ import { User as UserIcon, ArrowRight, Loader2, Command } from 'lucide-react';
 
 import { api } from '@/api/api';
 import { useAuthCheck } from '@/hooks/use-auth-check';
+import { toast } from 'react-toastify';
 
 export enum AuthMode {
   LOGIN = 'LOGIN',
@@ -108,7 +109,6 @@ export function AuthForm() {
           {mode === AuthMode.SIGNUP && (
             <div className="animate-fade-in-down">
               <label className="text-sm font-medium text-muted-foreground mb-2 block">Name</label>
-
               <Input
                 placeholder="John Doe"
                 type="text"
@@ -142,7 +142,16 @@ export function AuthForm() {
 
           {mode === AuthMode.LOGIN && (
             <div className="flex justify-end">
-              <button type="button" className="text-xs font-medium text-gray-700 hover:text-gray-500 transition-colors">
+              <button type="button" className="text-xs font-medium text-gray-700 hover:text-gray-500 transition-colors" onClick={async () => {
+                if (!auth.email) {
+                  return toast.warn(
+                    'Please enter your email address and click "Recover Password" again to receive the email with your temporary password.'
+                  )
+                }
+                await api.post('/users/reset-password', { email: auth.email })
+
+                return toast.success('Email sent successfully with your temporary password.')
+              }}>
                 Forgot password?
               </button>
             </div>

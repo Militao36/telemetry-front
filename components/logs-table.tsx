@@ -26,7 +26,7 @@ interface Log {
   exception_stacktrace: string;
 }
 
-export function LogsTable({ searchQuery, selectedLevel }: { searchQuery: string; selectedLevel: string }) {
+export function LogsTable({ othersFilters, selectedLevel }: { othersFilters: any, selectedLevel: string }) {
   const [expandedId, setExpandedId] = useState<number | null>(null)
   const [logs, setLogs] = useState<Log[]>([])
 
@@ -42,13 +42,14 @@ export function LogsTable({ searchQuery, selectedLevel }: { searchQuery: string;
   }
 
   async function findLogs() {
-    const response = await api.get(`/logs?severityText=${selectedLevel}&message=${searchQuery}`)
+    const qs = othersFilters.map((e: any) => `${e.field}=${e.value}`).join('&')
+    const response = await api.get(`/logs?severityText=${selectedLevel}&${qs}`)
     setLogs(response.data as Log[])
   }
 
   useEffect(() => {
     findLogs()
-  }, [searchQuery, selectedLevel])
+  }, [selectedLevel, othersFilters])
 
   return (
     <div className="space-y-2">
