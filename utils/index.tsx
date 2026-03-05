@@ -13,5 +13,5 @@ export function convertToHours(value: string): number {
 }
 
 export function clearLocalStorage(){
-  localStorage.clear()
+  localStorage.clear();
 }
