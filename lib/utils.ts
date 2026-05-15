@@ -36,38 +36,72 @@ export function formatMsToMsOrSeconds(value: number) {
   return `${value.toFixed(2)} ms`;
 }
 
+export function formatChartTick(value: string) {
+  return DateTime.fromFormat(value, "yyyy-MM-dd HH:mm:ss").toFormat("dd/MM HH:mm");
+}
+
+export function formatChartTooltipLabel(value: string) {
+  return DateTime.fromFormat(value, "yyyy-MM-dd HH:mm:ss").toFormat("dd/MM/yyyy HH:mm:ss");
+}
+
+export function downsampleSeries<T>(data: T[], maxPoints = 180): T[] {
+  if (data.length <= maxPoints) return data;
+
+  const step = Math.ceil(data.length / maxPoints);
+  const sampled: T[] = [];
+
+  for (let index = 0; index < data.length; index += step) {
+    sampled.push(data[index]);
+  }
+
+  const lastItem = data[data.length - 1];
+  if (sampled[sampled.length - 1] !== lastItem) {
+    sampled.push(lastItem);
+  }
+
+  return sampled;
+}
+
 export function formatRequestsData(data: RequestPerTimeSery[]) {
-  return data.map((item) => ({
-    time: DateTime.fromSQL(item.time, { zone: "utc" })
-      .toLocal()
-      .toFormat("yyyy-MM-dd HH:mm:ss"),
-    value: item.totalRequests,
-  }));
+  return downsampleSeries(
+    data.map((item) => ({
+      time: DateTime.fromSQL(item.time, { zone: "utc" })
+        .toLocal()
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      value: item.totalRequests,
+    }))
+  );
 }
 
 export function formatResponseTimeData(data: RequestPerTimeSery[]) {
-  return data.map((item) => ({
-    time: DateTime.fromSQL(item.time, { zone: "utc" })
-      .toLocal()
-      .toFormat("yyyy-MM-dd HH:mm:ss"),
-    ms: item.avgMs,
-  }));
+  return downsampleSeries(
+    data.map((item) => ({
+      time: DateTime.fromSQL(item.time, { zone: "utc" })
+        .toLocal()
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      ms: item.avgMs,
+    }))
+  );
 }
 
 export function formatQueriesData(data: QueriesPerTimeSery[]) {
-  return data.map((item) => ({
-    time: DateTime.fromSQL(item.time, { zone: "utc" })
-      .toLocal()
-      .toFormat("yyyy-MM-dd HH:mm:ss"),
-    ms: item.totalQueries,
-  }));
+  return downsampleSeries(
+    data.map((item) => ({
+      time: DateTime.fromSQL(item.time, { zone: "utc" })
+        .toLocal()
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      ms: item.totalQueries,
+    }))
+  );
 }
 
 export function formatQueryTimeData(data: QueriesPerTimeSery[]) {
-  return data.map((item) => ({
-    time: DateTime.fromSQL(item.time, { zone: "utc" })
-      .toLocal()
-      .toFormat("yyyy-MM-dd HH:mm:ss"),
-    ms: item.avgMs,
-  }));
+  return downsampleSeries(
+    data.map((item) => ({
+      time: DateTime.fromSQL(item.time, { zone: "utc" })
+        .toLocal()
+        .toFormat("yyyy-MM-dd HH:mm:ss"),
+      ms: item.avgMs,
+    }))
+  );
 }

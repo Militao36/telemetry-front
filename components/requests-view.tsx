@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { RequestsChart } from "./requests-chart";
 import { IRequest, RequestsTable } from "./requests-detailed-table";
 import { RequestDetail } from "./request-detail";
@@ -18,12 +17,18 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { formatRequestsData, formatResponseTimeData } from "@/lib/utils";
+import {
+  formatChartTick,
+  formatChartTooltipLabel,
+  formatRequestsData,
+  formatResponseTimeData,
+} from "@/lib/utils";
 import { DateTime } from "luxon";
+import { convertToHours, DASHBOARD_TIME_RANGES } from "@/utils";
 
 export function RequestsView() {
   const [methodFilter, setMethodFilter] = useState("all");
-  const [hourFilter, setHourFilter] = useState("3hr");
+  const [hourFilter, setHourFilter] = useState("3h");
   const [selectedRequest, setSelectedRequest] = useState<string | null>(null);
   const [requestsData, setRequestsData] = useState<any[]>([]);
   const [responseStatusDistribution, setResponseStatusDistribution] = useState<
@@ -33,9 +38,7 @@ export function RequestsView() {
   const [requestsRecents, setRequestsRecents] = useState<IRequest[]>([]);
   const [requestsSlowest, setRequestsSlowest] = useState<IRequest[]>([]);
 
-  const hour = hourFilter.includes("d")
-    ? (+hourFilter.replace("d", "") * 24).toString()
-    : hourFilter.replace("hr", "");
+  const hour = convertToHours(hourFilter).toString();
 
   async function fetchRequests(): Promise<IRequest[]> {
     const response = await api.get(
@@ -106,7 +109,7 @@ export function RequestsView() {
                       )}
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                      {["3hr", "6hr", "24hr", "7d", "15d", "30d"].map(
+                      {DASHBOARD_TIME_RANGES.map(
                         (hour) => (
                           <button
                             key={hour}
@@ -185,12 +188,15 @@ export function RequestsView() {
                             dataKey="time"
                             stroke="rgba(255,255,255,0.5)"
                             tick={{ fontSize: 12 }}
+                            tickFormatter={formatChartTick}
+                            minTickGap={36}
                           />
                           <YAxis
                             stroke="rgba(255,255,255,0.5)"
                             tick={{ fontSize: 12 }}
                           />
                           <Tooltip
+                            labelFormatter={formatChartTooltipLabel}
                             contentStyle={{
                               backgroundColor: "#fff",
                               border: "1px solid rgba(255,255,255,0.1)",
@@ -228,12 +234,15 @@ export function RequestsView() {
                             dataKey="time"
                             stroke="rgba(255,255,255,0.5)"
                             tick={{ fontSize: 12 }}
+                            tickFormatter={formatChartTick}
+                            minTickGap={36}
                           />
                           <YAxis
                             stroke="rgba(255,255,255,0.5)"
                             tick={{ fontSize: 12 }}
                           />
                           <Tooltip
+                            labelFormatter={formatChartTooltipLabel}
                             contentStyle={{
                               backgroundColor: "#fff",
                               border: "1px solid rgba(255,255,255,0.1)",

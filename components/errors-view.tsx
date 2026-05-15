@@ -7,6 +7,7 @@ import { ErrorsChart } from "./errors-chart"
 import { ErrorsList } from "./errors-list"
 import { AlertsPanel } from "./alerts-panel"
 import { AlertTriangle, Bell } from "lucide-react"
+import { DASHBOARD_TIME_RANGES } from "@/utils"
 
 export function ErrorsView() {
   const [severity, setSeverity] = useState("all")
@@ -42,11 +43,10 @@ export function ErrorsView() {
                     <button
                       key={sev}
                       onClick={() => setSeverity(sev)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${
-                        severity === sev
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${severity === sev
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
+                        }`}
                     >
                       {sev}
                     </button>
@@ -56,16 +56,15 @@ export function ErrorsView() {
 
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Time Range</p>
-                <div className="flex gap-2">
-                  {["1h", "24h", "7d", "30d"].map((range) => (
+                <div className="flex gap-2 flex-wrap">
+                  {DASHBOARD_TIME_RANGES.map((range) => (
                     <button
                       key={range}
                       onClick={() => setTimeRange(range)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
-                        timeRange === range
+                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${timeRange === range
                           ? "bg-primary text-primary-foreground"
                           : "bg-muted text-muted-foreground hover:bg-muted/80"
-                      }`}
+                        }`}
                     >
                       {range}
                     </button>

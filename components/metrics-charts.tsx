@@ -14,6 +14,8 @@ import {
 } from "recharts";
 import { QueriesPerTimeSery, RequestPerTimeSery } from "./dashboard";
 import {
+  formatChartTick,
+  formatChartTooltipLabel,
   formatQueriesData,
   formatQueryTimeData,
   formatRequestsData,
@@ -50,9 +52,12 @@ export function MetricsCharts({
               dataKey="time"
               stroke="rgba(255,255,255,0.5)"
               tick={{ fontSize: 12 }}
+              tickFormatter={formatChartTick}
+              minTickGap={36}
             />
             <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
             <Tooltip
+              labelFormatter={formatChartTooltipLabel}
               contentStyle={{
                 backgroundColor: "#fff",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -83,9 +88,12 @@ export function MetricsCharts({
               dataKey="time"
               stroke="rgba(255,255,255,0.5)"
               tick={{ fontSize: 12 }}
+              tickFormatter={formatChartTick}
+              minTickGap={36}
             />
             <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
             <Tooltip
+              labelFormatter={formatChartTooltipLabel}
               contentStyle={{
                 backgroundColor: "#fff",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -122,9 +130,12 @@ export function MetricsCharts({
               dataKey="time"
               stroke="rgba(255,255,255,0.5)"
               tick={{ fontSize: 12 }}
+              tickFormatter={formatChartTick}
+              minTickGap={36}
             />
             <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
             <Tooltip
+              labelFormatter={formatChartTooltipLabel}
               contentStyle={{
                 backgroundColor: "#fff",
                 border: "1px solid rgba(255,255,255,0.1)",
@@ -155,9 +166,12 @@ export function MetricsCharts({
               dataKey="time"
               stroke="rgba(255,255,255,0.5)"
               tick={{ fontSize: 12 }}
+              tickFormatter={formatChartTick}
+              minTickGap={36}
             />
             <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
             <Tooltip
+              labelFormatter={formatChartTooltipLabel}
               contentStyle={{
                 backgroundColor: "#fff",
                 border: "1px solid rgba(255,255,255,0.1)",

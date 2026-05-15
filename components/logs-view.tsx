@@ -6,40 +6,36 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { LogsTable } from "./logs-table"
 import { LogsFilter } from "./logs-filter"
-import { X } from "lucide-react"
+import { CalendarDays, Filter, RotateCcw, Search } from "lucide-react"
 
-type FilterField = "message" | "traceId" | "startDate" | "endDate"
-
-type LogFilter = {
-  field: FilterField
-  value: string
+export type LogsFilters = {
+  message: string
+  traceId: string
+  startTime: string
+  endTime: string
 }
 
 export function LogsView() {
-  const [selectedLevel, setSelectedLevel] = useState("all")
+  const [selectedLevel, setSelectedLevel] = useState("ALL")
+  const [filters, setFilters] = useState<LogsFilters>({
+    message: "",
+    traceId: "",
+    startTime: "",
+    endTime: "",
+  })
 
-  // Filtros dinâmicos (message sempre existe)
-  const [filters, setFilters] = useState<LogFilter[]>([
-    { field: "message", value: "" },
-  ])
-
-  function addFilter(field: FilterField) {
-    setFilters((prev) =>
-      prev.find((f) => f.field === field)
-        ? prev
-        : [...prev, { field, value: "" }]
-    )
+  function updateFilter(field: keyof LogsFilters, value: string) {
+    setFilters((prev) => ({ ...prev, [field]: value }))
   }
 
-  function updateFilter(field: FilterField, value: string) {
-    setFilters((prev) =>
-      prev.map((f) => (f.field === field ? { ...f, value } : f))
-    )
-  }
-
-  function removeFilter(field: FilterField) {
-    if (field === "message") return
-    setFilters((prev) => prev.filter((f) => f.field !== field))
+  function clearFilters() {
+    setSelectedLevel("ALL")
+    setFilters({
+      message: "",
+      traceId: "",
+      startTime: "",
+      endTime: "",
+    })
   }
 
   return (
@@ -56,64 +52,77 @@ export function LogsView() {
         <div className="p-6 space-y-4">
           {/* Filters */}
           <Card className="bg-card border-border p-4 space-y-4">
-            {/* Botões para adicionar filtros */}
-            <div className="flex gap-2 flex-wrap">
-              <Button size="sm" variant="outline" onClick={() => addFilter("traceId")}>
-                + Trace ID
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => addFilter("startDate")}>
-                + Data inicial
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => addFilter("endDate")}>
-                + Data final
-              </Button>
-            </div>
-
-            {/* Inputs dinâmicos */}
-            <div className="space-y-3">
-              {filters.map((filter) => (
-                <div key={filter.field} className="flex gap-2 items-end">
-                  <div className="flex-1">
-                    <label className="text-sm font-medium text-muted-foreground mb-1 block">
-                      {filter.field}
-                    </label>
-
-                    <Input
-                      type={
-                        filter.field === "startDate" || filter.field === "endDate"
-                          ? "date"
-                          : "text"
-                      }
-                      placeholder={`Filtrar por ${filter.field}`}
-                      value={filter.value}
-                      onChange={(e) =>
-                        updateFilter(filter.field, e.target.value)
-                      }
-                      className="bg-input border-border"
-                    />
-                  </div>
-
-                  {filter.field !== "message" && (
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => removeFilter(filter.field)}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  )}
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
+              <div className="lg:col-span-6">
+                <label className="mb-1 block text-sm font-medium text-muted-foreground">Mensagem</label>
+                <div className="relative">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Ex: timeout, nota fiscal, erro de banco"
+                    value={filters.message}
+                    onChange={(e) => updateFilter("message", e.target.value)}
+                    className="border-border bg-input pl-9"
+                  />
                 </div>
-              ))}
+              </div>
+
+              <div className="lg:col-span-3">
+                <label className="mb-1 block text-sm font-medium text-muted-foreground">Trace ID</label>
+                <Input
+                  type="text"
+                  placeholder="Cole o trace completo"
+                  value={filters.traceId}
+                  onChange={(e) => updateFilter("traceId", e.target.value)}
+                  className="border-border bg-input"
+                />
+              </div>
+
+              <div className="lg:col-span-3">
+                <label className="mb-1 block text-sm font-medium text-muted-foreground">Data inicial</label>
+                <div className="relative">
+                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={filters.startTime}
+                    onChange={(e) => updateFilter("startTime", e.target.value)}
+                    className="border-border bg-input pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="lg:col-span-3">
+                <label className="mb-1 block text-sm font-medium text-muted-foreground">Data final</label>
+                <div className="relative">
+                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    type="date"
+                    value={filters.endTime}
+                    onChange={(e) => updateFilter("endTime", e.target.value)}
+                    className="border-border bg-input pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-end lg:col-span-3 lg:justify-end">
+                <Button size="sm" variant="ghost" onClick={clearFilters} className="w-full gap-2 lg:w-auto">
+                  <RotateCcw className="h-4 w-4" />
+                  Limpar filtros
+                </Button>
+              </div>
             </div>
 
             {/* Filtro de nível */}
-            <LogsFilter
-              selectedLevel={selectedLevel}
-              onChange={setSelectedLevel}
-            />
+            <div className="rounded-lg border border-border bg-muted/30 p-3">
+              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                <Filter className="h-3.5 w-3.5" />
+                Nível do log
+              </p>
+              <LogsFilter selectedLevel={selectedLevel} onChange={setSelectedLevel} />
+            </div>
           </Card>
 
-          <LogsTable othersFilters={filters} selectedLevel={selectedLevel} />
+          <LogsTable filters={filters} selectedLevel={selectedLevel} />
         </div>
       </div>
     </div>

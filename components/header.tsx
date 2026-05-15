@@ -3,6 +3,8 @@
 // import { Button } from "@/components/ui/button"
 // import { Calendar, MoreHorizontal } from "lucide-react"
 
+import { DASHBOARD_TIME_RANGES } from "@/utils";
+
 export function Header({
   timeRange,
   setTimeRange,
@@ -17,8 +19,8 @@ export function Header({
         <div className="flex items-center gap-2 flex-wrap">
           <div>
             <p className="text-sm text-muted-foreground mb-2">Time Range</p>
-            <div className="flex gap-2">
-              {["1h", "24h", "7d", "30d"].map((range) => (
+            <div className="flex gap-2 flex-wrap justify-end sm:justify-start">
+              {DASHBOARD_TIME_RANGES.map((range) => (
                 <button
                   key={range}
                   onClick={() => setTimeRange(range)}

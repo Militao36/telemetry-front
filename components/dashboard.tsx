@@ -67,41 +67,39 @@ export function Dashboard() {
     queriesPerTimeSeries: [],
   });
 
-  async function fetchDataRequests() {
-    const response = await api.get(`/dashboard?hour=${convertToHours(timeRange)}`);
-
-    setDashboardData((state) => {
-      return {
-        ...state,
-        avgResponse: response.data.avgResponse,
-        p50Ms: response.data.p50Ms,
-        p90Ms: response.data.p90Ms,
-        p95Ms: response.data.p95Ms,
-        p99Ms: response.data.p99Ms,
-        totalErrors: response.data.totalErrors,
-        totalRequests: response.data.totalRequests,
-        topRequests: response.data.topRequests,
-        requestPerTimeSeries: response.data.requestPerTimeSeries,
-        slowestRequests: response.data.slowestRequests,
-        totalQueries: response.data.totalQueries,
-      };
-    });
-  }
-
-  async function fetchDataQueries() {
-    const response = await api.get(`/queries/dashboard?hour=${convertToHours(timeRange)}`);
-
-    setDashboardData((state) => {
-      return {
-        ...state,
-        queriesPerTimeSeries: response.data.queriesPerTimeSeries,
-      };
-    });
-  }
-
   useEffect(() => {
-    fetchDataRequests();
-    fetchDataQueries();
+    let mounted = true;
+
+    async function fetchDashboardData() {
+      const hour = convertToHours(timeRange);
+      const [dashboardResponse, queriesResponse] = await Promise.all([
+        api.get(`/dashboard?hour=${hour}`),
+        api.get(`/queries/dashboard?hour=${hour}`),
+      ]);
+
+      if (!mounted) return;
+
+      setDashboardData({
+        avgResponse: dashboardResponse.data.avgResponse,
+        p50Ms: dashboardResponse.data.p50Ms,
+        p90Ms: dashboardResponse.data.p90Ms,
+        p95Ms: dashboardResponse.data.p95Ms,
+        p99Ms: dashboardResponse.data.p99Ms,
+        totalErrors: dashboardResponse.data.totalErrors,
+        totalRequests: dashboardResponse.data.totalRequests,
+        totalQueries: dashboardResponse.data.totalQueries,
+        topRequests: dashboardResponse.data.topRequests,
+        requestPerTimeSeries: dashboardResponse.data.requestPerTimeSeries,
+        slowestRequests: dashboardResponse.data.slowestRequests,
+        queriesPerTimeSeries: queriesResponse.data.queriesPerTimeSeries,
+      });
+    }
+
+    fetchDashboardData();
+
+    return () => {
+      mounted = false;
+    };
   }, [timeRange]);
 
   return (

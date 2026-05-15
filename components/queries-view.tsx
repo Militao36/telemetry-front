@@ -9,7 +9,7 @@ import { QueriesChart } from "./queries-chart";
 import { QueriesTable } from "./queries-table";
 
 import { RefreshCw } from "lucide-react";
-import { convertToHours } from "@/utils";
+import { convertToHours, DASHBOARD_TIME_RANGES } from "@/utils";
 import { formatMsToMsOrSeconds } from "@/lib/utils";
 
 export interface DefaultSlowestQuery {
@@ -124,8 +124,8 @@ export function QueriesView() {
 
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Time Range</p>
-                <div className="flex gap-2">
-                  {["1h", "24h", "7d", "30d"].map((range) => (
+                <div className="flex gap-2 flex-wrap">
+                  {DASHBOARD_TIME_RANGES.map((range) => (
                     <button
                       key={range}
                       onClick={() => setTimeRange(range)}
@@ -169,10 +169,7 @@ export function QueriesView() {
                 Slowest Query
               </p>
               <p className="text-3xl font-bold">
-                {(
-                  formatMsToMsOrSeconds(queries?.slowestQuery[0]?.durationMs || 0)
-                )}
-                s
+                {formatMsToMsOrSeconds(queries?.slowestQuery[0]?.durationMs || 0)}
               </p>
               {/* <p className="text-xs text-red-400 mt-2">Unindexed join detected</p> */}
             </Card>

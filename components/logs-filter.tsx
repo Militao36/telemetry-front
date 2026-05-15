@@ -2,12 +2,12 @@
 
 export function LogsFilter({ selectedLevel, onChange }: { selectedLevel: string; onChange: (level: string) => void }) {
   const levels = [
-    { id: "all", label: "All", color: "bg-blue-500/20 text-blue-400" },
-    { id: "info", label: "Info", color: "bg-blue-500/20 text-blue-400" },
-    { id: "warning", label: "Warning", color: "bg-yellow-500/20 text-yellow-400" },
-    { id: "error", label: "Error", color: "bg-red-500/20 text-red-400" },
-    { id: "critical", label: "Critical", color: "bg-purple-500/20 text-purple-400" },
-    { id: "debug", label: "Debug", color: "bg-gray-500/20 text-gray-400" },
+    { id: "ALL", label: "Todos", color: "bg-slate-500/15 text-slate-600 border-slate-300/70" },
+    { id: "INFO", label: "Info", color: "bg-blue-500/15 text-blue-700 border-blue-300/70" },
+    { id: "WARNING", label: "Warning", color: "bg-amber-500/15 text-amber-700 border-amber-300/70" },
+    { id: "ERROR", label: "Erro", color: "bg-red-500/15 text-red-700 border-red-300/70" },
+    { id: "CRITICAL", label: "Crítico", color: "bg-rose-500/15 text-rose-700 border-rose-300/70" },
+    { id: "DEBUG", label: "Debug", color: "bg-zinc-500/15 text-zinc-700 border-zinc-300/70" },
   ]
 
   return (
@@ -16,8 +16,10 @@ export function LogsFilter({ selectedLevel, onChange }: { selectedLevel: string;
         <button
           key={level.id}
           onClick={() => onChange(level.id)}
-          className={`px-3 py-1 rounded text-sm font-medium transition-opacity ${
-            selectedLevel === level.id ? `${level.color} opacity-100` : `${level.color} opacity-50 hover:opacity-75`
+          className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-all ${
+            selectedLevel === level.id
+              ? `${level.color} shadow-sm`
+              : "border-border bg-muted/50 text-muted-foreground hover:bg-muted"
           }`}
         >
           {level.label}

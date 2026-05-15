@@ -13,6 +13,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
+import { formatChartTick, formatChartTooltipLabel } from "@/lib/utils";
 
 export interface RequestsDataStatus {
   status: string;
@@ -44,7 +45,12 @@ export function RequestsChart({
               stroke="rgba(255,255,255,0.1)"
               color="black"
             />
-            <XAxis dataKey="time" stroke="lab(54 0 -0.01)" />
+            <XAxis
+              dataKey="time"
+              stroke="lab(54 0 -0.01)"
+              tickFormatter={formatChartTick}
+              minTickGap={36}
+            />
             <YAxis stroke="lab(54 0 -0.01)" yAxisId="left" />
             <YAxis
               stroke="lab(54 0 -0.01)"
@@ -52,6 +58,7 @@ export function RequestsChart({
               orientation="right"
             />
             <Tooltip
+              labelFormatter={formatChartTooltipLabel}
               contentStyle={{
                 backgroundColor: "#fff",
                 border: "1px solid rgba(255,255,255,0.1)",
