@@ -34,6 +34,8 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
   const [logs, setLogs] = useState<Log[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const debouncedMessage = useDebounced(filters.message, 700)
+  const debouncedTraceId = useDebounced(filters.traceId, 700)
 
   const getLevelColor = (level?: Log["severityText"]) => {
     const normalized = (level || "INFO").toUpperCase()
@@ -85,8 +87,8 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
       const queryParams = new URLSearchParams()
       queryParams.set("severityText", selectedLevel)
 
-      if (filters.message.trim()) queryParams.set("message", filters.message.trim())
-      if (filters.traceId.trim()) queryParams.set("traceId", filters.traceId.trim())
+      if (debouncedMessage.trim()) queryParams.set("message", debouncedMessage.trim())
+      if (debouncedTraceId.trim()) queryParams.set("traceId", debouncedTraceId.trim())
       if (filters.startTime) queryParams.set("startTime", filters.startTime)
       if (filters.endTime) queryParams.set("endTime", filters.endTime)
 
@@ -102,7 +104,7 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
 
   useEffect(() => {
     findLogs()
-  }, [selectedLevel, filters])
+  }, [selectedLevel, debouncedMessage, debouncedTraceId, filters.startTime, filters.endTime])
 
   if (isLoading) {
     return (
@@ -243,4 +245,15 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
       )}
     </div>
   )
+}
+
+function useDebounced<T>(value: T, delay = 300) {
+  const [debounced, setDebounced] = useState(value)
+
+  useEffect(() => {
+    const timeout = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(timeout)
+  }, [value, delay])
+
+  return debounced
 }
