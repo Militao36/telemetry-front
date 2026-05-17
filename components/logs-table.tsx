@@ -30,7 +30,7 @@ interface Log {
 }
 
 export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, selectedLevel: string }) {
-  const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [expandedKey, setExpandedKey] = useState<string | null>(null)
   const [logs, setLogs] = useState<Log[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -136,11 +136,14 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
 
   return (
     <div className="space-y-2">
-      {logs.map((log) => (
+      {logs.map((log, idx) => {
+        const rowKey = `${log.id ?? "no-id"}-${log.timestamp ?? "no-time"}-${log.traceId ?? "no-trace"}-${log.spanId ?? "no-span"}-${idx}`
+
+        return (
         <Card
-          key={log.id}
+          key={rowKey}
           className="cursor-pointer overflow-hidden border-border bg-card transition-colors hover:border-primary/50"
-          onClick={() => setExpandedId(expandedId === log.id ? null : log.id)}
+          onClick={() => setExpandedKey(expandedKey === rowKey ? null : rowKey)}
         >
           <div className="p-4">
             <div className={cn("mb-3 h-1.5 w-14 rounded-full", getLevelAccent(log.severityText))} />
@@ -170,13 +173,16 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
                 size={20}
                 className={cn(
                   "mt-0.5 shrink-0 text-muted-foreground transition-transform",
-                  expandedId === log.id && "rotate-90"
+                  expandedKey === rowKey && "rotate-90"
                 )}
               />
             </div>
 
-            {expandedId === log.id && (
-              <div className="mt-4 space-y-4 border-t border-border/60 pt-4">
+            {expandedKey === rowKey && (
+              <div
+                className="mt-4 space-y-4 border-t border-border/60 pt-4"
+                onClick={(event) => event.stopPropagation()}
+              >
                 <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
                   <div>
                     <span className="text-muted-foreground">Trace ID</span>
@@ -235,7 +241,8 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
             )}
           </div>
         </Card>
-      ))}
+        )
+      })}
 
       {logs.length === 0 && (
         <Card className="border-border bg-card p-12 text-center">
