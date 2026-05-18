@@ -87,7 +87,10 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
       const queryParams = new URLSearchParams()
       queryParams.set("severityText", selectedLevel)
 
-      if (debouncedMessage.trim()) queryParams.set("message", debouncedMessage.trim())
+      if (debouncedMessage.trim()) {
+        queryParams.set("message", debouncedMessage.trim())
+        queryParams.set("searchMode", filters.searchMode)
+      }
       if (debouncedTraceId.trim()) queryParams.set("traceId", debouncedTraceId.trim())
       if (filters.startTime) queryParams.set("startTime", filters.startTime)
       if (filters.endTime) queryParams.set("endTime", filters.endTime)
@@ -104,7 +107,7 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
 
   useEffect(() => {
     findLogs()
-  }, [selectedLevel, debouncedMessage, debouncedTraceId, filters.startTime, filters.endTime])
+  }, [selectedLevel, debouncedMessage, debouncedTraceId, filters.searchMode, filters.startTime, filters.endTime])
 
   if (isLoading) {
     return (

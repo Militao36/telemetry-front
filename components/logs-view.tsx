@@ -10,6 +10,7 @@ import { CalendarDays, Filter, RotateCcw, Search } from "lucide-react"
 
 export type LogsFilters = {
   message: string
+  searchMode: "all" | "any" | "substring"
   traceId: string
   startTime: string
   endTime: string
@@ -19,6 +20,7 @@ export function LogsView() {
   const [selectedLevel, setSelectedLevel] = useState("ALL")
   const [filters, setFilters] = useState<LogsFilters>({
     message: "",
+    searchMode: "all",
     traceId: "",
     startTime: "",
     endTime: "",
@@ -32,6 +34,7 @@ export function LogsView() {
     setSelectedLevel("ALL")
     setFilters({
       message: "",
+      searchMode: "all",
       traceId: "",
       startTime: "",
       endTime: "",
@@ -59,12 +62,41 @@ export function LogsView() {
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     type="text"
-                    placeholder="Ex: timeout, nota fiscal, erro de banco"
+                    placeholder="Ex: timeout, erro de banco"
                     value={filters.message}
                     onChange={(e) => updateFilter("message", e.target.value)}
                     className="border-border bg-input pl-9"
                   />
                 </div>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={filters.searchMode === "all" ? "default" : "outline"}
+                    onClick={() => updateFilter("searchMode", "all")}
+                  >
+                    Todos os termos
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={filters.searchMode === "any" ? "default" : "outline"}
+                    onClick={() => updateFilter("searchMode", "any")}
+                  >
+                    Qualquer termo
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant={filters.searchMode === "substring" ? "default" : "outline"}
+                    onClick={() => updateFilter("searchMode", "substring")}
+                  >
+                    Texto exato
+                  </Button>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  Todos os termos: mais preciso. Qualquer termo: mais abrangente. Texto exato: busca literal.
+                </p>
               </div>
 
               <div className="lg:col-span-3">
