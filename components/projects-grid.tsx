@@ -37,7 +37,7 @@ export function ProjectsGrid() {
               <div className="flex-1">
                 <h3 className="text-lg font-semibold mb-2">{project.name}</h3>
               </div>
-              <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100">
+              <Button onClick={() => window.location.href = `/projects/new?id=${project.id}`} variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100">
                 <MoreHorizontal size={18} />
               </Button>
             </div>

@@ -100,6 +100,7 @@ export function Sidebar() {
             name="enviroment"
             className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             onChange={(e) => {
+              if (e.target.value === "-1") return;
               localStorage.setItem('tokenSelected', JSON.stringify(tokens.find(token => token.project.id === e.target.value)));
               window.location.reload();
             }}
