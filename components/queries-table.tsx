@@ -2,6 +2,7 @@
 
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { DefaultSlowestQuery } from "./queries-view"
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip"
 import { toast } from 'react-toastify';
@@ -10,6 +11,17 @@ import { formatMsToMsOrSeconds } from "@/lib/utils"
 
 
 export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowestQuery[], title: string }) {
+  function copyTraceId(traceId: string) {
+    if (!traceId) return
+    navigator.clipboard.writeText(traceId)
+    toast.info("Trace ID copied to clipboard!")
+  }
+
+  function openTraceLogs(traceId: string) {
+    if (!traceId) return
+    window.location.href = `/logs?traceId=${encodeURIComponent(traceId)}`
+  }
+
   return (
     <Card className="bg-card border-border overflow-hidden">
       <div className="p-6 border-b border-border">
@@ -24,6 +36,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Avg Time</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Duration</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Executions</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Trace</th>
               <th className="px-6 py-3 text-left text-xs font-semibold text-muted-foreground">Db/Table</th>
             </tr>
           </thead>
@@ -76,6 +89,31 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                   <td className="px-6 py-4 text-sm font-semibold">{formatMsToMsOrSeconds(query?.avgDurationMs)}</td>
                   <td className="px-6 py-4 text-sm text-red-400 font-semibold">{formatMsToMsOrSeconds(query?.durationMs)}</td>
                   <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
+                  <td className="px-6 py-4">
+                    {query.traceId ? (
+                      <div className="space-y-1">
+                        <button
+                          type="button"
+                          className="block max-w-40 truncate font-mono text-xs text-muted-foreground hover:text-blue-700"
+                          title={query.traceId}
+                          onClick={() => copyTraceId(query.traceId)}
+                        >
+                          trace {query.traceId.slice(0, 12)}...
+                        </button>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-[11px]"
+                          onClick={() => openTraceLogs(query.traceId)}
+                        >
+                          Ver trace completo
+                        </Button>
+                      </div>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">-</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4">
                     <Badge
                       className={`text-xs bg-green-300/20 text-green-400`}

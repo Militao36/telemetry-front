@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { AlertTriangle, ChevronRight } from "lucide-react"
+import { AlertTriangle, ChevronRight, Copy } from "lucide-react"
 import { api } from "@/api/api"
 import { cn } from "@/lib/utils"
+import { formatOTelValue } from "@/lib/otel-format"
+import { toast } from "react-toastify"
 import type { LogsFilters } from "./logs-view"
 
 interface Log {
@@ -22,14 +25,22 @@ interface Log {
   appVersion: string;
   loggerName: string;
   message: string;
-  attributes: string | Record<string, any>;
-  body: string | Record<string, any>;
+  attributes: unknown;
+  body: unknown;
   exceptionType: string;
   exceptionMessage: string;
   exceptionStacktrace: string;
 }
 
-export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, selectedLevel: string }) {
+export function LogsTable({
+  filters,
+  selectedLevel,
+  onViewTrace,
+}: {
+  filters: LogsFilters
+  selectedLevel: string
+  onViewTrace: (traceId: string) => void
+}) {
   const [expandedKey, setExpandedKey] = useState<string | null>(null)
   const [logs, setLogs] = useState<Log[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -70,10 +81,16 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
     }).format(date)
   }
 
-  const formatField = (field: string | Record<string, any>) => {
-    if (!field) return "-"
-    if (typeof field === "string") return field
-    return JSON.stringify(field, null, 2)
+  const copyToClipboard = async (value: unknown, label: string) => {
+    const text = formatOTelValue(value)
+    if (text === "-") return
+
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.info(`${label} copiado`)
+    } catch {
+      toast.error(`Nao foi possivel copiar ${label}`)
+    }
   }
 
   const hasExceptionData = (log: Log) => {
@@ -168,7 +185,7 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
                 <p className="line-clamp-2 text-sm font-medium text-foreground">{log.message || "Sem mensagem"}</p>
 
                 <p className="mt-2 line-clamp-1 font-mono text-xs text-muted-foreground">
-                  {formatField(log.attributes)}
+                  {formatOTelValue(log.attributes)}
                 </p>
               </div>
 
@@ -188,11 +205,48 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
               >
                 <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
                   <div>
-                    <span className="text-muted-foreground">Trace ID</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">Trace ID</span>
+                      {log.traceId && (
+                        <>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-sm"
+                            className="h-6 w-6"
+                            onClick={() => copyToClipboard(log.traceId, "Trace ID")}
+                          >
+                            <Copy className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-6 px-2 text-[11px]"
+                            onClick={() => onViewTrace(log.traceId)}
+                          >
+                            Ver trace completo
+                          </Button>
+                        </>
+                      )}
+                    </div>
                     <p className="mt-1 break-all font-mono text-foreground">{log.traceId || "-"}</p>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Span ID</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-muted-foreground">Span ID</span>
+                      {log.spanId && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon-sm"
+                          className="h-6 w-6"
+                          onClick={() => copyToClipboard(log.spanId, "Span ID")}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                      )}
+                    </div>
                     <p className="mt-1 break-all font-mono text-foreground">{log.spanId || "-"}</p>
                   </div>
                   <div>
@@ -215,15 +269,43 @@ export function LogsTable({ filters, selectedLevel }: { filters: LogsFilters, se
 
                 <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                   <div>
-                    <span className="text-xs text-muted-foreground">Attributes</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">Attributes</span>
+                      {formatOTelValue(log.attributes) !== "-" && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-[11px]"
+                          onClick={() => copyToClipboard(log.attributes, "Attributes")}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                          Copiar
+                        </Button>
+                      )}
+                    </div>
                     <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border/70 bg-muted/20 p-3 font-mono text-xs text-foreground">
-                      {formatField(log.attributes)}
+                      {formatOTelValue(log.attributes)}
                     </pre>
                   </div>
                   <div>
-                    <span className="text-xs text-muted-foreground">Body</span>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-xs text-muted-foreground">Body</span>
+                      {formatOTelValue(log.body) !== "-" && (
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-2 text-[11px]"
+                          onClick={() => copyToClipboard(log.body, "Body")}
+                        >
+                          <Copy className="h-3.5 w-3.5" />
+                          Copiar
+                        </Button>
+                      )}
+                    </div>
                     <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border/70 bg-muted/20 p-3 font-mono text-xs text-foreground">
-                      {formatField(log.body)}
+                      {formatOTelValue(log.body)}
                     </pre>
                   </div>
                 </div>

@@ -37,7 +37,13 @@ export function RequestDetail({
   }>({} as any);
 
   const copyToClipboard = (text: string, field: string) => {
+    if (!text) return;
     navigator.clipboard.writeText(text);
+  };
+
+  const openTraceLogs = () => {
+    if (!requestDetails.traceId) return;
+    window.location.href = `/logs?traceId=${encodeURIComponent(requestDetails.traceId)}`;
   };
 
   async function fetchRequestDetails(id: string) {
@@ -101,6 +107,59 @@ export function RequestDetail({
               >
                 <Copy size={14} />
               </Button>
+            </div>
+          </Card>
+        </div>
+
+        <div>
+          <p className="text-xs font-semibold text-muted-foreground mb-3">
+            TRACE
+          </p>
+          <Card className="bg-background/50 border-border p-3 space-y-3">
+            <div>
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <span className="text-xs text-muted-foreground">Trace ID</span>
+                <div className="flex items-center gap-1">
+                  {requestDetails.traceId && (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2"
+                        onClick={() => copyToClipboard(requestDetails.traceId, "traceId")}
+                      >
+                        <Copy size={14} />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 px-2 text-xs"
+                        onClick={openTraceLogs}
+                      >
+                        Ver trace completo
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+              <p className="break-all font-mono text-xs text-foreground">{requestDetails.traceId || "-"}</p>
+            </div>
+
+            <div>
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <span className="text-xs text-muted-foreground">Span ID</span>
+                {requestDetails.spanId && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 px-2"
+                    onClick={() => copyToClipboard(requestDetails.spanId, "spanId")}
+                  >
+                    <Copy size={14} />
+                  </Button>
+                )}
+              </div>
+              <p className="break-all font-mono text-xs text-foreground">{requestDetails.spanId || "-"}</p>
             </div>
           </Card>
         </div>

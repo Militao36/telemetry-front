@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Activity, AlertTriangle, ChevronRight, Clock, Database, Loader2, Search } from "lucide-react"
+import { Activity, AlertTriangle, ChevronRight, Clock, Copy, Database, Loader2, Search } from "lucide-react"
+import { formatOTelValue } from "@/lib/otel-format"
+import { toast } from "react-toastify"
 
 type DataType = "requests" | "queries"
 type HttpMethod = "ALL" | "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
@@ -41,14 +43,15 @@ type LinkedLogItem = {
   timestamp: string
   severityText?: string
   message?: string
+  serviceName?: string
   traceId?: string
   spanId?: string
   host?: string
   environment?: string
   loggerName?: string
   appVersion?: string
-  attributes?: string | Record<string, unknown>
-  body?: string | Record<string, unknown>
+  attributes?: unknown
+  body?: unknown
   exceptionType?: string
   exceptionMessage?: string
   exceptionStacktrace?: string
@@ -163,6 +166,23 @@ export function SearchView() {
     } finally {
       setLoadingTraceId("")
     }
+  }
+
+  async function copyToClipboard(value: unknown, label: string) {
+    const text = formatOTelValue(value)
+    if (text === "-") return
+
+    try {
+      await navigator.clipboard.writeText(text)
+      toast.info(`${label} copiado`)
+    } catch {
+      toast.error(`Nao foi possivel copiar ${label}`)
+    }
+  }
+
+  function openTraceLogs(traceId?: string) {
+    if (!traceId) return
+    window.location.href = `/logs?traceId=${encodeURIComponent(traceId)}`
   }
 
   function handleToggle(item: SearchItem) {
@@ -358,7 +378,20 @@ export function SearchView() {
                         onClick={(event) => event.stopPropagation()}
                       >
                         <div>
-                          <p className="text-muted-foreground">Trace ID</p>
+                          <div className="flex items-center gap-2">
+                            <p className="text-muted-foreground">Trace ID</p>
+                            {item.traceId && (
+                              <Button
+                                type="button"
+                                variant="outline"
+                                size="sm"
+                                className="h-6 px-2 text-[11px]"
+                                onClick={() => openTraceLogs(item.traceId)}
+                              >
+                                Ver trace completo
+                              </Button>
+                            )}
+                          </div>
                           <p className="break-all font-mono">{item.traceId}</p>
                         </div>
                         <div>
@@ -403,7 +436,7 @@ export function SearchView() {
                             {!loadingTraceId &&
                               !logsErrorByTraceId[item.traceId] &&
                               logsByTraceId[item.traceId] && (
-                                <div className="max-h-72 space-y-2 overflow-auto rounded-md border border-border bg-background p-2">
+                                <div className="space-y-2 rounded-md border border-border bg-background p-2">
                                   {logsByTraceId[item.traceId].length === 0 ? (
                                     <p className="p-2 text-xs text-muted-foreground">Nenhum log encontrado para este trace.</p>
                                   ) : (
@@ -448,11 +481,48 @@ export function SearchView() {
                                           <div className="mt-2 space-y-2 border-t border-border/60 pt-2">
                                             <div className="grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
                                               <div>
-                                                <p className="text-muted-foreground">Trace ID</p>
+                                                <div className="flex items-center gap-2">
+                                                  <p className="text-muted-foreground">Trace ID</p>
+                                                  {log.traceId && (
+                                                    <>
+                                                      <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="icon-sm"
+                                                        className="h-6 w-6"
+                                                        onClick={() => copyToClipboard(log.traceId, "Trace ID")}
+                                                      >
+                                                        <Copy className="h-3.5 w-3.5" />
+                                                      </Button>
+                                                      <Button
+                                                        type="button"
+                                                        variant="outline"
+                                                        size="sm"
+                                                        className="h-6 px-2 text-[11px]"
+                                                        onClick={() => openTraceLogs(log.traceId)}
+                                                      >
+                                                        Ver trace completo
+                                                      </Button>
+                                                    </>
+                                                  )}
+                                                </div>
                                                 <p className="break-all font-mono text-foreground">{log.traceId || "-"}</p>
                                               </div>
                                               <div>
-                                                <p className="text-muted-foreground">Span ID</p>
+                                                <div className="flex items-center gap-2">
+                                                  <p className="text-muted-foreground">Span ID</p>
+                                                  {log.spanId && (
+                                                    <Button
+                                                      type="button"
+                                                      variant="ghost"
+                                                      size="icon-sm"
+                                                      className="h-6 w-6"
+                                                      onClick={() => copyToClipboard(log.spanId, "Span ID")}
+                                                    >
+                                                      <Copy className="h-3.5 w-3.5" />
+                                                    </Button>
+                                                  )}
+                                                </div>
                                                 <p className="break-all font-mono text-foreground">{log.spanId || "-"}</p>
                                               </div>
                                               <div>
@@ -473,17 +543,45 @@ export function SearchView() {
                                               </div>
                                             </div>
 
-                                            <div className="grid grid-cols-1 gap-2 lg:grid-cols-2">
+                                            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
                                               <div>
-                                                <p className="text-[11px] text-muted-foreground">Attributes</p>
-                                                <pre className="mt-1 max-h-40 overflow-auto rounded border border-border/70 bg-muted/20 p-2 font-mono text-[11px] text-foreground">
-                                                  {formatField(log.attributes)}
+                                                <div className="flex items-center justify-between gap-2">
+                                                  <p className="text-[11px] text-muted-foreground">Attributes</p>
+                                                  {formatOTelValue(log.attributes) !== "-" && (
+                                                    <Button
+                                                      type="button"
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      className="h-6 px-2 text-[11px]"
+                                                      onClick={() => copyToClipboard(log.attributes, "Attributes")}
+                                                    >
+                                                      <Copy className="h-3.5 w-3.5" />
+                                                      Copiar
+                                                    </Button>
+                                                  )}
+                                                </div>
+                                                <pre className="mt-1 max-h-[400px] min-h-80 overflow-auto whitespace-pre-wrap break-words rounded border border-border/70 bg-muted/20 p-2 font-mono text-[11px] text-foreground">
+                                                  {formatOTelValue(log.attributes)}
                                                 </pre>
                                               </div>
                                               <div>
-                                                <p className="text-[11px] text-muted-foreground">Body</p>
-                                                <pre className="mt-1 max-h-40 overflow-auto rounded border border-border/70 bg-muted/20 p-2 font-mono text-[11px] text-foreground">
-                                                  {formatField(log.body)}
+                                                <div className="flex items-center justify-between gap-2">
+                                                  <p className="text-[11px] text-muted-foreground">Body</p>
+                                                  {formatOTelValue(log.body) !== "-" && (
+                                                    <Button
+                                                      type="button"
+                                                      variant="ghost"
+                                                      size="sm"
+                                                      className="h-6 px-2 text-[11px]"
+                                                      onClick={() => copyToClipboard(log.body, "Body")}
+                                                    >
+                                                      <Copy className="h-3.5 w-3.5" />
+                                                      Copiar
+                                                    </Button>
+                                                  )}
+                                                </div>
+                                                <pre className="mt-1 max-h-[400px] min-h-80 overflow-auto whitespace-pre-wrap break-words rounded border border-border/70 bg-muted/20 p-2 font-mono text-[11px] text-foreground">
+                                                  {formatOTelValue(log.body)}
                                                 </pre>
                                               </div>
                                             </div>
@@ -494,7 +592,7 @@ export function SearchView() {
                                                 <p className="text-[11px] text-red-800">{log.exceptionType || "Exception"}</p>
                                                 {log.exceptionMessage && <p className="mt-1 text-xs text-red-900">{log.exceptionMessage}</p>}
                                                 {log.exceptionStacktrace && (
-                                                  <pre className="mt-1 max-h-36 overflow-auto rounded border border-red-200 bg-white/70 p-2 font-mono text-[11px] text-red-900">
+                                                  <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-words rounded border border-red-200 bg-white/70 p-2 font-mono text-[11px] text-red-900">
                                                     {log.exceptionStacktrace}
                                                   </pre>
                                                 )}
@@ -542,12 +640,6 @@ function getLogLevelColor(level?: string) {
   if (normalized === "CRITICAL") return "bg-rose-500/15 text-rose-700"
   if (normalized === "DEBUG") return "bg-zinc-500/15 text-zinc-700"
   return "bg-blue-500/15 text-blue-700"
-}
-
-function formatField(field?: string | Record<string, unknown>) {
-  if (!field) return "-"
-  if (typeof field === "string") return field
-  return JSON.stringify(field, null, 2)
 }
 
 function formatWhen(value: string) {

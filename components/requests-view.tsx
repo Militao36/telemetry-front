@@ -42,7 +42,7 @@ export function RequestsView() {
 
   async function fetchRequests(): Promise<IRequest[]> {
     const response = await api.get(
-      `/requests/recent?httpMethod=${methodFilter}&hour=${hour}`
+      `/requests/recent?httpMethod=${methodFilter}&hour=${hour}`,
     );
 
     return response.data as IRequest[];
@@ -50,7 +50,7 @@ export function RequestsView() {
 
   async function fetchSlowestRequests(): Promise<IRequest[]> {
     const response = await api.get(
-      `/requests/slowest?httpMethod=${methodFilter}&hour=${hour}`
+      `/requests/slowest?httpMethod=${methodFilter}&hour=${hour}`,
     );
 
     return response.data as IRequest[];
@@ -58,7 +58,7 @@ export function RequestsView() {
 
   async function fetchMetricsData() {
     const response = await api.get(
-      `/requests/metrics?hour=${hour}&httpMethod=${methodFilter}`
+      `/requests/metrics?hour=${hour}&httpMethod=${methodFilter}`,
     );
 
     return response.data;
@@ -98,31 +98,31 @@ export function RequestsView() {
                           <button
                             key={method}
                             onClick={() => setMethodFilter(method)}
-                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${methodFilter === method
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted text-muted-foreground hover:bg-muted/80"
-                              }`}
+                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                              methodFilter === method
+                                ? "bg-primary text-primary-foreground"
+                                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                            }`}
                           >
                             {method === "all" ? "All Methods" : `${method}`}
                           </button>
-                        )
+                        ),
                       )}
                     </div>
                     <div className="flex gap-2 flex-wrap">
-                      {DASHBOARD_TIME_RANGES.map(
-                        (hour) => (
-                          <button
-                            key={hour}
-                            onClick={() => setHourFilter(hour)}
-                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${hourFilter === hour
+                      {DASHBOARD_TIME_RANGES.map((hour) => (
+                        <button
+                          key={hour}
+                          onClick={() => setHourFilter(hour)}
+                          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                            hourFilter === hour
                               ? "bg-primary text-primary-foreground"
                               : "bg-muted text-muted-foreground hover:bg-muted/80"
-                              }`}
-                          >
-                            {hour}
-                          </button>
-                        )
-                      )}
+                          }`}
+                        >
+                          {hour}
+                        </button>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -148,9 +148,9 @@ export function RequestsView() {
               />
 
               <div>
-                <div className="columns-2xl gap-2">
-                  <div>
-                    <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2 mb-2">
+                <div className="flex flex-row gap-2">
+                  <div className="w-full">
+                    <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2 mb-2 w-full">
                       <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
                         Requests Over Time
                       </h3>
@@ -214,9 +214,8 @@ export function RequestsView() {
                     </Card>
                   </div>
 
-
-                  <div>
-                    <Card className="bg-card border-border p-4 md:p-6  mb-2">
+                  <div className="w-full">
+                    <Card className="bg-card border-border p-4 md:p-6 mb-2 w-full">
                       <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
                         Response Time
                       </h3>

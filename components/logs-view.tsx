@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -21,13 +21,22 @@ export function LogsView() {
   const [filters, setFilters] = useState<LogsFilters>({
     message: "",
     searchMode: "all",
-    traceId: "",
+    traceId: getTraceIdFromUrl(),
     startTime: "",
     endTime: "",
   })
 
   function updateFilter(field: keyof LogsFilters, value: string) {
     setFilters((prev) => ({ ...prev, [field]: value }))
+
+    if (field === "traceId") {
+      updateTraceIdInUrl(value)
+    }
+  }
+
+  function viewTrace(traceId: string) {
+    setFilters((prev) => ({ ...prev, traceId }))
+    updateTraceIdInUrl(traceId, true)
   }
 
   function clearFilters() {
@@ -39,7 +48,17 @@ export function LogsView() {
       startTime: "",
       endTime: "",
     })
+    updateTraceIdInUrl("")
   }
+
+  useEffect(() => {
+    const handlePopState = () => {
+      setFilters((prev) => ({ ...prev, traceId: getTraceIdFromUrl() }))
+    }
+
+    window.addEventListener("popstate", handlePopState)
+    return () => window.removeEventListener("popstate", handlePopState)
+  }, [])
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
@@ -154,9 +173,34 @@ export function LogsView() {
             </div>
           </Card>
 
-          <LogsTable filters={filters} selectedLevel={selectedLevel} />
+          <LogsTable filters={filters} selectedLevel={selectedLevel} onViewTrace={viewTrace} />
         </div>
       </div>
     </div>
   )
+}
+
+function getTraceIdFromUrl() {
+  if (typeof window === "undefined") return ""
+  return new URLSearchParams(window.location.search).get("traceId") || ""
+}
+
+function updateTraceIdInUrl(traceId: string, push = false) {
+  if (typeof window === "undefined") return
+
+  const url = new URL(window.location.href)
+  if (traceId.trim()) {
+    url.searchParams.set("traceId", traceId.trim())
+  } else {
+    url.searchParams.delete("traceId")
+  }
+
+  const nextUrl = `${url.pathname}${url.search}`
+  if (nextUrl === `${window.location.pathname}${window.location.search}`) return
+
+  if (push) {
+    window.history.pushState(null, "", nextUrl)
+  } else {
+    window.history.replaceState(null, "", nextUrl)
+  }
 }
