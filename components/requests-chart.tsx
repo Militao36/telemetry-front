@@ -60,8 +60,9 @@ export function RequestsChart({
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "#111827",
+                border: "1px solid rgba(148,163,184,0.22)",
+                color: "#e5e7eb",
               }}
             />
             <Legend />
@@ -102,8 +103,9 @@ export function RequestsChart({
             <YAxis stroke="lab(54 0 -0.01)" />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "#111827",
+                border: "1px solid rgba(148,163,184,0.22)",
+                color: "#e5e7eb",
               }}
             />
             <Bar dataKey="count" fill="#3b82f6" />

@@ -45,7 +45,7 @@ export function RequestsTable({
     if (status >= 400 && status < 500)
       return "bg-yellow-500/20 text-yellow-400";
     if (status >= 500) return "bg-red-500/20 text-red-400";
-    return "bg-gray-500/20 text-gray-400";
+    return "bg-zinc-500/20 text-zinc-300";
   };
 
 

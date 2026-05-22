@@ -41,9 +41,11 @@ export function Sidebar() {
       </div>
 
       {/* Sidebar - hidden on mobile, visible on tablet and up */}
-      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex`}>
+      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar/95 border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex shadow-2xl shadow-black/30 backdrop-blur-xl`}>
         <div className="p-4 border-b border-sidebar-border flex items-center justify-center h-22 px-5">
-          <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={80} />
+          <div className="inline-flex h-12 w-36 items-center justify-center overflow-hidden rounded-xl bg-white/95 shadow-lg shadow-black/20">
+            <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={120} className="h-20 w-20 scale-[1.85] object-contain" />
+          </div>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
@@ -120,7 +122,7 @@ export function Sidebar() {
       {/* Mobile drawer - appears on mobile when menu is open */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
-          <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col" onClick={(e) => e.stopPropagation()}>
+          <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col shadow-2xl shadow-black/40" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">ML</div>

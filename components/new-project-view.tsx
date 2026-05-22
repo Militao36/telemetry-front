@@ -60,7 +60,7 @@ export function NewProjectView() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-background">
       {/* Header */}
-      <div className="border-b border-border bg-card px-4 sm:px-6 py-4">
+      <div className="border-b border-border/70 bg-card/80 px-4 sm:px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
         <Link href="/projects">
           <Button variant="ghost" className="gap-2">
             <ArrowLeft size={18} />

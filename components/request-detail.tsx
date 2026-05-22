@@ -133,7 +133,7 @@ export function RequestDetail({
                       <Button
                         variant="outline"
                         size="sm"
-                        className="h-7 px-2 text-xs"
+                        className="h-7 px-2 text-xs cursor-pointer"
                         onClick={openTraceLogs}
                       >
                         Ver trace completo

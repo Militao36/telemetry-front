@@ -103,7 +103,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="dark">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <meta name="description" content="UnTelemetry é uma plataforma proprietária de observabilidade com suporte total ao OpenTelemetry." />
@@ -112,7 +112,7 @@ export default function RootLayout({
 
         <link rel="canonical" href="https://untelemetry.unledu.com.br" />
 
-        <meta name="theme-color" content="#6A4DF5" />
+        <meta name="theme-color" content="#080b16" />
         <meta name="application-name" content="UnTelemetry" />
         <meta name="apple-mobile-web-app-title" content="UnTelemetry" />
         <meta name="apple-mobile-web-app-capable" content="yes" />

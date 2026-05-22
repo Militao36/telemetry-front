@@ -69,7 +69,7 @@ export function AlertsPanel() {
                 <h4 className="font-semibold text-sm flex-1">{alert.name}</h4>
                 <Badge
                   className={
-                    alert.status === "active" ? "bg-green-500/20 text-green-400" : "bg-gray-500/20 text-gray-400"
+                    alert.status === "active" ? "bg-green-500/20 text-green-300" : "bg-zinc-500/20 text-zinc-300"
                   }
                 >
                   {alert.status}

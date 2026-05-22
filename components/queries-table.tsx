@@ -57,7 +57,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
 
                             toast.info("Query copied to clipboard!");
                             navigator.clipboard.writeText(sqlFormatted || query.dbStatement)
-                          }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-blue-700 hover:weight-semibold">
+                          }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-primary hover:weight-semibold">
                             {query.dbStatement.trim().trimEnd().trimStart().substring(0, 50)}
                           </p>
 
@@ -75,7 +75,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                           <p onClick={() => {
                             toast.info("Query copied to clipboard!");
                             navigator.clipboard.writeText(query.dbParams || query.dbParams)
-                          }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-blue-700 hover:weight-semibold">
+                          }} className="text-xs text-left font-mono text-muted-foreground mb-1 line-clamp-2 cursor-pointer hover:text-primary hover:weight-semibold">
                             {query.dbParams.trim().trimEnd().trimStart().substring(0, 50)}
                           </p>
 
@@ -85,7 +85,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                         </TooltipTrigger>
                       </div>
                     </Tooltip>
-                    </td>
+                  </td>
                   <td className="px-6 py-4 text-sm font-semibold">{formatMsToMsOrSeconds(query?.avgDurationMs)}</td>
                   <td className="px-6 py-4 text-sm text-red-400 font-semibold">{formatMsToMsOrSeconds(query?.durationMs)}</td>
                   <td className="px-6 py-4 text-sm">{query?.executions?.toLocaleString("en-US")}</td>
@@ -94,7 +94,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                       <div className="space-y-1">
                         <button
                           type="button"
-                          className="block max-w-40 truncate font-mono text-xs text-muted-foreground hover:text-blue-700"
+                          className="block max-w-40 truncate font-mono text-xs text-muted-foreground hover:text-primary"
                           title={query.traceId}
                           onClick={() => copyTraceId(query.traceId)}
                         >
@@ -104,7 +104,7 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-7 px-2 text-[11px]"
+                          className="h-7 px-2 text-[11px] cursor-pointer"
                           onClick={() => openTraceLogs(query.traceId)}
                         >
                           Ver trace completo

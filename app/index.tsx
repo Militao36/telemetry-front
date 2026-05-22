@@ -6,11 +6,11 @@ export default function SitePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="border-b border-border">
+      <nav className="border-b border-border/70 bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-lg flex items-center justify-center">
-              <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={120} />
+            <div className="inline-flex h-12 w-36 items-center justify-center overflow-hidden rounded-xl bg-white/95 shadow-lg shadow-black/20">
+              <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={120} className="h-20 w-20 scale-[1.85] object-contain" />
             </div>
           </div>
           <div className="hidden md:flex items-center gap-8">
@@ -43,8 +43,8 @@ export default function SitePage() {
         </div>
 
         <div className="relative z-10">
-          <div className="inline-block mb-6 px-4 py-2 bg-muted rounded-full">
-            <p className="text-sm font-semibold text-accent text-gray-800">✨ Tecnologia OpenTelemetry integrada, onde está o OpenTelemetry nós estamos!</p>
+          <div className="inline-block mb-6 rounded-full border border-primary/25 bg-primary/10 px-4 py-2 shadow-lg shadow-primary/10">
+            <p className="text-sm font-semibold text-primary">Tecnologia OpenTelemetry integrada, onde está o OpenTelemetry nós estamos!</p>
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight mb-6 text-balance leading-tight">
@@ -287,7 +287,7 @@ export default function SitePage() {
               </div>
               <div className="bg-card rounded-lg p-4 border border-border hover:border-primary/50 transition">
                 <p className="font-bold mb-2">Tempo médio de trace</p>
-                <p className="text-2xl text-gray-700 font-mono text-accent">23ms</p>
+                <p className="text-2xl font-mono text-primary">23ms</p>
               </div>
             </div>
           </div>
@@ -304,7 +304,7 @@ export default function SitePage() {
           </div>
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <div className="border-2 border-primary rounded-2xl p-8 bg-background relative overflow-hidden">
+            <div className="border-2 border-primary/70 rounded-2xl p-8 bg-card/80 relative overflow-hidden shadow-xl shadow-primary/10">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold mb-2">Plano free</h3>
                 <p className="text-muted-foreground">Perfeito para começar</p>
@@ -348,7 +348,7 @@ export default function SitePage() {
               </ul>
             </div>
             {/* Used Plan */}
-            <div className="border-2 border-primary rounded-2xl p-8 bg-background relative overflow-hidden">
+            <div className="border-2 border-primary/70 rounded-2xl p-8 bg-card/80 relative overflow-hidden shadow-xl shadow-primary/10">
               <div className="absolute top-0 right-0 bg-primary text-primary-foreground px-4 py-1 text-sm font-bold rounded-bl-lg">
                 MAIS POPULAR
               </div>
@@ -395,7 +395,7 @@ export default function SitePage() {
               </ul>
             </div>
             {/* Starter Plan */}
-            <div className="border-2 border-primary rounded-2xl p-8 bg-background relative overflow-hidden">
+            <div className="border-2 border-primary/70 rounded-2xl p-8 bg-card/80 relative overflow-hidden shadow-xl shadow-primary/10">
               <div className="mb-6">
                 <h3 className="text-2xl font-bold mb-2">Plano Base</h3>
                 <p className="text-muted-foreground">Perfeito para começar</p>

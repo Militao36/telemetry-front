@@ -63,7 +63,7 @@ export function LogsView() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="border-b border-border bg-card px-6 py-4">
+      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
         <h1 className="text-2xl font-bold">Logs</h1>
         <p className="text-sm text-muted-foreground mt-1">
           Real-time application logs and events
@@ -73,7 +73,7 @@ export function LogsView() {
       <div className="flex-1 overflow-auto">
         <div className="p-6 space-y-4">
           {/* Filters */}
-          <Card className="bg-card border-border p-4 space-y-4">
+          <Card className="bg-card/90 border-border/80 p-4 space-y-4">
             <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
               <div className="lg:col-span-6">
                 <label className="mb-1 block text-sm font-medium text-muted-foreground">Mensagem</label>

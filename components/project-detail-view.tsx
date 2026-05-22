@@ -22,7 +22,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border bg-card px-6 py-4">
+      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
         <div className="flex items-center gap-4 mb-4">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft size={18} />
@@ -52,11 +52,10 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-4 py-2 border-b-2 transition-colors capitalize ${
-                  activeTab === tab
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
+                className={`px-4 py-2 border-b-2 transition-colors capitalize ${activeTab === tab
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
               >
                 {tab}
               </button>

@@ -35,8 +35,8 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ user, onLogout }) 
   }, [user.name]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-indigo-50 via-slate-50 to-purple-50">
-      <div className="glass-panel w-full max-w-md p-8 rounded-2xl shadow-xl border border-white/50 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <div className="glass-panel w-full max-w-md p-8 rounded-2xl relative overflow-hidden">
         {/* Background decorative elements */}
         <div className="absolute top-0 right-0 -mr-16 -mt-16 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
         <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
@@ -46,7 +46,7 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ user, onLogout }) 
             <UserIcon className="text-white w-10 h-10" />
           </div>
 
-          <h1 className="text-2xl font-bold text-slate-800 mb-2">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             Hello, {user.name}
           </h1>
           
@@ -57,12 +57,12 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ user, onLogout }) 
                 <span className="text-sm font-medium">Asking Gemini for a greeting...</span>
               </div>
             ) : (
-              <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 animate-fade-in">
+              <div className="bg-primary/10 p-4 rounded-xl border border-primary/20 animate-fade-in">
                 <div className="flex items-center justify-center gap-2 mb-2 text-indigo-600">
                   <Sparkles className="w-4 h-4" />
                   <span className="text-xs font-semibold uppercase tracking-wider">AI Insight</span>
                 </div>
-                <p className="text-slate-600 text-sm leading-relaxed">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   "{greeting}"
                 </p>
               </div>
@@ -70,14 +70,14 @@ export const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ user, onLogout }) 
           </div>
 
           <div className="w-full space-y-3">
-             <div className="p-4 bg-white rounded-lg border border-slate-100 shadow-sm text-left">
-                <p className="text-xs text-slate-400 uppercase font-semibold mb-1">Account Email</p>
-                <p className="text-slate-700 font-medium">{user.email}</p>
+             <div className="p-4 bg-card rounded-lg border border-border shadow-sm text-left">
+                <p className="text-xs text-muted-foreground uppercase font-semibold mb-1">Account Email</p>
+                <p className="text-foreground font-medium">{user.email}</p>
              </div>
 
             <button
               onClick={onLogout}
-              className="w-full mt-6 py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 font-medium rounded-lg border border-slate-200 transition-colors duration-200 flex items-center justify-center gap-2 group"
+              className="w-full mt-6 py-2.5 px-4 bg-muted hover:bg-muted/80 text-foreground font-medium rounded-lg border border-border transition-colors duration-200 flex items-center justify-center gap-2 group"
             >
               <LogOut className="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" />
               Sign Out

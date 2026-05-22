@@ -204,7 +204,7 @@ export function SearchView() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="border-b border-border bg-card px-6 py-4">
+      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
         <h1 className="text-2xl font-bold">Searches</h1>
         <p className="mt-1 text-sm text-muted-foreground">Busca unificada de requests e queries com filtros diretos.</p>
       </div>
@@ -309,8 +309,8 @@ export function SearchView() {
         </Card>
 
         {error && (
-          <Card className="mb-4 border-red-200 bg-red-50">
-            <CardContent className="flex items-center gap-2 p-4 text-red-700">
+          <Card className="mb-4 border-red-500/30 bg-red-950/35">
+            <CardContent className="flex items-center gap-2 p-4 text-red-100">
               <AlertTriangle className="size-4" />
               <p className="text-sm">{error}</p>
             </CardContent>
@@ -385,7 +385,7 @@ export function SearchView() {
                                 type="button"
                                 variant="outline"
                                 size="sm"
-                                className="h-6 px-2 text-[11px]"
+                                className="h-6 px-2 text-[11px] cursor-pointer"
                                 onClick={() => openTraceLogs(item.traceId)}
                               >
                                 Ver trace completo
@@ -425,7 +425,7 @@ export function SearchView() {
                             )}
 
                             {logsErrorByTraceId[item.traceId] && (
-                              <div className="space-y-2 rounded-md border border-red-200 bg-red-50 p-3 text-xs text-red-700">
+                              <div className="space-y-2 rounded-md border border-red-500/30 bg-red-950/35 p-3 text-xs text-red-100">
                                 <p>{logsErrorByTraceId[item.traceId]}</p>
                                 <Button size="sm" variant="outline" onClick={() => fetchLinkedLogs(item.traceId)}>
                                   Tentar novamente
@@ -498,7 +498,7 @@ export function SearchView() {
                                                         type="button"
                                                         variant="outline"
                                                         size="sm"
-                                                        className="h-6 px-2 text-[11px]"
+                                                        className="h-6 px-2 text-[11px] cursor-pointer"
                                                         onClick={() => openTraceLogs(log.traceId)}
                                                       >
                                                         Ver trace completo
@@ -587,12 +587,12 @@ export function SearchView() {
                                             </div>
 
                                             {(log.exceptionType || log.exceptionMessage || log.exceptionStacktrace) && (
-                                              <div className="rounded border border-red-200 bg-red-50/70 p-2">
-                                                <p className="text-[11px] font-semibold uppercase tracking-wide text-red-700">Exception</p>
-                                                <p className="text-[11px] text-red-800">{log.exceptionType || "Exception"}</p>
-                                                {log.exceptionMessage && <p className="mt-1 text-xs text-red-900">{log.exceptionMessage}</p>}
+                                              <div className="rounded border border-red-500/30 bg-red-950/35 p-2">
+                                                <p className="text-[11px] font-semibold uppercase tracking-wide text-red-200">Exception</p>
+                                                <p className="text-[11px] text-red-100">{log.exceptionType || "Exception"}</p>
+                                                {log.exceptionMessage && <p className="mt-1 text-xs text-red-100">{log.exceptionMessage}</p>}
                                                 {log.exceptionStacktrace && (
-                                                  <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-words rounded border border-red-200 bg-white/70 p-2 font-mono text-[11px] text-red-900">
+                                                  <pre className="mt-1 overflow-x-auto whitespace-pre-wrap break-words rounded border border-red-500/30 bg-background/70 p-2 font-mono text-[11px] text-red-100">
                                                     {log.exceptionStacktrace}
                                                   </pre>
                                                 )}
@@ -627,19 +627,19 @@ export function SearchView() {
 
 function getStatusColor(status?: number) {
   if (!status) return "bg-muted text-muted-foreground"
-  if (status >= 200 && status < 300) return "bg-emerald-500/10 text-emerald-600"
-  if (status >= 400 && status < 500) return "bg-amber-500/10 text-amber-600"
-  if (status >= 500) return "bg-red-500/10 text-red-600"
+  if (status >= 200 && status < 300) return "bg-emerald-500/15 text-emerald-200"
+  if (status >= 400 && status < 500) return "bg-amber-500/15 text-amber-200"
+  if (status >= 500) return "bg-red-500/15 text-red-200"
   return "bg-muted text-muted-foreground"
 }
 
 function getLogLevelColor(level?: string) {
   const normalized = (level || "INFO").toUpperCase()
-  if (normalized === "ERROR") return "bg-red-500/15 text-red-700"
-  if (normalized === "WARNING") return "bg-amber-500/15 text-amber-700"
-  if (normalized === "CRITICAL") return "bg-rose-500/15 text-rose-700"
-  if (normalized === "DEBUG") return "bg-zinc-500/15 text-zinc-700"
-  return "bg-blue-500/15 text-blue-700"
+  if (normalized === "ERROR") return "bg-red-500/15 text-red-200"
+  if (normalized === "WARNING") return "bg-amber-500/15 text-amber-200"
+  if (normalized === "CRITICAL") return "bg-rose-500/15 text-rose-200"
+  if (normalized === "DEBUG") return "bg-zinc-500/15 text-zinc-200"
+  return "bg-blue-500/15 text-blue-200"
 }
 
 function formatWhen(value: string) {

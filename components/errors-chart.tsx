@@ -44,7 +44,7 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
             <YAxis stroke="rgba(255,255,255,0.5)" />
-            <Tooltip contentStyle={{ backgroundColor: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Area type="monotone" dataKey="critical" stackId="1" fill="#ef4444" />
             <Area type="monotone" dataKey="high" stackId="1" fill="#f97316" />
@@ -61,7 +61,7 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
             <YAxis stroke="rgba(255,255,255,0.5)" />
-            <Tooltip contentStyle={{ backgroundColor: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Line type="monotone" dataKey="resolved" stroke="#22c55e" strokeWidth={2} dot={false} />
             <Line type="monotone" dataKey="unresolved" stroke="#ef4444" strokeWidth={2} dot={false} />

@@ -10,7 +10,7 @@ export function Header({
   setTimeRange,
 }: { timeRange: string; setTimeRange: (range: string) => void }) {
   return (
-    <div className="border-b border-border bg-card px-3 sm:px-4 md:px-6 py-3 md:py-4">
+    <div className="border-b border-border/70 bg-card/80 px-3 sm:px-4 md:px-6 py-3 md:py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold truncate">Dashboard</h1>

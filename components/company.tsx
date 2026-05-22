@@ -283,7 +283,7 @@ export function SignupModal({ isOpen, onClose }: { isOpen: boolean; onClose: () 
                 <p className="text-muted-foreground">Aqui está seu QR code para ativar a conta</p>
               </div>
 
-              <div className="bg-white p-6 rounded-xl border-2 border-border">
+              <div className="bg-white p-6 rounded-xl border-2 border-primary/30 shadow-xl shadow-black/30">
                 {qrValue && (
                   <img
                     src={qrValue}

@@ -87,18 +87,18 @@ export function AuthForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-linear-to-br from-slate-100 to-indigo-50 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background relative overflow-hidden">
       {/* Abstract shapes background */}
-      <div className="absolute top-10 left-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse"></div>
-      <div className="absolute top-0 right-10 w-72 h-72 bg-indigo-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse animation-delay-2000"></div>
-      <div className="absolute -bottom-32 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-2xl opacity-30 animate-pulse animation-delay-4000"></div>
+      <div className="absolute top-10 left-10 w-72 h-72 bg-primary/25 rounded-full filter blur-2xl opacity-40 animate-pulse"></div>
+      <div className="absolute top-0 right-10 w-72 h-72 bg-cyan-500/15 rounded-full filter blur-2xl opacity-40 animate-pulse animation-delay-2000"></div>
+      <div className="absolute -bottom-32 left-20 w-72 h-72 bg-fuchsia-500/15 rounded-full filter blur-2xl opacity-40 animate-pulse animation-delay-4000"></div>
 
       <div className="glass-panel w-full max-w-md p-8 rounded-2xl shadow-2xl border border-white/60 relative z-10 transition-all duration-500 ease-in-out">
         <div className="flex flex-col items-center mb-8">
-          <h2 className="text-2xl font-bold text-slate-800 tracking-tight">
+          <h2 className="text-2xl font-bold text-foreground tracking-tight">
             {mode === AuthMode.LOGIN ? 'Welcome Back' : 'Create Account'}
           </h2>
-          <p className="text-slate-500 text-sm mt-2 text-center">
+          <p className="text-muted-foreground text-sm mt-2 text-center">
             {mode === AuthMode.LOGIN
               ? 'Enter your credentials to access your account'
               : 'Sign up to get started with our platform'}
@@ -142,7 +142,7 @@ export function AuthForm() {
 
           {mode === AuthMode.LOGIN && (
             <div className="flex justify-end">
-              <button type="button" className="text-xs font-medium text-gray-700 hover:text-gray-500 transition-colors" onClick={async () => {
+              <button type="button" className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors" onClick={async () => {
                 if (!auth.email) {
                   return toast.warn(
                     'Please enter your email address and click "Recover Password" again to receive the email with your temporary password.'
@@ -163,9 +163,9 @@ export function AuthForm() {
             onClick={handleSubmit}
             className={`
               w-full py-2.5 px-4 mt-6
-              bg-gray-600 hover:bg-gray-700
+              bg-primary hover:bg-primary/90
               text-white font-medium rounded-lg
-              shadow-lg shadow-gray-600/30
+              shadow-lg shadow-primary/25
               transition-all duration-200
               flex items-center justify-center gap-2
               disabled:opacity-70 disabled:cursor-not-allowed
@@ -187,12 +187,12 @@ export function AuthForm() {
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-slate-200 text-center">
-          <p className="text-sm text-slate-600">
+        <div className="mt-8 pt-6 border-t border-border text-center">
+          <p className="text-sm text-muted-foreground">
             {mode === AuthMode.LOGIN ? "Don't have an account?" : "Already have an account?"}
             <button
               onClick={toggleMode}
-              className="ml-2 font-semibold text-gray-700 hover:text-gray-500 hover:underline transition-all focus:outline-none"
+              className="ml-2 font-semibold text-primary hover:text-primary/80 hover:underline transition-all focus:outline-none"
             >
               {mode === AuthMode.LOGIN ? 'Sign up' : 'Log in'}
             </button>

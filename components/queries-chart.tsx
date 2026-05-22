@@ -63,7 +63,7 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis dataKey="interval" stroke="rgba(255,255,255,0.5)" tickFormatter={formatChartTick} minTickGap={36} />
             <YAxis stroke="rgba(255,255,255,0.5)" />
-            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#fff", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Bar dataKey="selects" stackId="a" fill="#8b5cf6" />
             <Bar dataKey="inserts" stackId="a" fill="#3b82f6" />
@@ -80,7 +80,7 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis dataKey="intervalHour" stroke="rgba(255,255,255,0.5)" tickFormatter={formatChartTick} minTickGap={36} />
             <YAxis stroke="rgba(255,255,255,0.5)" />
-            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#fff", border: "1px solid rgba(255,255,255,0.1)" }} />
+            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Line type="monotone" dataKey="avgMs" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Average" />
             <Line type="monotone" dataKey="p95Ms" stroke="#fbbf24" strokeWidth={2} dot={false} name="P95" />

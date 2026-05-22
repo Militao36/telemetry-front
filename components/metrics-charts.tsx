@@ -59,8 +59,9 @@ export function MetricsCharts({
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "#111827",
+                border: "1px solid rgba(148,163,184,0.22)",
+                color: "#e5e7eb",
               }}
             />
             <Area
@@ -95,8 +96,9 @@ export function MetricsCharts({
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "#111827",
+                border: "1px solid rgba(148,163,184,0.22)",
+                color: "#e5e7eb",
               }}
             />
             <Line
@@ -137,8 +139,9 @@ export function MetricsCharts({
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "#111827",
+                border: "1px solid rgba(148,163,184,0.22)",
+                color: "#e5e7eb",
               }}
             />
             <Area
@@ -173,8 +176,9 @@ export function MetricsCharts({
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#fff",
-                border: "1px solid rgba(255,255,255,0.1)",
+                backgroundColor: "#111827",
+                border: "1px solid rgba(148,163,184,0.22)",
+                color: "#e5e7eb",
               }}
             />
             <Line

@@ -75,7 +75,7 @@ export function RequestsView() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border bg-card px-6 py-4">
+      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
         <div>
           <h1 className="text-2xl font-bold">Requests</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -198,8 +198,9 @@ export function RequestsView() {
                           <Tooltip
                             labelFormatter={formatChartTooltipLabel}
                             contentStyle={{
-                              backgroundColor: "#fff",
-                              border: "1px solid rgba(255,255,255,0.1)",
+                              backgroundColor: "#111827",
+                              border: "1px solid rgba(148,163,184,0.22)",
+                              color: "#e5e7eb",
                             }}
                           />
                           <Area
@@ -243,8 +244,9 @@ export function RequestsView() {
                           <Tooltip
                             labelFormatter={formatChartTooltipLabel}
                             contentStyle={{
-                              backgroundColor: "#fff",
-                              border: "1px solid rgba(255,255,255,0.1)",
+                              backgroundColor: "#111827",
+                              border: "1px solid rgba(148,163,184,0.22)",
+                              color: "#e5e7eb",
                             }}
                           />
                           <Line
