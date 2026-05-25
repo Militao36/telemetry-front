@@ -30,7 +30,7 @@ export function ProjectsGrid() {
       {projects.map((project) => (
         <Card
           key={project.id}
-          className="bg-card border-border hover:border-primary/50 transition-colors overflow-hidden group"
+          className="bg-card/95 border-border hover:border-primary/60 transition-colors overflow-hidden group"
         >
           <div className="p-6 space-y-4">
             <div className="flex items-start justify-between">

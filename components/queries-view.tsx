@@ -82,7 +82,7 @@ export function QueriesView() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="page-header">
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Query Performance</h1>
@@ -100,19 +100,19 @@ export function QueriesView() {
       <div className="flex-1 overflow-auto">
         <div className="p-6 space-y-6">
           {/* Filters */}
-          <Card className="bg-card border-border p-4">
+          <Card className="bg-card/95 border-border p-4">
             <div className="flex gap-4 items-center">
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Query Type</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Query Type</p>
                 <div className="flex gap-2">
                   {["all", "select", "insert", "update", "delete"].map(
                     (type) => (
                       <button
                         key={type}
                         onClick={() => setQueryType(type)}
-                        className={`px-3 py-1 rounded text-xs font-medium transition-colors capitalize ${queryType === type
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-muted-foreground hover:bg-muted/80"
+                        className={`filter-chip capitalize ${queryType === type
+                          ? "filter-chip-active"
+                          : ""
                           }`}
                       >
                         {type}
@@ -123,15 +123,15 @@ export function QueriesView() {
               </div>
 
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Time Range</p>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Time Range</p>
                 <div className="flex gap-2 flex-wrap">
                   {DASHBOARD_TIME_RANGES.map((range) => (
                     <button
                       key={range}
                       onClick={() => setTimeRange(range)}
-                      className={`px-3 py-1 rounded text-xs font-medium transition-colors ${timeRange === range
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground hover:bg-muted/80"
+                      className={`filter-chip ${timeRange === range
+                        ? "filter-chip-active"
+                        : ""
                         }`}
                     >
                       {range}
@@ -144,7 +144,7 @@ export function QueriesView() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-card border-border p-6">
+            <Card className="bg-card/95 border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 Total Queries
               </p>
@@ -155,7 +155,7 @@ export function QueriesView() {
               </p>
               {/* <p className="text-xs text-green-400 mt-2">+12.5% from yesterday</p> */}
             </Card>
-            <Card className="bg-card border-border p-6">
+            <Card className="bg-card/95 border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 Avg Query Time
               </p>
@@ -164,7 +164,7 @@ export function QueriesView() {
               </p>
               {/* <p className="text-xs text-yellow-400 mt-2">+8% slower than last week</p> */}
             </Card>
-            <Card className="bg-card border-border p-6">
+            <Card className="bg-card/95 border-border p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 Slowest Query
               </p>

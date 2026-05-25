@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import { Search, BarChart3, FileText, Database, User2Icon, Settings, Menu, X, Layout, LogOutIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { SignupModal } from "./company";
 import Image from "next/image";
 
 export function Sidebar() {
+  const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isSignupOpen, setIsSignupOpen] = useState(false);
@@ -41,20 +43,27 @@ export function Sidebar() {
       </div>
 
       {/* Sidebar - hidden on mobile, visible on tablet and up */}
-      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar/95 border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex shadow-2xl shadow-black/30 backdrop-blur-xl`}>
-        <div className="p-4 border-b border-sidebar-border flex items-center justify-center h-22 px-5">
-          <div className="inline-flex h-12 w-36 items-center justify-center overflow-hidden rounded-xl bg-white/95 shadow-lg shadow-black/20">
+      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar/95 border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex shadow-2xl shadow-black/40 backdrop-blur-xl`}>
+        <div className="p-4 border-b border-sidebar-border/90 flex items-center justify-center h-24 px-5">
+          <div className="inline-flex h-14 w-40 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-xl shadow-primary/10 ring-1 ring-white/20">
             <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={120} className="h-20 w-20 scale-[1.85] object-contain" />
           </div>
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
           {navItems.map((item) => {
+            const isActive = item.href && item.href !== "/login" && pathname.startsWith(item.href);
+            const navClassName = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${collapsed ? "justify-center" : ""} ${
+              isActive
+                ? "bg-gradient-to-r from-primary/95 to-primary/35 text-white shadow-lg shadow-primary/20 ring-1 ring-primary/25"
+                : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            }`;
+
             if (item.href === null) {
               return (
                 <button
                   key={item.label}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground"
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sidebar-foreground transition-all hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                   onClick={() => setIsSignupOpen(true)}
                 >
                   <item.icon size={20} />
@@ -68,8 +77,7 @@ export function Sidebar() {
                 <Link
                   key={item.label}
                   href={item.href}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${collapsed ? "justify-center" : ""
-                    } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
+                  className={navClassName}
                   title={item.label}
                   onClick={() => {
                     localStorage.clear()
@@ -86,8 +94,7 @@ export function Sidebar() {
               <Link
                 key={item.label}
                 href={item.href}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${collapsed ? "justify-center" : ""
-                  } hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground`}
+                className={navClassName}
                 title={item.label}
               >
                 <item.icon size={20} />
@@ -97,10 +104,10 @@ export function Sidebar() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="p-4 border-t border-sidebar-border/90">
           <select
             name="enviroment"
-            className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full rounded-lg border border-sidebar-border bg-card/90 px-3 py-2 text-foreground shadow-sm shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary"
             onChange={(e) => {
               if (e.target.value === "-1") return;
               localStorage.setItem('tokenSelected', JSON.stringify(tokens.find(token => token.project.id === e.target.value)));
@@ -113,7 +120,7 @@ export function Sidebar() {
             ))}
             <option value="-1">Selecionar projeto</option>
           </select>
-          <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="w-full justify-center">
+          <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="mt-2 w-full justify-center">
             <Menu size={20} />
           </Button>
         </div>
@@ -135,6 +142,8 @@ export function Sidebar() {
 
             <nav className="flex-1 p-4 space-y-2">
               {navItems.map((item) => {
+                const isActive = item.href && item.href !== "/login" && pathname.startsWith(item.href);
+
                 if (item.href === null) {
                   return (
                     <button
@@ -155,7 +164,11 @@ export function Sidebar() {
                   <Link
                     key={item.label}
                     href={item.href as string}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground text-sidebar-foreground"
+                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                      isActive
+                        ? "bg-gradient-to-r from-primary/95 to-primary/35 text-white shadow-lg shadow-primary/20"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
                     onClick={() => setMobileOpen(false)}
                   >
                     <item.icon size={20} />

@@ -51,11 +51,11 @@ export function LogsTable({
   const getLevelColor = (level?: Log["severityText"]) => {
     const normalized = (level || "INFO").toUpperCase()
     const colors = {
-      INFO: "bg-blue-500/15 text-blue-200 border-blue-400/40",
-      WARNING: "bg-amber-500/15 text-amber-200 border-amber-400/40",
-      ERROR: "bg-red-500/15 text-red-200 border-red-400/40",
-      CRITICAL: "bg-rose-500/15 text-rose-200 border-rose-400/40",
-      DEBUG: "bg-zinc-400/15 text-zinc-200 border-zinc-400/40",
+      INFO: "bg-blue-500/25 text-blue-100 border-blue-400/70 shadow-blue-500/15",
+      WARNING: "bg-amber-500/25 text-amber-100 border-amber-400/70 shadow-amber-500/15",
+      ERROR: "bg-red-500/25 text-red-100 border-red-400/70 shadow-red-500/15",
+      CRITICAL: "bg-rose-500/25 text-rose-100 border-rose-400/70 shadow-rose-500/15",
+      DEBUG: "bg-slate-500/25 text-slate-100 border-slate-400/70 shadow-slate-500/15",
     }
     return colors[normalized as keyof typeof colors] ?? colors.INFO
   }
@@ -79,6 +79,13 @@ export function LogsTable({
       dateStyle: "short",
       timeStyle: "medium",
     }).format(date)
+  }
+
+  const formatPreview = (value: unknown, maxLength = 260) => {
+    const text = formatOTelValue(value)
+    if (text.length <= maxLength) return text
+
+    return `${text.slice(0, maxLength).trimEnd()}...`
   }
 
   const copyToClipboard = async (value: unknown, label: string) => {
@@ -162,7 +169,7 @@ export function LogsTable({
         return (
           <Card
             key={rowKey}
-            className="cursor-pointer overflow-hidden border-border bg-card transition-colors hover:border-primary/50"
+            className="cursor-pointer overflow-hidden border-border bg-card/95 py-0 transition-colors hover:border-primary/60"
             onClick={() => setExpandedKey(expandedKey === rowKey ? null : rowKey)}
           >
             <div className="p-4">
@@ -170,22 +177,22 @@ export function LogsTable({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="mb-2 flex flex-wrap items-center gap-2.5">
-                    <Badge className={`${getLevelColor(log.severityText)} shrink-0 border text-[10px] uppercase`}>
+                    <Badge className={`${getLevelColor(log.severityText)} shrink-0 border text-[10px] uppercase shadow-lg`}>
                       {(log.severityText || "INFO").toUpperCase()}
                     </Badge>
                     <span className="text-xs text-muted-foreground">{formatTimestamp(log.timestamp)}</span>
-                    <span className="rounded bg-muted px-2 py-0.5 text-xs text-muted-foreground">{log.serviceName}</span>
+                    <span className="rounded-md border border-border bg-secondary/60 px-2 py-0.5 text-xs text-foreground">{log.serviceName}</span>
                     {log.traceId && (
-                      <span className="rounded bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
+                      <span className="rounded-md border border-border bg-secondary/60 px-2 py-0.5 font-mono text-xs text-muted-foreground">
                         trace {log.traceId.slice(0, 12)}...
                       </span>
                     )}
                   </div>
 
-                  <p className="line-clamp-2 text-sm font-medium text-foreground">{log.message || "Sem mensagem"}</p>
+                  <p className="line-clamp-2 text-sm font-semibold text-foreground">{log.message || "Sem mensagem"}</p>
 
-                  <p className="mt-2 line-clamp-1 font-mono text-xs text-muted-foreground">
-                    {formatOTelValue(log.attributes)}
+                  <p className="mt-3 truncate font-mono text-xs text-muted-foreground">
+                    {formatPreview(log.attributes)}
                   </p>
                 </div>
 
@@ -200,7 +207,7 @@ export function LogsTable({
 
               {expandedKey === rowKey && (
                 <div
-                  className="mt-4 space-y-4 border-t border-border/60 pt-4"
+                   className="mt-4 space-y-4 border-t border-border pt-4"
                   onClick={(event) => event.stopPropagation()}
                 >
                   <div className="grid grid-cols-1 gap-3 text-xs sm:grid-cols-2 lg:grid-cols-4">
@@ -284,7 +291,7 @@ export function LogsTable({
                           </Button>
                         )}
                       </div>
-                      <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border/70 bg-muted/20 p-3 font-mono text-xs text-foreground">
+                       <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border bg-secondary/45 p-3 font-mono text-xs text-emerald-100/90">
                         {formatOTelValue(log.attributes)}
                       </pre>
                     </div>
@@ -304,7 +311,7 @@ export function LogsTable({
                           </Button>
                         )}
                       </div>
-                      <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border/70 bg-muted/20 p-3 font-mono text-xs text-foreground">
+                       <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border bg-secondary/45 p-3 font-mono text-xs text-emerald-100/90">
                         {formatOTelValue(log.body)}
                       </pre>
                     </div>

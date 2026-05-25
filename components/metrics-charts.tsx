@@ -31,7 +31,7 @@ export function MetricsCharts({
 }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-4">
-      <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2">
+      <Card className="bg-card/95 border-border p-4 md:p-6 lg:col-span-2">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Requests Over Time
         </h3>
@@ -46,16 +46,16 @@ export function MetricsCharts({
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
+              stroke="rgba(148,163,184,0.22)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(255,255,255,0.5)"
+              stroke="rgba(203,213,225,0.78)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
@@ -75,7 +75,7 @@ export function MetricsCharts({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card border-border p-4 md:p-6">
+      <Card className="bg-card/95 border-border p-4 md:p-6">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Response Time
         </h3>
@@ -83,16 +83,16 @@ export function MetricsCharts({
           <LineChart data={formatResponseTimeData(requestsData)}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
+              stroke="rgba(148,163,184,0.22)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(255,255,255,0.5)"
+              stroke="rgba(203,213,225,0.78)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
@@ -112,7 +112,7 @@ export function MetricsCharts({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2">
+      <Card className="bg-card/95 border-border p-4 md:p-6 lg:col-span-2">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Queries Over Time
         </h3>
@@ -126,16 +126,16 @@ export function MetricsCharts({
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
+              stroke="rgba(148,163,184,0.22)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(255,255,255,0.5)"
+              stroke="rgba(203,213,225,0.78)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
@@ -155,7 +155,7 @@ export function MetricsCharts({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card border-border p-4 md:p-6">
+      <Card className="bg-card/95 border-border p-4 md:p-6">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Query time
         </h3>
@@ -163,16 +163,16 @@ export function MetricsCharts({
           <LineChart data={formatQueryTimeData(queriesData)}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(255,255,255,0.1)"
+              stroke="rgba(148,163,184,0.22)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(255,255,255,0.5)"
+              stroke="rgba(203,213,225,0.78)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(255,255,255,0.5)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{

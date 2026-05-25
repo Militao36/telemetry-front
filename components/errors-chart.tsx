@@ -37,13 +37,13 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="bg-card border-border p-6">
+      <Card className="bg-card/95 border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Errors by Severity</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={errorData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
-            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+            <XAxis dataKey="time" stroke="rgba(203,213,225,0.78)" />
+            <YAxis stroke="rgba(203,213,225,0.78)" />
             <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Area type="monotone" dataKey="critical" stackId="1" fill="#ef4444" />
@@ -54,13 +54,13 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card border-border p-6">
+      <Card className="bg-card/95 border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Resolution Trend</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={resolutionData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
-            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+            <XAxis dataKey="time" stroke="rgba(203,213,225,0.78)" />
+            <YAxis stroke="rgba(203,213,225,0.78)" />
             <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Line type="monotone" dataKey="resolved" stroke="#22c55e" strokeWidth={2} dot={false} />

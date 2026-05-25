@@ -51,7 +51,7 @@ export function AlertsPanel() {
   ]
 
   return (
-    <Card className="bg-card border-border overflow-hidden h-fit sticky top-6">
+    <Card className="bg-card/95 border-border overflow-hidden h-fit sticky top-6">
       <div className="p-6 border-b border-border flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <Bell size={20} />
@@ -64,7 +64,7 @@ export function AlertsPanel() {
       <div className="overflow-y-auto max-h-96">
         <div className="divide-y divide-border">
           {alerts.map((alert) => (
-            <div key={alert.id} className="p-4 hover:bg-card/50 transition-colors">
+            <div key={alert.id} className="p-4 hover:bg-secondary/35 transition-colors">
               <div className="flex items-start justify-between gap-2 mb-2">
                 <h4 className="font-semibold text-sm flex-1">{alert.name}</h4>
                 <Badge

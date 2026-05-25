@@ -75,7 +75,7 @@ export function RequestsView() {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="page-header">
         <div>
           <h1 className="text-2xl font-bold">Requests</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -89,7 +89,7 @@ export function RequestsView() {
           <div className="flex-1 overflow-auto">
             <div className="p-6 space-y-6">
               {/* Search and Filters */}
-              <Card className="bg-card border-border p-4">
+              <Card className="bg-card/95 border-border p-4">
                 <div className="space-y-4">
                   <div className=" flex gap-2 justify-between">
                     <div className="flex gap-2 flex-wrap">
@@ -98,10 +98,10 @@ export function RequestsView() {
                           <button
                             key={method}
                             onClick={() => setMethodFilter(method)}
-                            className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                            className={`filter-chip ${
                               methodFilter === method
-                                ? "bg-primary text-primary-foreground"
-                                : "bg-muted text-muted-foreground hover:bg-muted/80"
+                                ? "filter-chip-active"
+                                : ""
                             }`}
                           >
                             {method === "all" ? "All Methods" : `${method}`}
@@ -114,10 +114,10 @@ export function RequestsView() {
                         <button
                           key={hour}
                           onClick={() => setHourFilter(hour)}
-                          className={`px-3 py-1 rounded text-xs font-medium transition-colors ${
+                          className={`filter-chip ${
                             hourFilter === hour
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted text-muted-foreground hover:bg-muted/80"
+                              ? "filter-chip-active"
+                              : ""
                           }`}
                         >
                           {hour}
@@ -150,7 +150,7 @@ export function RequestsView() {
               <div>
                 <div className="flex flex-row gap-2">
                   <div className="w-full">
-                    <Card className="bg-card border-border p-4 md:p-6 lg:col-span-2 mb-2 w-full">
+                    <Card className="bg-card/95 border-border p-4 md:p-6 lg:col-span-2 mb-2 w-full">
                       <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
                         Requests Over Time
                       </h3>
@@ -182,17 +182,17 @@ export function RequestsView() {
                           </defs>
                           <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke="rgba(255,255,255,0.1)"
+                            stroke="rgba(148,163,184,0.22)"
                           />
                           <XAxis
                             dataKey="time"
-                            stroke="rgba(255,255,255,0.5)"
+                            stroke="rgba(203,213,225,0.78)"
                             tick={{ fontSize: 12 }}
                             tickFormatter={formatChartTick}
                             minTickGap={36}
                           />
                           <YAxis
-                            stroke="rgba(255,255,255,0.5)"
+                            stroke="rgba(203,213,225,0.78)"
                             tick={{ fontSize: 12 }}
                           />
                           <Tooltip
@@ -216,7 +216,7 @@ export function RequestsView() {
                   </div>
 
                   <div className="w-full">
-                    <Card className="bg-card border-border p-4 md:p-6 mb-2 w-full">
+                    <Card className="bg-card/95 border-border p-4 md:p-6 mb-2 w-full">
                       <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
                         Response Time
                       </h3>
@@ -228,17 +228,17 @@ export function RequestsView() {
                         <LineChart data={formatResponseTimeData(requestsData)}>
                           <CartesianGrid
                             strokeDasharray="3 3"
-                            stroke="rgba(255,255,255,0.1)"
+                            stroke="rgba(148,163,184,0.22)"
                           />
                           <XAxis
                             dataKey="time"
-                            stroke="rgba(255,255,255,0.5)"
+                            stroke="rgba(203,213,225,0.78)"
                             tick={{ fontSize: 12 }}
                             tickFormatter={formatChartTick}
                             minTickGap={36}
                           />
                           <YAxis
-                            stroke="rgba(255,255,255,0.5)"
+                            stroke="rgba(203,213,225,0.78)"
                             tick={{ fontSize: 12 }}
                           />
                           <Tooltip

@@ -204,7 +204,7 @@ export function SearchView() {
 
   return (
     <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="page-header">
         <h1 className="text-2xl font-bold">Searches</h1>
         <p className="mt-1 text-sm text-muted-foreground">Busca unificada de requests e queries com filtros diretos.</p>
       </div>

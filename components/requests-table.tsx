@@ -8,13 +8,13 @@ import { formatValueToK } from "@/lib/utils";
 
 export function RequestsTable({ topRequests }: { topRequests: any[] }) {
   return (
-    <Card className="bg-card border-border overflow-hidden">
+    <Card className="bg-card/95 border-border overflow-hidden">
       <div className="p-4 md:p-6 border-b border-border">
         <h3 className="text-base sm:text-lg font-semibold">Top Requests</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-card/50 border-b border-border">
+          <thead className="bg-secondary/45 border-b border-border">
             <tr>
               <th className="px-3 md:px-6 py-2 md:py-3 text-left text-xs md:text-sm font-semibold text-muted-foreground">
                 Method
@@ -35,14 +35,14 @@ export function RequestsTable({ topRequests }: { topRequests: any[] }) {
             {topRequests.map((req, index) => (
               <tr
                 key={index}
-                className="border-b border-border/50 hover:bg-card/50 transition-colors"
+                className="border-b border-border/70 hover:bg-secondary/35 transition-colors"
               >
                 <td className="px-3 md:px-6 py-2 md:py-4">
                   <Badge variant="outline" className="font-mono text-xs">
                     {req.httpMethod}
                   </Badge>
                 </td>
-                <td className="px-3 md:px-6 py-2 md:py-4 text-xs md:text-sm font-mono text-muted-foreground truncate max-w-24 md:max-w-none">
+                <td className="px-3 md:px-6 py-2 md:py-4 text-xs md:text-sm font-mono text-foreground truncate max-w-24 md:max-w-none">
                   {req.path}
                 </td>
                 <td className="px-3 md:px-6 py-2 md:py-4 text-xs md:text-sm hidden sm:table-cell">

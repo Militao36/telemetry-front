@@ -87,7 +87,7 @@ export function StatsCards({
       {stats.map((stat) => (
         <Card
           key={stat.label}
-          className="bg-card border-border p-3 sm:p-4 md:p-6"
+          className="bg-card/95 border-border p-3 sm:p-4 md:p-6"
         >
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
@@ -103,7 +103,7 @@ export function StatsCards({
                 </span>
               </div>
             </div>
-            <div className={`${stat.color} opacity-75 shrink-0`}>
+            <div className={`${stat.color} shrink-0 rounded-lg border border-border bg-secondary/50 p-2 shadow-sm shadow-black/20`}>
               <stat.icon size={18} className="sm:size-6" />
             </div>
           </div>

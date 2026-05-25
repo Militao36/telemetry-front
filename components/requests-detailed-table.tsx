@@ -50,13 +50,13 @@ export function RequestsTable({
 
 
   return (
-    <Card className="bg-card border-border overflow-hidden">
+    <Card className="bg-card/95 border-border overflow-hidden">
       <div className="p-6 border-b border-border">
         <h3 className="text-lg font-semibold">{title}</h3>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full">
-          <thead className="bg-card/50 border-b border-border">
+          <thead className="bg-secondary/45 border-b border-border">
             <tr>
               <th className="px-6 py-3 text-left text-sm font-semibold text-muted-foreground">
                 Method
@@ -77,14 +77,14 @@ export function RequestsTable({
             {dataRequests.map((req) => (
               <tr
                 key={req.spanId}
-                className="border-b border-border/50 hover:bg-card/50 transition-colors cursor-pointer"
+                className="border-b border-border/70 hover:bg-secondary/35 transition-colors cursor-pointer"
               >
                 <td className="px-6 py-4">
                   <Badge variant="outline" className="font-mono text-xs">
                     {req.httpMethod}
                   </Badge>
                 </td>
-                <td className="px-6 py-4 text-sm font-mono text-muted-foreground">
+                <td className="px-6 py-4 text-sm font-mono text-foreground">
                   {req.httpTarget}
                 </td>
                 <td className="px-6 py-4">

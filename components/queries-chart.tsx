@@ -55,14 +55,14 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="bg-card border-border p-6">
+      <Card className="bg-card/95 border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Query Volume by Type</h3>
 
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={formattedQueryVolumeByHours}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="interval" stroke="rgba(255,255,255,0.5)" tickFormatter={formatChartTick} minTickGap={36} />
-            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+            <XAxis dataKey="interval" stroke="rgba(203,213,225,0.78)" tickFormatter={formatChartTick} minTickGap={36} />
+            <YAxis stroke="rgba(203,213,225,0.78)" />
             <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Bar dataKey="selects" stackId="a" fill="#8b5cf6" />
@@ -73,13 +73,13 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card border-border p-6">
+      <Card className="bg-card/95 border-border p-6">
         <h3 className="text-lg font-semibold mb-4">Response Time Percentiles</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={formattedAvgQueryTimeByHour}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-            <XAxis dataKey="intervalHour" stroke="rgba(255,255,255,0.5)" tickFormatter={formatChartTick} minTickGap={36} />
-            <YAxis stroke="rgba(255,255,255,0.5)" />
+            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+            <XAxis dataKey="intervalHour" stroke="rgba(203,213,225,0.78)" tickFormatter={formatChartTick} minTickGap={36} />
+            <YAxis stroke="rgba(203,213,225,0.78)" />
             <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
             <Legend />
             <Line type="monotone" dataKey="avgMs" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Average" />

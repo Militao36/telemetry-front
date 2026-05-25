@@ -22,7 +22,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border/70 bg-card/80 px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="page-header">
         <div className="flex items-center gap-4 mb-4">
           <Button variant="ghost" size="sm" className="gap-2">
             <ArrowLeft size={18} />
@@ -72,7 +72,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                   { label: "Avg Response", value: "145ms", change: "+2%" },
                   { label: "Uptime", value: "99.99%", change: "+0.01%" },
                 ].map((stat) => (
-                  <Card key={stat.label} className="bg-card border-border p-4">
+                  <Card key={stat.label} className="bg-card/95 border-border p-4">
                     <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-bold">{stat.value}</span>
@@ -84,7 +84,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
 
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Card className="bg-card border-border p-6">
+                <Card className="bg-card/95 border-border p-6">
                   <h3 className="text-lg font-semibold mb-4">Request Volume</h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <AreaChart data={projectData}>
@@ -94,18 +94,18 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                           <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                      <XAxis dataKey="time" stroke="rgba(255,255,255,0.5)" />
-                      <YAxis stroke="rgba(255,255,255,0.5)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
+                      <XAxis dataKey="time" stroke="rgba(203,213,225,0.78)" />
+                      <YAxis stroke="rgba(203,213,225,0.78)" />
                       <Tooltip
-                        contentStyle={{ backgroundColor: "#1e1e2e", border: "1px solid rgba(255,255,255,0.1)" }}
+                        contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }}
                       />
                       <Area type="monotone" dataKey="requests" stroke="#8b5cf6" fill="url(#projectGradient)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </Card>
 
-                <Card className="bg-card border-border p-6">
+                <Card className="bg-card/95 border-border p-6">
                   <h3 className="text-lg font-semibold mb-4">API Endpoints</h3>
                   <div className="space-y-3">
                     {[
@@ -116,9 +116,9 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                     ].map((api) => (
                       <div
                         key={api.endpoint}
-                        className="flex items-center justify-between p-3 bg-card/50 rounded-lg border border-border"
+                          className="flex items-center justify-between p-3 bg-secondary/45 rounded-lg border border-border"
                       >
-                        <span className="font-mono text-sm text-muted-foreground">{api.endpoint}</span>
+                        <span className="font-mono text-sm text-foreground">{api.endpoint}</span>
                         <span className="font-bold text-primary">{api.requests}</span>
                       </div>
                     ))}
@@ -129,7 +129,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
           )}
 
           {activeTab === "settings" && (
-            <Card className="bg-card border-border p-6">
+            <Card className="bg-card/95 border-border p-6">
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-semibold mb-2 block">Project Name</label>
@@ -166,7 +166,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                 { name: "Email Alerts", status: "pending", icon: "📧" },
                 { name: "Webhooks", status: "available", icon: "🔗" },
               ].map((integration) => (
-                <Card key={integration.name} className="bg-card border-border p-4">
+                <Card key={integration.name} className="bg-card/95 border-border p-4">
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="font-semibold">{integration.name}</p>

@@ -60,7 +60,7 @@ export function NewProjectView() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-background">
       {/* Header */}
-      <div className="border-b border-border/70 bg-card/80 px-4 sm:px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="page-header">
         <Link href="/projects">
           <Button variant="ghost" className="gap-2">
             <ArrowLeft size={18} />
@@ -93,7 +93,7 @@ export function NewProjectView() {
                   placeholder="My Awesome App"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="bg-card border-border text-foreground"
+                  className="text-foreground"
                 />
                 <p className="text-xs text-muted-foreground mt-1">Choose a memorable name for your project</p>
               </div>
@@ -105,7 +105,7 @@ export function NewProjectView() {
                   placeholder="Describe what this project does..."
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  className="w-full rounded-md border border-input bg-input px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-sm shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   rows={4}
                 />
                 <p className="text-xs text-muted-foreground mt-1">Optional but helpful for team members</p>
@@ -117,7 +117,7 @@ export function NewProjectView() {
                   name="enviroment"
                   value={formData.enviroment}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full rounded-md border border-input bg-input px-3 py-2 text-foreground shadow-sm shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="production">Production</option>
                   <option value="staging">Staging</option>
@@ -131,7 +131,7 @@ export function NewProjectView() {
                   name="languageOrFramework"
                   value={formData.languageOrFramework}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full rounded-md border border-input bg-input px-3 py-2 text-foreground shadow-sm shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="nodejs">Node.js</option>
                   <option value="python">Python</option>
@@ -150,7 +150,7 @@ export function NewProjectView() {
                   placeholder="Enter your API token..."
                   value={formData.token}
                   onChange={handleInputChange}
-                  className="w-full px-3 py-2 bg-card border border-border rounded-md text-foreground placeholder-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+                  className="w-full rounded-md border border-input bg-input px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-sm shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
                   rows={4}
                 />
               </div>

@@ -9,7 +9,7 @@ import { Plus } from "lucide-react"
 export function ProjectsView() {
   return (
     <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="border-b border-border/70 bg-card/80 px-4 sm:px-6 py-4 shadow-lg shadow-black/10 backdrop-blur-xl">
+      <div className="page-header">
         <div className="flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
           <div className="w-full sm:w-auto">
             <h1 className="text-2xl font-bold">Projects</h1>
