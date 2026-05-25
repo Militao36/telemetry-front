@@ -6,7 +6,8 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Check } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { ArrowLeft, Plus, X } from "lucide-react"
 import { useSearchParams } from "next/navigation"
 import { api } from "@/api/api"
 import { toast } from "react-toastify"
@@ -20,7 +21,9 @@ export function NewProjectView() {
     enviroment: "production",
     languageOrFramework: "nodejs",
     token: "",
+    redactionFields: [] as string[],
   })
+  const [redactionField, setRedactionField] = useState("")
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -40,6 +43,37 @@ export function NewProjectView() {
     }
   }
 
+  const addRedactionField = () => {
+    const field = redactionField.trim().toLowerCase()
+
+    if (!field) {
+      return
+    }
+
+    if (formData.redactionFields.includes(field)) {
+      setRedactionField("")
+      return
+    }
+
+    if (formData.redactionFields.length >= 100) {
+      toast.warn("You can add up to 100 custom redaction fields.")
+      return
+    }
+
+    setFormData((prev) => ({
+      ...prev,
+      redactionFields: [...prev.redactionFields, field],
+    }))
+    setRedactionField("")
+  }
+
+  const removeRedactionField = (field: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      redactionFields: prev.redactionFields.filter((item) => item !== field),
+    }))
+  }
+
   useEffect(() => {
     const id = params.get('id')
     if (id) {
@@ -52,6 +86,7 @@ export function NewProjectView() {
           enviroment: response.data.enviroment,
           languageOrFramework: response.data.languageOrFramework,
           token: response.data.token,
+          redactionFields: response.data.redactionFields || [],
         })
       })()
     }
@@ -153,6 +188,52 @@ export function NewProjectView() {
                   className="w-full rounded-md border border-border bg-card px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-none focus:outline-none focus:ring-2 focus:ring-primary dark:bg-input resize-none"
                   rows={4}
                 />
+              </div>
+
+              <div className="rounded-lg border border-border bg-card/60 p-4 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-2">Custom Redaction Fields</label>
+                  <p className="text-xs text-muted-foreground">
+                    Default sensitive fields like password, token, authorization, cookies, API keys and card data are always redacted. Add only project-specific fields here.
+                  </p>
+                </div>
+
+                <div className="flex gap-2">
+                  <Input
+                    value={redactionField}
+                    onChange={(event) => setRedactionField(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter") {
+                        event.preventDefault()
+                        addRedactionField()
+                      }
+                    }}
+                    placeholder="customer_document"
+                    className="text-foreground"
+                  />
+                  <Button type="button" variant="outline" onClick={addRedactionField} className="gap-2 bg-transparent">
+                    <Plus size={16} />
+                    Add
+                  </Button>
+                </div>
+
+                {formData.redactionFields.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {formData.redactionFields.map((field) => (
+                      <Badge key={field} variant="outline" className="gap-1 py-1">
+                        {field}
+                        <button
+                          type="button"
+                          onClick={() => removeRedactionField(field)}
+                          className="ml-1 rounded-sm text-muted-foreground hover:text-foreground"
+                          aria-label={`Remove ${field}`}
+                        >
+                          <X size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <Button onClick={() => handleCreateProject()} className="cursor-pointer w-full bg-primary hover:bg-primary/90 h-11">

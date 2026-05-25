@@ -14,6 +14,7 @@ export function ProjectsGrid() {
     name: string
     enviroment: string
     languageOrFramework: string
+    redactionFields?: string[]
   }>>([])
 
   async function listProjects() {
@@ -46,6 +47,12 @@ export function ProjectsGrid() {
               <span>{project.enviroment}</span>
               <span>{project.languageOrFramework}</span>
             </div>
+
+            {!!project.redactionFields?.length && (
+              <Badge variant="outline" className="bg-secondary/50 text-xs">
+                Redaction: {project.redactionFields.length} custom fields
+              </Badge>
+            )}
 
             <Link href={`/projects/new?id=${project.id}`} className="w-full sm:w-auto">
               <Button variant="outline" className="cursor-pointer w-full justify-between gap-2 bg-transparent" size="sm">
