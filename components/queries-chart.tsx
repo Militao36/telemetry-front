@@ -60,10 +60,10 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
 
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={formattedQueryVolumeByHours}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-            <XAxis dataKey="interval" stroke="rgba(203,213,225,0.78)" tickFormatter={formatChartTick} minTickGap={36} />
-            <YAxis stroke="rgba(203,213,225,0.78)" />
-            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+            <XAxis dataKey="interval" stroke="var(--chart-axis)" tickFormatter={formatChartTick} minTickGap={36} />
+            <YAxis stroke="var(--chart-axis)" />
+            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", border: "1px solid var(--chart-tooltip-border)", color: "var(--chart-tooltip-text)" }} />
             <Legend />
             <Bar dataKey="selects" stackId="a" fill="#8b5cf6" />
             <Bar dataKey="inserts" stackId="a" fill="#3b82f6" />
@@ -77,10 +77,10 @@ export function QueriesChart({ queryVolumeByHours, avgQueryTimeByHour }: { query
         <h3 className="text-lg font-semibold mb-4">Response Time Percentiles</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={formattedAvgQueryTimeByHour}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-            <XAxis dataKey="intervalHour" stroke="rgba(203,213,225,0.78)" tickFormatter={formatChartTick} minTickGap={36} />
-            <YAxis stroke="rgba(203,213,225,0.78)" />
-            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+            <XAxis dataKey="intervalHour" stroke="var(--chart-axis)" tickFormatter={formatChartTick} minTickGap={36} />
+            <YAxis stroke="var(--chart-axis)" />
+            <Tooltip labelFormatter={formatChartTooltipLabel} contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", border: "1px solid var(--chart-tooltip-border)", color: "var(--chart-tooltip-text)" }} />
             <Legend />
             <Line type="monotone" dataKey="avgMs" stroke="#8b5cf6" strokeWidth={2} dot={false} name="Average" />
             <Line type="monotone" dataKey="p95Ms" stroke="#fbbf24" strokeWidth={2} dot={false} name="P95" />

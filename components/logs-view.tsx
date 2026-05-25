@@ -155,7 +155,7 @@ export function LogsView() {
               </div>
 
               <div className="flex items-end lg:col-span-3 lg:justify-end">
-                <Button size="sm" variant="ghost" onClick={clearFilters} className="w-full gap-2 text-primary hover:text-primary-foreground lg:w-auto">
+                <Button size="sm" variant="ghost" onClick={clearFilters} className="w-full gap-2 text-primary hover:text-primary lg:w-auto dark:hover:text-primary-foreground">
                   <RotateCcw className="h-4 w-4" />
                   Limpar filtros
                 </Button>

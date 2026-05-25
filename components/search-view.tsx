@@ -337,7 +337,7 @@ export function SearchView() {
               items.map((item) => (
                 <Card
                   key={`${item.traceId}-${item.spanId}`}
-                  className="border-border/50 transition-all hover:border-border hover:shadow-sm"
+                  className="border-border/50 transition-all hover:border-border hover:shadow-none"
                 >
                   <CardContent className="p-4">
                     <button
@@ -627,19 +627,19 @@ export function SearchView() {
 
 function getStatusColor(status?: number) {
   if (!status) return "bg-muted text-muted-foreground"
-  if (status >= 200 && status < 300) return "bg-emerald-500/15 text-emerald-200"
-  if (status >= 400 && status < 500) return "bg-amber-500/15 text-amber-200"
-  if (status >= 500) return "bg-red-500/15 text-red-200"
+  if (status >= 200 && status < 300) return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-200"
+  if (status >= 400 && status < 500) return "bg-amber-500/15 text-amber-700 dark:text-amber-200"
+  if (status >= 500) return "bg-red-500/15 text-red-700 dark:text-red-200"
   return "bg-muted text-muted-foreground"
 }
 
 function getLogLevelColor(level?: string) {
   const normalized = (level || "INFO").toUpperCase()
-  if (normalized === "ERROR") return "bg-red-500/15 text-red-200"
-  if (normalized === "WARNING") return "bg-amber-500/15 text-amber-200"
-  if (normalized === "CRITICAL") return "bg-rose-500/15 text-rose-200"
-  if (normalized === "DEBUG") return "bg-zinc-500/15 text-zinc-200"
-  return "bg-blue-500/15 text-blue-200"
+  if (normalized === "ERROR") return "bg-red-500/15 text-red-700 dark:text-red-200"
+  if (normalized === "WARNING") return "bg-amber-500/15 text-amber-700 dark:text-amber-200"
+  if (normalized === "CRITICAL") return "bg-rose-500/15 text-rose-700 dark:text-rose-200"
+  if (normalized === "DEBUG") return "bg-zinc-500/15 text-zinc-700 dark:text-zinc-200"
+  return "bg-blue-500/15 text-blue-700 dark:text-blue-200"
 }
 
 function formatWhen(value: string) {

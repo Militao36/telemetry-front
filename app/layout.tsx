@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { ToastContainer } from 'react-toastify';
+import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 
 const _geist = Geist({ subsets: ["latin"] });
@@ -103,7 +104,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <meta name="description" content="UnTelemetry é uma plataforma proprietária de observabilidade com suporte total ao OpenTelemetry." />
@@ -141,9 +142,11 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body className={`font-sans antialiased`}>
-        <ToastContainer />
-        {children}
-        <Analytics />
+        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+          <ToastContainer />
+          {children}
+          <Analytics />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -133,7 +133,7 @@ export function ErrorsList({ severity }: { severity: string }) {
                 <div className="mt-4 pt-4 border-t border-border/50 space-y-3">
                   <div>
                     <p className="text-xs text-muted-foreground mb-1">Stack Trace</p>
-                    <div className="bg-secondary/45 p-3 rounded border border-border text-xs font-mono text-emerald-100/90 overflow-x-auto max-h-32">
+                    <div className="bg-secondary/45 p-3 rounded border border-border text-xs font-mono text-slate-700 dark:text-emerald-100/90 overflow-x-auto max-h-32">
                       {`at PaymentService.processCharge (payments.ts:125:14)
 at ChainablePromiseAll (bluebird.js:1445:32)
 at handler.middleware (middleware.ts:45:28)

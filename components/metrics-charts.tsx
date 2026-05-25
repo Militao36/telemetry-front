@@ -46,22 +46,22 @@ export function MetricsCharts({
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(148,163,184,0.22)"
+              stroke="var(--chart-grid)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(203,213,225,0.78)"
+              stroke="var(--chart-axis)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="var(--chart-axis)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#111827",
-                border: "1px solid rgba(148,163,184,0.22)",
-                color: "#e5e7eb",
+                backgroundColor: "var(--chart-tooltip-bg)",
+                border: "1px solid var(--chart-tooltip-border)",
+                color: "var(--chart-tooltip-text)",
               }}
             />
             <Area
@@ -83,22 +83,22 @@ export function MetricsCharts({
           <LineChart data={formatResponseTimeData(requestsData)}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(148,163,184,0.22)"
+              stroke="var(--chart-grid)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(203,213,225,0.78)"
+              stroke="var(--chart-axis)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="var(--chart-axis)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#111827",
-                border: "1px solid rgba(148,163,184,0.22)",
-                color: "#e5e7eb",
+                backgroundColor: "var(--chart-tooltip-bg)",
+                border: "1px solid var(--chart-tooltip-border)",
+                color: "var(--chart-tooltip-text)",
               }}
             />
             <Line
@@ -126,22 +126,22 @@ export function MetricsCharts({
             </defs>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(148,163,184,0.22)"
+              stroke="var(--chart-grid)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(203,213,225,0.78)"
+              stroke="var(--chart-axis)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="var(--chart-axis)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#111827",
-                border: "1px solid rgba(148,163,184,0.22)",
-                color: "#e5e7eb",
+                backgroundColor: "var(--chart-tooltip-bg)",
+                border: "1px solid var(--chart-tooltip-border)",
+                color: "var(--chart-tooltip-text)",
               }}
             />
             <Area
@@ -163,22 +163,22 @@ export function MetricsCharts({
           <LineChart data={formatQueryTimeData(queriesData)}>
             <CartesianGrid
               strokeDasharray="3 3"
-              stroke="rgba(148,163,184,0.22)"
+              stroke="var(--chart-grid)"
             />
             <XAxis
               dataKey="time"
-              stroke="rgba(203,213,225,0.78)"
+              stroke="var(--chart-axis)"
               tick={{ fontSize: 12 }}
               tickFormatter={formatChartTick}
               minTickGap={36}
             />
-            <YAxis stroke="rgba(203,213,225,0.78)" tick={{ fontSize: 12 }} />
+            <YAxis stroke="var(--chart-axis)" tick={{ fontSize: 12 }} />
             <Tooltip
               labelFormatter={formatChartTooltipLabel}
               contentStyle={{
-                backgroundColor: "#111827",
-                border: "1px solid rgba(148,163,184,0.22)",
-                color: "#e5e7eb",
+                backgroundColor: "var(--chart-tooltip-bg)",
+                border: "1px solid var(--chart-tooltip-border)",
+                color: "var(--chart-tooltip-text)",
               }}
             />
             <Line

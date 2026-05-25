@@ -94,11 +94,11 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                           <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-                      <XAxis dataKey="time" stroke="rgba(203,213,225,0.78)" />
-                      <YAxis stroke="rgba(203,213,225,0.78)" />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+                      <XAxis dataKey="time" stroke="var(--chart-axis)" />
+                      <YAxis stroke="var(--chart-axis)" />
                       <Tooltip
-                        contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }}
+                        contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", border: "1px solid var(--chart-tooltip-border)", color: "var(--chart-tooltip-text)" }}
                       />
                       <Area type="monotone" dataKey="requests" stroke="#8b5cf6" fill="url(#projectGradient)" />
                     </AreaChart>

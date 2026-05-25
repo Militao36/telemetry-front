@@ -7,6 +7,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SignupModal } from "./company";
 import Image from "next/image";
+import { ThemeToggle } from "./theme-toggle";
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -43,9 +44,9 @@ export function Sidebar() {
       </div>
 
       {/* Sidebar - hidden on mobile, visible on tablet and up */}
-      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar/95 border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex shadow-2xl shadow-black/40 backdrop-blur-xl`}>
+      <div className={`${collapsed ? "w-20" : "w-64"} bg-sidebar/95 border-r border-sidebar-border transition-all duration-300 flex flex-col hidden md:flex shadow-none backdrop-blur-xl dark:shadow-2xl dark:shadow-black/40`}>
         <div className="p-4 border-b border-sidebar-border/90 flex items-center justify-center h-24 px-5">
-          <div className="inline-flex h-14 w-40 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-xl shadow-primary/10 ring-1 ring-white/20">
+          <div className="inline-flex h-14 w-40 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-none ring-1 ring-border dark:shadow-xl dark:shadow-primary/10 dark:ring-white/20">
             <Image src="/logo.png" alt="UnTelemetry Logo" width={120} height={120} className="h-20 w-20 scale-[1.85] object-contain" />
           </div>
         </div>
@@ -55,7 +56,7 @@ export function Sidebar() {
             const isActive = item.href && item.href !== "/login" && pathname.startsWith(item.href);
             const navClassName = `w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${collapsed ? "justify-center" : ""} ${
               isActive
-                ? "bg-gradient-to-r from-primary/95 to-primary/35 text-white shadow-lg shadow-primary/20 ring-1 ring-primary/25"
+                ? "bg-gradient-to-r from-primary/95 to-primary/35 text-white shadow-none ring-1 ring-primary/25 dark:shadow-lg dark:shadow-primary/20"
                 : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             }`;
 
@@ -105,9 +106,12 @@ export function Sidebar() {
         </nav>
 
         <div className="p-4 border-t border-sidebar-border/90">
+          <div className="mb-2">
+            <ThemeToggle collapsed={collapsed} />
+          </div>
           <select
             name="enviroment"
-            className="w-full rounded-lg border border-sidebar-border bg-card/90 px-3 py-2 text-foreground shadow-sm shadow-black/20 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full rounded-lg border border-sidebar-border bg-card/90 px-3 py-2 text-foreground shadow-none focus:outline-none focus:ring-2 focus:ring-primary"
             onChange={(e) => {
               if (e.target.value === "-1") return;
               localStorage.setItem('tokenSelected', JSON.stringify(tokens.find(token => token.project.id === e.target.value)));
@@ -129,7 +133,7 @@ export function Sidebar() {
       {/* Mobile drawer - appears on mobile when menu is open */}
       {mobileOpen && (
         <div className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm" onClick={() => setMobileOpen(false)}>
-          <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col shadow-2xl shadow-black/40" onClick={(e) => e.stopPropagation()}>
+          <div className="w-64 bg-sidebar border-r border-sidebar-border h-screen flex flex-col shadow-none dark:shadow-2xl dark:shadow-black/40" onClick={(e) => e.stopPropagation()}>
             <div className="p-4 border-b border-sidebar-border flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground text-sm font-bold">ML</div>
@@ -166,7 +170,7 @@ export function Sidebar() {
                     href={item.href as string}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all ${
                       isActive
-                        ? "bg-gradient-to-r from-primary/95 to-primary/35 text-white shadow-lg shadow-primary/20"
+                        ? "bg-gradient-to-r from-primary/95 to-primary/35 text-white shadow-none dark:shadow-lg dark:shadow-primary/20"
                         : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     }`}
                     onClick={() => setMobileOpen(false)}
@@ -177,6 +181,9 @@ export function Sidebar() {
                 )
               })}
             </nav>
+            <div className="p-4 border-t border-sidebar-border/90">
+              <ThemeToggle />
+            </div>
           </div>
         </div>
       )}

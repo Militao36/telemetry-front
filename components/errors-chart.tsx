@@ -41,10 +41,10 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
         <h3 className="text-lg font-semibold mb-4">Errors by Severity</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={errorData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-            <XAxis dataKey="time" stroke="rgba(203,213,225,0.78)" />
-            <YAxis stroke="rgba(203,213,225,0.78)" />
-            <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+            <XAxis dataKey="time" stroke="var(--chart-axis)" />
+            <YAxis stroke="var(--chart-axis)" />
+            <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", border: "1px solid var(--chart-tooltip-border)", color: "var(--chart-tooltip-text)" }} />
             <Legend />
             <Area type="monotone" dataKey="critical" stackId="1" fill="#ef4444" />
             <Area type="monotone" dataKey="high" stackId="1" fill="#f97316" />
@@ -58,10 +58,10 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
         <h3 className="text-lg font-semibold mb-4">Resolution Trend</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={resolutionData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(148,163,184,0.22)" />
-            <XAxis dataKey="time" stroke="rgba(203,213,225,0.78)" />
-            <YAxis stroke="rgba(203,213,225,0.78)" />
-            <Tooltip contentStyle={{ backgroundColor: "#111827", border: "1px solid rgba(148,163,184,0.22)", color: "#e5e7eb" }} />
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--chart-grid)" />
+            <XAxis dataKey="time" stroke="var(--chart-axis)" />
+            <YAxis stroke="var(--chart-axis)" />
+            <Tooltip contentStyle={{ backgroundColor: "var(--chart-tooltip-bg)", border: "1px solid var(--chart-tooltip-border)", color: "var(--chart-tooltip-text)" }} />
             <Legend />
             <Line type="monotone" dataKey="resolved" stroke="#22c55e" strokeWidth={2} dot={false} />
             <Line type="monotone" dataKey="unresolved" stroke="#ef4444" strokeWidth={2} dot={false} />

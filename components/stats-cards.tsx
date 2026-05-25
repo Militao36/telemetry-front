@@ -103,7 +103,7 @@ export function StatsCards({
                 </span>
               </div>
             </div>
-            <div className={`${stat.color} shrink-0 rounded-lg border border-border bg-secondary/50 p-2 shadow-sm shadow-black/20`}>
+            <div className={`${stat.color} shrink-0 rounded-lg border border-border bg-secondary/50 p-2 shadow-none`}>
               <stat.icon size={18} className="sm:size-6" />
             </div>
           </div>

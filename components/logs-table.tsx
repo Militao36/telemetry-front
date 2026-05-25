@@ -51,11 +51,11 @@ export function LogsTable({
   const getLevelColor = (level?: Log["severityText"]) => {
     const normalized = (level || "INFO").toUpperCase()
     const colors = {
-      INFO: "bg-blue-500/25 text-blue-100 border-blue-400/70 shadow-blue-500/15",
-      WARNING: "bg-amber-500/25 text-amber-100 border-amber-400/70 shadow-amber-500/15",
-      ERROR: "bg-red-500/25 text-red-100 border-red-400/70 shadow-red-500/15",
-      CRITICAL: "bg-rose-500/25 text-rose-100 border-rose-400/70 shadow-rose-500/15",
-      DEBUG: "bg-slate-500/25 text-slate-100 border-slate-400/70 shadow-slate-500/15",
+      INFO: "bg-blue-500/15 text-blue-700 border-blue-400/70 dark:bg-blue-500/25 dark:text-blue-100",
+      WARNING: "bg-amber-500/15 text-amber-700 border-amber-400/70 dark:bg-amber-500/25 dark:text-amber-100",
+      ERROR: "bg-red-500/15 text-red-700 border-red-400/70 dark:bg-red-500/25 dark:text-red-100",
+      CRITICAL: "bg-rose-500/15 text-rose-700 border-rose-400/70 dark:bg-rose-500/25 dark:text-rose-100",
+      DEBUG: "bg-slate-500/25 text-slate-700 border-slate-400/70 dark:text-slate-100",
     }
     return colors[normalized as keyof typeof colors] ?? colors.INFO
   }
@@ -177,7 +177,7 @@ export function LogsTable({
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="mb-2 flex flex-wrap items-center gap-2.5">
-                    <Badge className={`${getLevelColor(log.severityText)} shrink-0 border text-[10px] uppercase shadow-lg`}>
+                    <Badge className={`${getLevelColor(log.severityText)} shrink-0 border text-[10px] uppercase shadow-none`}>
                       {(log.severityText || "INFO").toUpperCase()}
                     </Badge>
                     <span className="text-xs text-muted-foreground">{formatTimestamp(log.timestamp)}</span>
@@ -291,7 +291,7 @@ export function LogsTable({
                           </Button>
                         )}
                       </div>
-                       <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border bg-secondary/45 p-3 font-mono text-xs text-emerald-100/90">
+                       <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border bg-secondary/45 p-3 font-mono text-xs text-slate-700 dark:text-emerald-100/90">
                         {formatOTelValue(log.attributes)}
                       </pre>
                     </div>
@@ -311,7 +311,7 @@ export function LogsTable({
                           </Button>
                         )}
                       </div>
-                       <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border bg-secondary/45 p-3 font-mono text-xs text-emerald-100/90">
+                       <pre className="mt-2 max-h-52 overflow-auto rounded-md border border-border bg-secondary/45 p-3 font-mono text-xs text-slate-700 dark:text-emerald-100/90">
                         {formatOTelValue(log.body)}
                       </pre>
                     </div>
