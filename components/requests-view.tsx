@@ -24,7 +24,8 @@ import {
   formatResponseTimeData,
 } from "@/lib/utils";
 import { DateTime } from "luxon";
-import { convertToHours, DASHBOARD_TIME_RANGES } from "@/utils";
+import { convertToHours } from "@/utils";
+import { DASHBOARD_TIME_PRESETS, TimeRangeFilter, TimeRangePreset, getPresetLabel } from "./time-range-filter";
 
 export function RequestsView() {
   const [methodFilter, setMethodFilter] = useState("all");
@@ -39,6 +40,10 @@ export function RequestsView() {
   const [requestsSlowest, setRequestsSlowest] = useState<IRequest[]>([]);
 
   const hour = convertToHours(hourFilter).toString();
+
+  function applyTimePreset(preset: TimeRangePreset) {
+    setHourFilter(preset.value);
+  }
 
   async function fetchRequests(): Promise<IRequest[]> {
     const response = await api.get(
@@ -92,37 +97,30 @@ export function RequestsView() {
               <Card className="bg-card/95 border-border p-4">
                 <div className="space-y-4">
                   <div className=" flex gap-2 justify-between">
-                    <div className="flex gap-2 flex-wrap">
-                      {["all", "GET", "POST", "PATCH", "PUT", "DELETE"].map(
-                        (method) => (
-                          <button
-                            key={method}
-                            onClick={() => setMethodFilter(method)}
-                            className={`filter-chip ${
-                              methodFilter === method
-                                ? "filter-chip-active"
-                                : ""
-                            }`}
-                          >
-                            {method === "all" ? "All Methods" : `${method}`}
-                          </button>
-                        ),
-                      )}
+                    <div>
+                      <div className="flex gap-2 flex-wrap">
+                        {["all", "GET", "POST", "PATCH", "PUT", "DELETE"].map(
+                          (method) => (
+                            <button
+                              key={method}
+                              onClick={() => setMethodFilter(method)}
+                              className={`filter-chip ${methodFilter === method
+                                  ? "filter-chip-active"
+                                  : ""
+                                }`}
+                            >
+                              {method === "all" ? "All Methods" : `${method}`}
+                            </button>
+                          ),
+                        )}
+                      </div>
                     </div>
-                    <div className="flex gap-2 flex-wrap">
-                      {DASHBOARD_TIME_RANGES.map((hour) => (
-                        <button
-                          key={hour}
-                          onClick={() => setHourFilter(hour)}
-                          className={`filter-chip ${
-                            hourFilter === hour
-                              ? "filter-chip-active"
-                              : ""
-                          }`}
-                        >
-                          {hour}
-                        </button>
-                      ))}
+                    <div className="w-64">
+                      <TimeRangeFilter
+                        selectedLabel={getPresetLabel(DASHBOARD_TIME_PRESETS, hourFilter)}
+                        presets={DASHBOARD_TIME_PRESETS}
+                        onPresetSelect={applyTimePreset}
+                      />
                     </div>
                   </div>
                 </div>

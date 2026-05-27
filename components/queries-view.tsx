@@ -9,8 +9,9 @@ import { QueriesChart } from "./queries-chart";
 import { QueriesTable } from "./queries-table";
 
 import { RefreshCw } from "lucide-react";
-import { convertToHours, DASHBOARD_TIME_RANGES } from "@/utils";
+import { convertToHours } from "@/utils";
 import { formatMsToMsOrSeconds } from "@/lib/utils";
+import { DASHBOARD_TIME_PRESETS, TimeRangeFilter, TimeRangePreset, getPresetLabel } from "./time-range-filter";
 
 export interface DefaultSlowestQuery {
   traceId: string;
@@ -76,6 +77,10 @@ export function QueriesView() {
     setQueries(data);
   };
 
+  function applyTimePreset(preset: TimeRangePreset) {
+    setTimeRange(preset.value);
+  }
+
   useEffect(() => {
     list();
   }, [queryType, timeRange]);
@@ -122,22 +127,13 @@ export function QueriesView() {
                 </div>
               </div>
 
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">Time Range</p>
-                <div className="flex gap-2 flex-wrap">
-                  {DASHBOARD_TIME_RANGES.map((range) => (
-                    <button
-                      key={range}
-                      onClick={() => setTimeRange(range)}
-                      className={`filter-chip ${timeRange === range
-                        ? "filter-chip-active"
-                        : ""
-                        }`}
-                    >
-                      {range}
-                    </button>
-                  ))}
-                </div>
+              <div className="w-64">
+                <TimeRangeFilter
+                  label="Time Range"
+                  selectedLabel={getPresetLabel(DASHBOARD_TIME_PRESETS, timeRange)}
+                  presets={DASHBOARD_TIME_PRESETS}
+                  onPresetSelect={applyTimePreset}
+                />
               </div>
             </div>
           </Card>

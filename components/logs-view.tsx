@@ -6,7 +6,8 @@ import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { LogsTable } from "./logs-table"
 import { LogsFilter } from "./logs-filter"
-import { CalendarDays, Filter, RotateCcw, Search } from "lucide-react"
+import { Filter, RotateCcw, Search } from "lucide-react"
+import { LOG_TIME_PRESETS, TimeRangeFilter, TimeRangePreset, getPresetMinutes, toDateTimeLocalValue } from "./time-range-filter"
 
 export type LogsFilters = {
   message: string
@@ -18,6 +19,7 @@ export type LogsFilters = {
 
 export function LogsView() {
   const [selectedLevel, setSelectedLevel] = useState("ALL")
+  const [selectedTimeLabel, setSelectedTimeLabel] = useState("Ultimas 3 horas")
   const [filters, setFilters] = useState<LogsFilters>({
     message: "",
     searchMode: "all",
@@ -34,6 +36,29 @@ export function LogsView() {
     }
   }
 
+  function applyTimePreset(preset: TimeRangePreset) {
+    const minutes = getPresetMinutes(preset.value)
+    setSelectedTimeLabel(preset.label)
+
+    if (preset.value === "3h") {
+      setFilters((prev) => ({ ...prev, startTime: "", endTime: "" }))
+      return
+    }
+
+    const end = new Date()
+    const start = new Date(end.getTime() - minutes * 60_000)
+    setFilters((prev) => ({
+      ...prev,
+      startTime: toDateTimeLocalValue(start),
+      endTime: toDateTimeLocalValue(end),
+    }))
+  }
+
+  function updateCustomTime(field: "startTime" | "endTime", value: string) {
+    setSelectedTimeLabel("Intervalo customizado")
+    updateFilter(field, value)
+  }
+
   function viewTrace(traceId: string) {
     setFilters((prev) => ({ ...prev, traceId }))
     updateTraceIdInUrl(traceId, true)
@@ -48,6 +73,7 @@ export function LogsView() {
       startTime: "",
       endTime: "",
     })
+    setSelectedTimeLabel("Ultimas 3 horas")
     updateTraceIdInUrl("")
   }
 
@@ -129,29 +155,15 @@ export function LogsView() {
               </div>
 
               <div className="lg:col-span-3">
-                <label className="mb-2 block text-sm font-semibold text-foreground">Data inicial</label>
-                <div className="relative">
-                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    type="date"
-                    value={filters.startTime}
-                    onChange={(e) => updateFilter("startTime", e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
-              </div>
-
-              <div className="lg:col-span-3">
-                <label className="mb-2 block text-sm font-semibold text-foreground">Data final</label>
-                <div className="relative">
-                  <CalendarDays className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    type="date"
-                    value={filters.endTime}
-                    onChange={(e) => updateFilter("endTime", e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
+                <TimeRangeFilter
+                  selectedLabel={selectedTimeLabel}
+                  presets={LOG_TIME_PRESETS}
+                  customStart={filters.startTime}
+                  customEnd={filters.endTime}
+                  onPresetSelect={applyTimePreset}
+                  onCustomStartChange={(value) => updateCustomTime("startTime", value)}
+                  onCustomEndChange={(value) => updateCustomTime("endTime", value)}
+                />
               </div>
 
               <div className="flex items-end lg:col-span-3 lg:justify-end">

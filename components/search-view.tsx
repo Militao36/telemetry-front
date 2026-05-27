@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Activity, AlertTriangle, ChevronRight, Clock, Copy, Database, Loader2, Search } from "lucide-react"
 import { formatOTelValue } from "@/lib/otel-format"
 import { toast } from "react-toastify"
+import { LOG_TIME_PRESETS, TimeRangeFilter, TimeRangePreset, getPresetMinutes, toDateTimeLocalValue } from "./time-range-filter"
 
 type DataType = "requests" | "queries"
 type HttpMethod = "ALL" | "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
@@ -57,6 +58,11 @@ type LinkedLogItem = {
   exceptionStacktrace?: string
 }
 
+type LogsResponse = {
+  data?: LinkedLogItem[]
+  nextCursor?: string | null
+}
+
 function isRequest(item: SearchItem): item is RequestItem {
   return "httpMethod" in item
 }
@@ -70,6 +76,7 @@ export function SearchView() {
   const [tableName, setTableName] = useState("")
   const [startTimeFrom, setStartTimeFrom] = useState("")
   const [startTimeTo, setStartTimeTo] = useState("")
+  const [selectedTimeLabel, setSelectedTimeLabel] = useState("Ultimas 3 horas")
   const [selectedId, setSelectedId] = useState("")
   const [items, setItems] = useState<SearchItem[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -78,6 +85,8 @@ export function SearchView() {
   const [logsErrorByTraceId, setLogsErrorByTraceId] = useState<Record<string, string>>({})
   const [loadingTraceId, setLoadingTraceId] = useState("")
   const [expandedLinkedLogByTraceId, setExpandedLinkedLogByTraceId] = useState<Record<string, string>>({})
+  const [loadingLinkedLogDetailKey, setLoadingLinkedLogDetailKey] = useState("")
+  const [linkedLogDetailErrors, setLinkedLogDetailErrors] = useState<Record<string, string>>({})
 
   const methods: HttpMethod[] = ["ALL", "GET", "POST", "PUT", "PATCH", "DELETE"]
 
@@ -105,8 +114,8 @@ export function SearchView() {
       params.set("limit", "40")
       params.set("offset", "0")
 
-      if (startTimeFrom) params.set("startTimeFrom", startTimeFrom)
-      if (startTimeTo) params.set("startTimeTo", startTimeTo)
+      if (startTimeFrom) params.set("startTimeFrom", formatDateTimeParam(startTimeFrom))
+      if (startTimeTo) params.set("startTimeTo", formatDateTimeParam(startTimeTo))
 
       const normalizedTerm = debouncedTerm.trim()
       const normalizedTrace = debouncedTrace.trim()
@@ -145,6 +154,33 @@ export function SearchView() {
     setTableName("")
     setStartTimeFrom("")
     setStartTimeTo("")
+    setSelectedTimeLabel("Ultimas 3 horas")
+  }
+
+  function applyTimePreset(preset: TimeRangePreset) {
+    const minutes = getPresetMinutes(preset.value)
+    setSelectedTimeLabel(preset.label)
+
+    if (preset.value === "3h") {
+      setStartTimeFrom("")
+      setStartTimeTo("")
+      return
+    }
+
+    const end = new Date()
+    const start = new Date(end.getTime() - minutes * 60_000)
+    setStartTimeFrom(toDateTimeLocalValue(start))
+    setStartTimeTo(toDateTimeLocalValue(end))
+  }
+
+  function updateCustomTime(field: "start" | "end", value: string) {
+    setSelectedTimeLabel("Intervalo customizado")
+
+    if (field === "start") {
+      setStartTimeFrom(value)
+    } else {
+      setStartTimeTo(value)
+    }
   }
 
   async function fetchLinkedLogs(traceIdValue: string) {
@@ -155,9 +191,10 @@ export function SearchView() {
 
     try {
       const response = await api.get(
-        `/logs?traceId=${encodeURIComponent(traceIdValue)}&severityText=ALL&limit=20&offset=0`
+        `/logs?traceId=${encodeURIComponent(traceIdValue)}&severityText=ALL&limit=20`
       )
-      setLogsByTraceId((prev) => ({ ...prev, [traceIdValue]: (response.data || []) as LinkedLogItem[] }))
+      const payload = normalizeLogsResponse(response.data)
+      setLogsByTraceId((prev) => ({ ...prev, [traceIdValue]: payload.data }))
     } catch {
       setLogsErrorByTraceId((prev) => ({
         ...prev,
@@ -165,6 +202,52 @@ export function SearchView() {
       }))
     } finally {
       setLoadingTraceId("")
+    }
+  }
+
+  function getLinkedLogKey(log: LinkedLogItem, idx?: number) {
+    return `${log.timestamp || "no-time"}-${log.traceId || "no-trace"}-${log.spanId || "no-span"}-${idx ?? ""}`
+  }
+
+  async function fetchLinkedLogDetail(traceIdValue: string, log: LinkedLogItem, key: string) {
+    if (!log.traceId || !log.spanId || log.attributes !== undefined || loadingLinkedLogDetailKey === key) return
+
+    setLoadingLinkedLogDetailKey(key)
+    setLinkedLogDetailErrors((prev) => ({ ...prev, [key]: "" }))
+
+    try {
+      const params = new URLSearchParams()
+      if (log.timestamp) params.set("timestamp", log.timestamp)
+
+      const response = await api.get(`/logs/${encodeURIComponent(log.traceId)}/${encodeURIComponent(log.spanId)}?${params.toString()}`)
+      const detail = response.data as LinkedLogItem
+
+      setLogsByTraceId((prev) => ({
+        ...prev,
+        [traceIdValue]: (prev[traceIdValue] || []).map((item) => (
+          item.traceId === log.traceId && item.spanId === log.spanId && item.timestamp === log.timestamp
+            ? { ...item, ...detail }
+            : item
+        )),
+      }))
+    } catch {
+      setLinkedLogDetailErrors((prev) => ({ ...prev, [key]: "Nao foi possivel carregar os detalhes deste log." }))
+    } finally {
+      setLoadingLinkedLogDetailKey("")
+    }
+  }
+
+  function toggleLinkedLogDetail(traceIdValue: string, log: LinkedLogItem, key: string) {
+    const current = expandedLinkedLogByTraceId[traceIdValue]
+    const nextId = current === key ? "" : key
+
+    setExpandedLinkedLogByTraceId((prev) => ({
+      ...prev,
+      [traceIdValue]: nextId,
+    }))
+
+    if (nextId) {
+      fetchLinkedLogDetail(traceIdValue, log, key)
     }
   }
 
@@ -210,16 +293,19 @@ export function SearchView() {
       </div>
 
       <div className="flex-1 overflow-auto p-5">
-        <Card className="mb-6 border-border/60">
-          <CardContent className="space-y-4 p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-foreground">Filtros</p>
-              <Button variant="ghost" size="sm" onClick={clearFilters}>Limpar</Button>
+        <Card className="mb-6 border-border/60 bg-card/95">
+          <CardContent className="space-y-5 p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">Filtros</p>
+                <p className="mt-1 text-xs text-muted-foreground">Combine periodo, trace e filtros especificos para encontrar requests ou queries.</p>
+              </div>
+              <Button variant="ghost" size="sm" onClick={clearFilters}>Limpar filtros</Button>
             </div>
 
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
-              <div className="lg:col-span-2">
-                <label className="mb-1 block text-xs text-muted-foreground">Tipo</label>
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
+              <div className="xl:col-span-2">
+                <label className="mb-2 block text-sm font-medium text-foreground">Tipo</label>
                 <Select value={dataType} onValueChange={(v) => setDataType(v as DataType)}>
                   <SelectTrigger>
                     <SelectValue />
@@ -231,8 +317,25 @@ export function SearchView() {
                 </Select>
               </div>
 
-              <div className="lg:col-span-5">
-                <label className="mb-1 block text-xs text-muted-foreground">
+              <div className="xl:col-span-3">
+                <TimeRangeFilter
+                  selectedLabel={selectedTimeLabel}
+                  presets={LOG_TIME_PRESETS}
+                  customStart={startTimeFrom}
+                  customEnd={startTimeTo}
+                  onPresetSelect={applyTimePreset}
+                  onCustomStartChange={(value) => updateCustomTime("start", value)}
+                  onCustomEndChange={(value) => updateCustomTime("end", value)}
+                />
+              </div>
+
+              <div className="xl:col-span-7">
+                <label className="mb-2 block text-sm font-medium text-foreground">Trace ID</label>
+                <Input value={traceId} onChange={(e) => setTraceId(e.target.value)} placeholder="Cole o trace completo ou deixe vazio" />
+              </div>
+
+              <div className="xl:col-span-6">
+                <label className="mb-2 block text-sm font-medium text-foreground">
                   {dataType === "requests" ? "Path contem" : "Query contem"}
                 </label>
                 <div className="relative">
@@ -246,16 +349,11 @@ export function SearchView() {
                 </div>
               </div>
 
-              <div className="lg:col-span-5">
-                <label className="mb-1 block text-xs text-muted-foreground">Trace ID</label>
-                <Input value={traceId} onChange={(e) => setTraceId(e.target.value)} placeholder="Opcional" />
-              </div>
-
               {dataType === "requests" && (
                 <>
-                  <div className="lg:col-span-5">
-                    <label className="mb-1 block text-xs text-muted-foreground">Metodo</label>
-                    <div className="flex flex-wrap gap-2">
+                  <div className="xl:col-span-4">
+                    <label className="mb-2 block text-sm font-medium text-foreground">Metodo</label>
+                    <div className="flex min-h-10 flex-wrap items-center gap-2">
                       {methods.map((item) => (
                         <Button
                           key={item}
@@ -270,8 +368,8 @@ export function SearchView() {
                     </div>
                   </div>
 
-                  <div className="lg:col-span-2">
-                    <label className="mb-1 block text-xs text-muted-foreground">Status</label>
+                  <div className="xl:col-span-2">
+                    <label className="mb-2 block text-sm font-medium text-foreground">Status</label>
                     <Input
                       value={statusCode === "ALL" ? "" : statusCode}
                       onChange={(e) => setStatusCode(e.target.value ? e.target.value : "ALL")}
@@ -282,20 +380,11 @@ export function SearchView() {
               )}
 
               {dataType === "queries" && (
-                <div className="lg:col-span-4">
-                  <label className="mb-1 block text-xs text-muted-foreground">Tabela</label>
+                <div className="xl:col-span-6">
+                  <label className="mb-2 block text-sm font-medium text-foreground">Tabela</label>
                   <Input value={tableName} onChange={(e) => setTableName(e.target.value)} placeholder="Ex: users" />
                 </div>
               )}
-
-              <div className="lg:col-span-2">
-                <label className="mb-1 block text-xs text-muted-foreground">Data inicial</label>
-                <Input type="date" value={startTimeFrom} onChange={(e) => setStartTimeFrom(e.target.value)} />
-              </div>
-              <div className="lg:col-span-2">
-                <label className="mb-1 block text-xs text-muted-foreground">Data final</label>
-                <Input type="date" value={startTimeTo} onChange={(e) => setStartTimeTo(e.target.value)} />
-              </div>
             </div>
 
             {activeFilters.length > 0 && (
@@ -440,9 +529,12 @@ export function SearchView() {
                                   {logsByTraceId[item.traceId].length === 0 ? (
                                     <p className="p-2 text-xs text-muted-foreground">Nenhum log encontrado para este trace.</p>
                                   ) : (
-                                    logsByTraceId[item.traceId].map((log, idx) => (
+                                    logsByTraceId[item.traceId].map((log, idx) => {
+                                      const linkedLogKey = getLinkedLogKey(log, idx)
+
+                                      return (
                                       <div
-                                        key={`${log.id || idx}-${log.timestamp}`}
+                                        key={linkedLogKey}
                                         className="rounded border border-border/70 p-2"
                                       >
                                         <div className="mb-1 flex items-start justify-between gap-2">
@@ -463,21 +555,15 @@ export function SearchView() {
                                             className="h-6 px-2 text-[11px]"
                                             onClick={(event) => {
                                               event.stopPropagation()
-                                              const key = item.traceId
-                                              const current = expandedLinkedLogByTraceId[key]
-                                              const nextId = `${log.id || idx}`
-                                              setExpandedLinkedLogByTraceId((prev) => ({
-                                                ...prev,
-                                                [key]: current === nextId ? "" : nextId,
-                                              }))
+                                              toggleLinkedLogDetail(item.traceId, log, linkedLogKey)
                                             }}
                                           >
-                                            {expandedLinkedLogByTraceId[item.traceId] === `${log.id || idx}` ? "Ocultar" : "Detalhes"}
+                                            {expandedLinkedLogByTraceId[item.traceId] === linkedLogKey ? "Ocultar" : "Detalhes"}
                                           </Button>
                                         </div>
                                         <p className="line-clamp-2 text-xs text-foreground">{log.message || "Sem mensagem"}</p>
 
-                                        {expandedLinkedLogByTraceId[item.traceId] === `${log.id || idx}` && (
+                                        {expandedLinkedLogByTraceId[item.traceId] === linkedLogKey && (
                                           <div className="mt-2 space-y-2 border-t border-border/60 pt-2">
                                             <div className="grid grid-cols-1 gap-2 text-[11px] sm:grid-cols-2">
                                               <div>
@@ -586,6 +672,19 @@ export function SearchView() {
                                               </div>
                                             </div>
 
+                                            {loadingLinkedLogDetailKey === linkedLogKey && (
+                                              <div className="flex items-center gap-2 rounded border border-border/70 bg-muted/20 p-2 text-[11px] text-muted-foreground">
+                                                <Loader2 className="size-3 animate-spin" />
+                                                Carregando detalhes do log...
+                                              </div>
+                                            )}
+
+                                            {linkedLogDetailErrors[linkedLogKey] && (
+                                              <div className="rounded border border-red-500/30 bg-red-950/35 p-2 text-[11px] text-red-100">
+                                                {linkedLogDetailErrors[linkedLogKey]}
+                                              </div>
+                                            )}
+
                                             {(log.exceptionType || log.exceptionMessage || log.exceptionStacktrace) && (
                                               <div className="rounded border border-red-500/30 bg-red-950/35 p-2">
                                                 <p className="text-[11px] font-semibold uppercase tracking-wide text-red-200">Exception</p>
@@ -601,7 +700,8 @@ export function SearchView() {
                                           </div>
                                         )}
                                       </div>
-                                    ))
+                                      )
+                                    })
                                   )}
                                 </div>
                               )}
@@ -663,4 +763,26 @@ function useDebounced<T>(value: T, delay = 300) {
   }, [value, delay])
 
   return debounced
+}
+
+function normalizeLogsResponse(value: unknown): { data: LinkedLogItem[]; nextCursor: string | null } {
+  if (Array.isArray(value)) {
+    return { data: value as LinkedLogItem[], nextCursor: null }
+  }
+
+  const payload = value as LogsResponse
+  return {
+    data: payload?.data || [],
+    nextCursor: payload?.nextCursor || null,
+  }
+}
+
+function formatDateTimeParam(value: string) {
+  if (!value.includes("T")) return value
+
+  const date = new Date(value)
+  if (Number.isNaN(date.getTime())) return value
+
+  const pad = (part: number, size = 2) => part.toString().padStart(size, "0")
+  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}-${pad(date.getUTCDate())} ${pad(date.getUTCHours())}:${pad(date.getUTCMinutes())}:${pad(date.getUTCSeconds())}.${pad(date.getUTCMilliseconds(), 3)}`
 }

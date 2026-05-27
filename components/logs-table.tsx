@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+  import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { AlertTriangle, ChevronRight, Copy } from "lucide-react"
+import { AlertTriangle, ChevronRight, Copy, Loader2 } from "lucide-react"
 import { api } from "@/api/api"
 import { cn } from "@/lib/utils"
 import { formatOTelValue } from "@/lib/otel-format"
@@ -32,6 +32,11 @@ interface Log {
   exceptionStacktrace: string;
 }
 
+type LogsResponse = {
+  data?: Log[]
+  nextCursor?: string | null
+}
+
 export function LogsTable({
   filters,
   selectedLevel,
@@ -43,8 +48,12 @@ export function LogsTable({
 }) {
   const [expandedKey, setExpandedKey] = useState<string | null>(null)
   const [logs, setLogs] = useState<Log[]>([])
+  const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [loadingDetailKey, setLoadingDetailKey] = useState<string | null>(null)
+  const [detailErrors, setDetailErrors] = useState<Record<string, string>>({})
   const debouncedMessage = useDebounced(filters.message, 700)
   const debouncedTraceId = useDebounced(filters.traceId, 700)
 
@@ -104,28 +113,83 @@ export function LogsTable({
     return Boolean(log.exceptionType || log.exceptionMessage || log.exceptionStacktrace)
   }
 
-  async function findLogs() {
-    setIsLoading(true)
+  function getLogKey(log: Log, idx?: number) {
+    return `${log.timestamp ?? "no-time"}-${log.traceId ?? "no-trace"}-${log.spanId ?? "no-span"}-${idx ?? ""}`
+  }
+
+  function buildLogsUrl(cursor?: string | null) {
+    const queryParams = new URLSearchParams()
+    queryParams.set("severityText", selectedLevel)
+
+    if (debouncedMessage.trim()) {
+      queryParams.set("message", debouncedMessage.trim())
+      queryParams.set("searchMode", filters.searchMode)
+    }
+    if (debouncedTraceId.trim()) queryParams.set("traceId", debouncedTraceId.trim())
+    if (filters.startTime) queryParams.set("startTime", filters.startTime)
+    if (filters.endTime) queryParams.set("endTime", filters.endTime)
+    if (cursor) queryParams.set("cursor", cursor)
+
+    return `/logs?${queryParams.toString()}`
+  }
+
+  async function findLogs(cursor?: string | null) {
+    const isLoadingNextPage = Boolean(cursor)
+    if (isLoadingNextPage) {
+      setIsLoadingMore(true)
+    } else {
+      setIsLoading(true)
+      setLogs([])
+      setNextCursor(null)
+      setExpandedKey(null)
+      setDetailErrors({})
+    }
     setError(null)
     try {
-      const queryParams = new URLSearchParams()
-      queryParams.set("severityText", selectedLevel)
-
-      if (debouncedMessage.trim()) {
-        queryParams.set("message", debouncedMessage.trim())
-        queryParams.set("searchMode", filters.searchMode)
-      }
-      if (debouncedTraceId.trim()) queryParams.set("traceId", debouncedTraceId.trim())
-      if (filters.startTime) queryParams.set("startTime", filters.startTime)
-      if (filters.endTime) queryParams.set("endTime", filters.endTime)
-
-      const url = `/logs?${queryParams.toString()}`
+      const url = buildLogsUrl(cursor)
       const response = await api.get(url)
-      setLogs(response.data as Log[])
+      const payload = response.data as LogsResponse
+      setLogs((prev) => (isLoadingNextPage ? [...prev, ...(payload.data || [])] : payload.data || []))
+      setNextCursor(payload.nextCursor || null)
     } catch {
       setError("Nao foi possivel carregar os logs. Tente novamente em instantes.")
     } finally {
       setIsLoading(false)
+      setIsLoadingMore(false)
+    }
+  }
+
+  async function fetchLogDetail(log: Log, key: string) {
+    if (!log.traceId || !log.spanId || log.attributes !== undefined || loadingDetailKey === key) return
+
+    setLoadingDetailKey(key)
+    setDetailErrors((prev) => ({ ...prev, [key]: "" }))
+
+    try {
+      const params = new URLSearchParams()
+      if (log.timestamp) params.set("timestamp", log.timestamp)
+
+      const response = await api.get(`/logs/${encodeURIComponent(log.traceId)}/${encodeURIComponent(log.spanId)}?${params.toString()}`)
+      const detail = response.data as Log
+
+      setLogs((prev) => prev.map((item) => (
+        item.traceId === log.traceId && item.spanId === log.spanId && item.timestamp === log.timestamp
+          ? { ...item, ...detail }
+          : item
+      )))
+    } catch {
+      setDetailErrors((prev) => ({ ...prev, [key]: "Nao foi possivel carregar os detalhes deste log." }))
+    } finally {
+      setLoadingDetailKey(null)
+    }
+  }
+
+  function toggleLog(log: Log, key: string) {
+    const nextKey = expandedKey === key ? null : key
+    setExpandedKey(nextKey)
+
+    if (nextKey) {
+      fetchLogDetail(log, key)
     }
   }
 
@@ -164,13 +228,13 @@ export function LogsTable({
   return (
     <div className="space-y-2">
       {logs.map((log, idx) => {
-        const rowKey = `${log.id ?? "no-id"}-${log.timestamp ?? "no-time"}-${log.traceId ?? "no-trace"}-${log.spanId ?? "no-span"}-${idx}`
+        const rowKey = getLogKey(log, idx)
 
         return (
           <Card
             key={rowKey}
             className="cursor-pointer overflow-hidden border-border bg-card/95 py-0 transition-colors hover:border-primary/60"
-            onClick={() => setExpandedKey(expandedKey === rowKey ? null : rowKey)}
+            onClick={() => toggleLog(log, rowKey)}
           >
             <div className="p-4">
               <div className={cn("mb-3 h-1.5 w-14 rounded-full", getLevelAccent(log.severityText))} />
@@ -191,9 +255,7 @@ export function LogsTable({
 
                   <p className="line-clamp-2 text-sm font-semibold text-foreground">{log.message || "Sem mensagem"}</p>
 
-                  <p className="mt-3 truncate font-mono text-xs text-muted-foreground">
-                    {formatPreview(log.attributes)}
-                  </p>
+                  {log.exceptionMessage && <p className="mt-3 truncate font-mono text-xs text-muted-foreground">{formatPreview(log.exceptionMessage)}</p>}
                 </div>
 
                 <ChevronRight
@@ -317,6 +379,19 @@ export function LogsTable({
                     </div>
                   </div>
 
+                  {loadingDetailKey === rowKey && (
+                    <div className="flex items-center gap-2 rounded-md border border-border bg-secondary/35 p-3 text-xs text-muted-foreground">
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                      Carregando detalhes do log...
+                    </div>
+                  )}
+
+                  {detailErrors[rowKey] && (
+                    <div className="rounded-md border border-red-500/30 bg-red-950/35 p-3 text-xs text-red-100">
+                      {detailErrors[rowKey]}
+                    </div>
+                  )}
+
                   {hasExceptionData(log) && (
                     <div className="rounded-md border border-red-500/30 bg-red-950/35 p-3">
                       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-red-200">Exception</p>
@@ -341,6 +416,15 @@ export function LogsTable({
           <p className="text-lg font-semibold text-foreground">Nenhum log encontrado</p>
           <p className="mt-2 text-sm text-muted-foreground">Tente ajustar os filtros de mensagem, data ou severidade.</p>
         </Card>
+      )}
+
+      {nextCursor && logs.length > 0 && (
+        <div className="flex justify-center pt-3">
+          <Button variant="outline" onClick={() => findLogs(nextCursor)} disabled={isLoadingMore}>
+            {isLoadingMore && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Carregar mais
+          </Button>
+        </div>
       )}
     </div>
   )
