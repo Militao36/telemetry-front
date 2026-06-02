@@ -4,7 +4,13 @@
 
 UnTelemetry Frontend e a interface web da UnTelemetry, uma plataforma de observabilidade baseada em OpenTelemetry. Ela fornece dashboards e telas para requisicoes HTTP, queries de banco, logs, erros, projetos e busca.
 
-Este projeto e o frontend complementar da UnTelemetry API.
+Este projeto e o frontend complementar da UnTelemetry API. Para rodar em modo self-hosted, o backend precisa estar rodando e acessivel atraves de `NEXT_PUBLIC_API_URL`.
+
+Repositorio do backend:
+
+```text
+https://github.com/Militao36/telemetry-api
+```
 
 ## Versao Hospedada
 
@@ -40,7 +46,7 @@ https://untelemetry.unledu.com.br/
 
 - Node.js 20 ou superior
 - npm
-- Uma instancia da UnTelemetry API rodando
+- Uma instancia da UnTelemetry API rodando: `https://github.com/Militao36/telemetry-api`
 
 ## Configuracao
 
@@ -135,10 +141,8 @@ Este frontend espera que a UnTelemetry API esteja disponivel atraves de `NEXT_PU
 Repositorio da API:
 
 ```text
-https://github.com/your-org/telemetry-api
+https://github.com/Militao36/telemetry-api
 ```
-
-Substitua essa URL pela URL final do repositorio depois de publicar a API.
 
 ## Observacoes de Seguranca
 
