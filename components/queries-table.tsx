@@ -50,10 +50,12 @@ export function QueriesTable({ slowesType, title }: { slowesType: DefaultSlowest
                       <div>
                         <TooltipTrigger>
                           <p onClick={() => {
-                            let sqlFormatted = ''
+                            let sqlFormatted: string;
                             try {
                               sqlFormatted = query.dbStatement ? format(query.dbStatement, { language: "postgresql" }).toString() : '';
-                            } catch (error) { }
+                            } catch {
+                              sqlFormatted = query.dbStatement;
+                            }
 
                             toast.info("Query copied to clipboard!");
                             navigator.clipboard.writeText(sqlFormatted || query.dbStatement)

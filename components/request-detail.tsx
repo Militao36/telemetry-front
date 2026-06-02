@@ -195,7 +195,7 @@ export function RequestDetail({
               "Host: api.example.com",
               "User-Agent: Mozilla/5.0 (Windows NT 10.0)",
               "Accept: application/json",
-              "Authorization: Bearer token_xxxx",
+              "Authorization: Bearer <token>",
               "Content-Type: application/json",
               "X-Request-ID: req_12345",
             ].map((header, i) => (
