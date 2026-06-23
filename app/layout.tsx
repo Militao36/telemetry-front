@@ -113,7 +113,7 @@ export default function RootLayout({
 
         <link rel="canonical" href="https://untelemetry.unledu.com.br" />
 
-        <meta name="theme-color" content="#080b16" />
+        <meta name="theme-color" content="#ffffff" />
         <meta name="application-name" content="UnTelemetry" />
         <meta name="apple-mobile-web-app-title" content="UnTelemetry" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -142,7 +142,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/logo.png" />
       </head>
       <body className={`font-sans antialiased`}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false} disableTransitionOnChange>
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           <ToastContainer />
           {children}
           <Analytics />
