@@ -93,11 +93,11 @@ export function NewProjectView() {
   }, [])
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden bg-background">
+    <div className="app-shell flex flex-col">
       {/* Header */}
-      <div className="page-header">
+      <div className="modern-page-header">
         <Link href="/projects">
-          <Button variant="ghost" className="gap-2">
+          <Button variant="outline" size="lg" className="gap-2 rounded-xl border-slate-200 bg-white px-5 font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70">
             <ArrowLeft size={18} />
             Back to Projects
           </Button>
@@ -105,12 +105,12 @@ export function NewProjectView() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 overflow-auto">
+      <div className="app-content">
         <div className="p-4 sm:p-6 md:p-8 max-w-2xl mx-auto">
           {/* Title */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{params.get('id') ? 'Edit Project' : 'Create New Project'}</h1>
-            <p className="text-muted-foreground">
+            <h1 className="page-title mb-2">{params.get('id') ? 'Edit Project' : 'Create New Project'}</h1>
+            <p className="page-subtitle">
               {params.get('id')
                 ? 'Update your project details and settings'
                 : 'Set up a new project to start monitoring your application'}
@@ -120,39 +120,39 @@ export function NewProjectView() {
           {/* Form */}
           <div className="space-y-8">
             {/* Step 1 - Basic Info */}
-            <div className="space-y-6 animate-in fade-in">
+            <div className="soft-card space-y-6 p-6 animate-in fade-in">
               <div>
-                <label className="block text-sm font-semibold mb-2">Project Name</label>
+                <label className="field-label">Project Name</label>
                 <Input
                   name="name"
                   placeholder="My Awesome App"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className="text-foreground"
+                  className="control-surface font-medium"
                 />
                 <p className="text-xs text-muted-foreground mt-1">Choose a memorable name for your project</p>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Description</label>
+                <label className="field-label">Description</label>
                 <textarea
                   name="description"
                   placeholder="Describe what this project does..."
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border border-border bg-card px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-none focus:outline-none focus:ring-2 focus:ring-primary dark:bg-input resize-none"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-primary dark:border-border dark:bg-input resize-none"
                   rows={4}
                 />
                 <p className="text-xs text-muted-foreground mt-1">Optional but helpful for team members</p>
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Environment</label>
+                <label className="field-label">Environment</label>
                 <select
                   name="enviroment"
                   value={formData.enviroment}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border border-border bg-card px-3 py-2 text-foreground shadow-none focus:outline-none focus:ring-2 focus:ring-primary dark:bg-input"
+                  className="control-surface w-full px-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="production">Production</option>
                   <option value="staging">Staging</option>
@@ -161,12 +161,12 @@ export function NewProjectView() {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold mb-2">Language / Framework</label>
+                <label className="field-label">Language / Framework</label>
                 <select
                   name="languageOrFramework"
                   value={formData.languageOrFramework}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border border-border bg-card px-3 py-2 text-foreground shadow-none focus:outline-none focus:ring-2 focus:ring-primary dark:bg-input"
+                  className="control-surface w-full px-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
                   <option value="nodejs">Node.js</option>
                   <option value="python">Python</option>
@@ -179,20 +179,20 @@ export function NewProjectView() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-semibold mb-2">Token API</label>
+                <label className="field-label">Token API</label>
                 <textarea
                   name="token"
                   placeholder="Enter your API token..."
                   value={formData.token}
                   onChange={handleInputChange}
-                  className="w-full rounded-md border border-border bg-card px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-none focus:outline-none focus:ring-2 focus:ring-primary dark:bg-input resize-none"
+                  className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-foreground placeholder:text-muted-foreground shadow-sm focus:outline-none focus:ring-2 focus:ring-primary dark:border-border dark:bg-input resize-none"
                   rows={4}
                 />
               </div>
 
-              <div className="rounded-lg border border-border bg-card/60 p-4 space-y-4">
+              <div className="rounded-xl border border-slate-200 bg-slate-50/80 p-4 space-y-4 dark:border-border dark:bg-secondary/40">
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Custom Redaction Fields</label>
+                  <label className="field-label">Custom Redaction Fields</label>
                   <p className="text-xs text-muted-foreground">
                     Default sensitive fields like password, token, authorization, cookies, API keys and card data are always redacted. Add only project-specific fields here.
                   </p>
@@ -209,9 +209,9 @@ export function NewProjectView() {
                       }
                     }}
                     placeholder="customer_document"
-                    className="text-foreground"
+                    className="control-surface font-medium"
                   />
-                  <Button type="button" variant="outline" onClick={addRedactionField} className="gap-2 bg-transparent">
+                  <Button type="button" variant="outline" onClick={addRedactionField} className="gap-2 rounded-xl border-slate-200 bg-white font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70">
                     <Plus size={16} />
                     Add
                   </Button>
@@ -236,7 +236,7 @@ export function NewProjectView() {
                 )}
               </div>
 
-              <Button onClick={() => handleCreateProject()} className="cursor-pointer w-full bg-primary hover:bg-primary/90 h-11">
+              <Button onClick={() => handleCreateProject()} className="cursor-pointer w-full rounded-xl bg-primary font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90 h-12">
                 {params.get('id') ? 'Update Project' : 'Save Project'}
               </Button>
             </div>

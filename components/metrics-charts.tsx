@@ -31,7 +31,7 @@ export function MetricsCharts({
 }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-4">
-      <Card className="bg-card/95 border-border p-4 md:p-6 lg:col-span-2">
+      <Card className="soft-card p-4 md:p-6 lg:col-span-2">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Requests Over Time
         </h3>
@@ -75,7 +75,7 @@ export function MetricsCharts({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card/95 border-border p-4 md:p-6">
+      <Card className="soft-card p-4 md:p-6">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Response Time
         </h3>
@@ -112,7 +112,7 @@ export function MetricsCharts({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card/95 border-border p-4 md:p-6 lg:col-span-2">
+      <Card className="soft-card p-4 md:p-6 lg:col-span-2">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Queries Over Time
         </h3>
@@ -155,7 +155,7 @@ export function MetricsCharts({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card/95 border-border p-4 md:p-6">
+      <Card className="soft-card p-4 md:p-6">
         <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
           Query time
         </h3>

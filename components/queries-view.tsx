@@ -86,30 +86,30 @@ export function QueriesView() {
   }, [queryType, timeRange]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="page-header">
+    <div className="app-shell flex flex-col">
+      <div className="modern-page-header">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">Query Performance</h1>
-            <p className="text-sm text-muted-foreground mt-1">
+            <h1 className="page-title">Query Performance</h1>
+            <p className="page-subtitle">
               Monitor query performance
             </p>
           </div>
-          <Button onClick={() => list()} variant="outline" size="sm" className="gap-2 bg-transparent">
+          <Button onClick={() => list()} variant="outline" size="lg" className="gap-2 rounded-xl border-slate-200 bg-white px-5 font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70">
             <RefreshCw size={18} />
             Refresh
           </Button>
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <div className="p-6 space-y-6">
+      <div className="app-content">
+        <div className="app-section">
           {/* Filters */}
-          <Card className="bg-card/95 border-border p-4">
-            <div className="flex gap-4 items-center">
+          <Card className="filter-card">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground mb-2">Query Type</p>
-                <div className="flex gap-2">
+                <p className="field-label">Query Type</p>
+                <div className="flex flex-wrap gap-2">
                   {["all", "select", "insert", "update", "delete"].map(
                     (type) => (
                       <button
@@ -127,9 +127,11 @@ export function QueriesView() {
                 </div>
               </div>
 
-              <div className="w-64">
+              <div className="w-full lg:w-72">
                 <TimeRangeFilter
                   label="Time Range"
+                  labelClassName="field-label"
+                  triggerClassName="control-surface w-full justify-between px-4"
                   selectedLabel={getPresetLabel(DASHBOARD_TIME_PRESETS, timeRange)}
                   presets={DASHBOARD_TIME_PRESETS}
                   onPresetSelect={applyTimePreset}
@@ -140,7 +142,7 @@ export function QueriesView() {
 
           {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-card/95 border-border p-6">
+            <Card className="soft-card p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 Total Queries
               </p>
@@ -151,7 +153,7 @@ export function QueriesView() {
               </p>
               {/* <p className="text-xs text-green-400 mt-2">+12.5% from yesterday</p> */}
             </Card>
-            <Card className="bg-card/95 border-border p-6">
+            <Card className="soft-card p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 Avg Query Time
               </p>
@@ -160,7 +162,7 @@ export function QueriesView() {
               </p>
               {/* <p className="text-xs text-yellow-400 mt-2">+8% slower than last week</p> */}
             </Card>
-            <Card className="bg-card/95 border-border p-6">
+            <Card className="soft-card p-6">
               <p className="text-sm text-muted-foreground mb-2">
                 Slowest Query
               </p>

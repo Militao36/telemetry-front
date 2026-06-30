@@ -51,7 +51,7 @@ export function AlertsPanel() {
   ]
 
   return (
-    <Card className="bg-card/95 border-border overflow-hidden h-fit sticky top-6">
+    <Card className="soft-card overflow-hidden h-fit sticky top-6">
       <div className="p-6 border-b border-border flex items-center justify-between">
         <h3 className="text-lg font-semibold flex items-center gap-2">
           <Bell size={20} />

@@ -31,7 +31,7 @@ export function ProjectsGrid() {
       {projects.map((project) => (
         <Card
           key={project.id}
-          className="bg-card/95 border-border hover:border-primary/60 transition-colors overflow-hidden group"
+          className="soft-card hover:border-primary/60 transition-colors overflow-hidden group"
         >
           <div className="p-6 space-y-4">
             <div className="flex items-start justify-between">
@@ -55,7 +55,7 @@ export function ProjectsGrid() {
             )}
 
             <Link href={`/projects/new?id=${project.id}`} className="w-full sm:w-auto">
-              <Button variant="outline" className="cursor-pointer w-full justify-between gap-2 bg-transparent" size="sm">
+              <Button variant="outline" className="cursor-pointer w-full justify-between gap-2 rounded-xl border-slate-200 bg-white font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70" size="sm">
                 <span>View Details</span>
                 <ChevronRight size={16} />
               </Button>

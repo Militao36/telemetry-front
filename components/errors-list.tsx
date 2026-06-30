@@ -95,7 +95,7 @@ export function ErrorsList({ severity }: { severity: string }) {
   const filteredErrors = errors.filter((error) => severity === "all" || error.severity === severity)
 
   return (
-    <Card className="bg-card/95 border-border overflow-hidden">
+    <Card className="soft-card overflow-hidden">
       <div className="p-6 border-b border-border">
         <h3 className="text-lg font-semibold">Recent Errors</h3>
       </div>

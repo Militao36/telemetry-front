@@ -37,7 +37,7 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="bg-card/95 border-border p-6">
+      <Card className="soft-card p-6">
         <h3 className="text-lg font-semibold mb-4">Errors by Severity</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={errorData}>
@@ -54,7 +54,7 @@ export function ErrorsChart({ timeRange }: { timeRange: string }) {
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card/95 border-border p-6">
+      <Card className="soft-card p-6">
         <h3 className="text-lg font-semibold mb-4">Resolution Trend</h3>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={resolutionData}>

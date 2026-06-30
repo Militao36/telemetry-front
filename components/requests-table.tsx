@@ -8,7 +8,7 @@ import { formatValueToK } from "@/lib/utils";
 
 export function RequestsTable({ topRequests }: { topRequests: any[] }) {
   return (
-    <Card className="bg-card/95 border-border overflow-hidden">
+    <Card className="soft-card overflow-hidden">
       <div className="p-4 md:p-6 border-b border-border">
         <h3 className="text-base sm:text-lg font-semibold">Top Requests</h3>
       </div>

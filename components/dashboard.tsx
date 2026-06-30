@@ -103,10 +103,10 @@ export function Dashboard() {
   }, [timeRange]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden w-full">
+    <div className="app-shell flex flex-col w-full">
       <Header timeRange={timeRange} setTimeRange={setTimeRange} />
-      <div className="flex-1 overflow-auto">
-        <div className="p-3 sm:p-4 md:p-6 space-y-4 sm:space-y-5 md:space-y-6">
+      <div className="app-content">
+        <div className="app-section">
           <StatsCards {...dashboardData} />
           <MetricsCharts
             requestsData={dashboardData.requestPerTimeSeries}

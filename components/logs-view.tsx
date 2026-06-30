@@ -87,22 +87,21 @@ export function LogsView() {
   }, [])
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      {/* Header */}
-      <div className="page-header">
-        <h1 className="text-2xl font-bold">Logs</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+    <div className="app-shell flex flex-col">
+      <div className="modern-page-header">
+        <h1 className="page-title">Logs</h1>
+        <p className="page-subtitle">
           Logs e eventos em tempo real da sua aplicacao
         </p>
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <div className="p-6 space-y-4">
+      <div className="app-content">
+        <div className="app-section">
           {/* Filters */}
-          <Card className="border-border bg-card/95 p-5 space-y-4">
-            <div className="grid grid-cols-1 gap-3 lg:grid-cols-12">
+          <Card className="filter-card space-y-5">
+            <div className="grid grid-cols-1 gap-x-6 gap-y-5 lg:grid-cols-12">
               <div className="lg:col-span-6">
-                <label className="mb-2 block text-sm font-semibold text-foreground">Mensagem</label>
+                <label className="field-label">Mensagem</label>
                 <div className="relative">
                   <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
@@ -110,7 +109,7 @@ export function LogsView() {
                     placeholder="Ex: timeout, erro de banco"
                     value={filters.message}
                     onChange={(e) => updateFilter("message", e.target.value)}
-                    className="pl-9"
+                    className="control-surface pl-9 font-medium"
                   />
                 </div>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -145,17 +144,21 @@ export function LogsView() {
               </div>
 
               <div className="lg:col-span-3">
-                <label className="mb-2 block text-sm font-semibold text-foreground">Trace ID</label>
+                <label className="field-label">Trace ID</label>
                 <Input
                   type="text"
                   placeholder="Cole o trace completo"
                   value={filters.traceId}
                   onChange={(e) => updateFilter("traceId", e.target.value)}
+                  className="control-surface font-medium"
                 />
               </div>
 
               <div className="lg:col-span-3">
                 <TimeRangeFilter
+                  label="Período"
+                  labelClassName="field-label"
+                  triggerClassName="control-surface w-full justify-between px-4"
                   selectedLabel={selectedTimeLabel}
                   presets={LOG_TIME_PRESETS}
                   customStart={filters.startTime}
@@ -167,7 +170,7 @@ export function LogsView() {
               </div>
 
               <div className="flex items-end lg:col-span-3 lg:justify-end">
-                <Button size="sm" variant="ghost" onClick={clearFilters} className="w-full gap-2 text-primary hover:text-primary lg:w-auto dark:hover:text-primary-foreground">
+                <Button size="lg" variant="outline" onClick={clearFilters} className="w-full gap-2 rounded-xl border-slate-200 bg-white px-5 font-semibold text-slate-700 shadow-sm hover:border-primary/50 lg:w-auto dark:bg-secondary/70">
                   <RotateCcw className="h-4 w-4" />
                   Limpar filtros
                 </Button>

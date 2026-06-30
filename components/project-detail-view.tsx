@@ -21,22 +21,22 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
   ]
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="page-header">
+    <div className="app-shell flex flex-col">
+      <div className="modern-page-header">
         <div className="flex items-center gap-4 mb-4">
-          <Button variant="ghost" size="sm" className="gap-2">
+          <Button variant="outline" size="lg" className="gap-2 rounded-xl border-slate-200 bg-white px-5 font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70">
             <ArrowLeft size={18} />
             Back
           </Button>
         </div>
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold">E-Commerce API</h1>
-            <p className="text-sm text-muted-foreground mt-1">Backend team • Environment: Production</p>
+            <h1 className="page-title">E-Commerce API</h1>
+            <p className="page-subtitle">Backend team • Environment: Production</p>
           </div>
           <div className="flex items-center gap-2">
             <Badge className="bg-green-500/20 text-green-400">● Active</Badge>
-            <Button variant="outline" size="sm" className="gap-2 bg-transparent">
+            <Button variant="outline" size="lg" className="gap-2 rounded-xl border-slate-200 bg-white px-5 font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70">
               <Settings size={16} />
               Settings
             </Button>
@@ -44,8 +44,8 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-auto">
-        <div className="p-6 space-y-6">
+      <div className="app-content">
+        <div className="app-section">
           {/* Tabs */}
           <div className="flex gap-4 border-b border-border">
             {["overview", "settings", "integrations"].map((tab) => (
@@ -72,7 +72,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                   { label: "Avg Response", value: "145ms", change: "+2%" },
                   { label: "Uptime", value: "99.99%", change: "+0.01%" },
                 ].map((stat) => (
-                  <Card key={stat.label} className="bg-card/95 border-border p-4">
+                  <Card key={stat.label} className="soft-card p-4">
                     <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-2xl font-bold">{stat.value}</span>
@@ -84,7 +84,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
 
               {/* Charts */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <Card className="bg-card/95 border-border p-6">
+                <Card className="soft-card p-6">
                   <h3 className="text-lg font-semibold mb-4">Request Volume</h3>
                   <ResponsiveContainer width="100%" height={300}>
                     <AreaChart data={projectData}>
@@ -105,7 +105,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                   </ResponsiveContainer>
                 </Card>
 
-                <Card className="bg-card/95 border-border p-6">
+                <Card className="soft-card p-6">
                   <h3 className="text-lg font-semibold mb-4">API Endpoints</h3>
                   <div className="space-y-3">
                     {[
@@ -129,7 +129,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
           )}
 
           {activeTab === "settings" && (
-            <Card className="bg-card/95 border-border p-6">
+            <Card className="soft-card p-6">
               <div className="space-y-4">
                 <div>
                   <label className="text-sm font-semibold mb-2 block">Project Name</label>
@@ -166,7 +166,7 @@ export function ProjectDetailView({ projectId }: { projectId: string }) {
                 { name: "Email Alerts", status: "pending", icon: "📧" },
                 { name: "Webhooks", status: "available", icon: "🔗" },
               ].map((integration) => (
-                <Card key={integration.name} className="bg-card/95 border-border p-4">
+                <Card key={integration.name} className="soft-card p-4">
                   <div className="flex items-start justify-between">
                     <div>
                       <p className="font-semibold">{integration.name}</p>

@@ -10,15 +10,15 @@ export function Header({
   setTimeRange,
 }: { timeRange: string; setTimeRange: (range: string) => void }) {
   return (
-    <div className="page-header px-3 sm:px-4 md:px-6 py-3 md:py-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+    <div className="modern-page-header">
+      <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold truncate">Dashboard</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-1">Real-time monitoring of your applications</p>
+          <h1 className="page-title truncate">Dashboard</h1>
+          <p className="page-subtitle">Real-time monitoring of your applications</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <div>
-            <p className="text-sm font-medium text-muted-foreground mb-2">Time Range</p>
+            <p className="field-label">Time Range</p>
             <div className="flex gap-2 flex-wrap justify-end sm:justify-start">
               {DASHBOARD_TIME_RANGES.map((range) => (
                 <button

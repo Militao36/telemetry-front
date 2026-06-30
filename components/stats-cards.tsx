@@ -87,7 +87,7 @@ export function StatsCards({
       {stats.map((stat) => (
         <Card
           key={stat.label}
-          className="bg-card/95 border-border p-3 sm:p-4 md:p-6"
+          className="soft-card p-3 sm:p-4 md:p-6"
         >
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">

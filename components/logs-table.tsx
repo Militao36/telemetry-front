@@ -226,14 +226,14 @@ export function LogsTable({
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {logs.map((log, idx) => {
         const rowKey = getLogKey(log, idx)
 
         return (
           <Card
             key={rowKey}
-            className="cursor-pointer overflow-hidden border-border bg-card/95 py-0 transition-colors hover:border-primary/60"
+            className="soft-card cursor-pointer overflow-hidden py-0 transition-colors hover:border-primary/60"
             onClick={() => toggleLog(log, rowKey)}
           >
             <div className="p-4">
@@ -412,7 +412,7 @@ export function LogsTable({
       })}
 
       {logs.length === 0 && (
-        <Card className="border-border bg-card p-12 text-center">
+        <Card className="soft-card p-12 text-center">
           <p className="text-lg font-semibold text-foreground">Nenhum log encontrado</p>
           <p className="mt-2 text-sm text-muted-foreground">Tente ajustar os filtros de mensagem, data ou severidade.</p>
         </Card>

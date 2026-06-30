@@ -42,6 +42,8 @@ export function TimeRangeFilter({
   onPresetSelect,
   onCustomStartChange,
   onCustomEndChange,
+  triggerClassName,
+  labelClassName,
 }: {
   label?: string
   selectedLabel: string
@@ -51,15 +53,17 @@ export function TimeRangeFilter({
   onPresetSelect: (preset: TimeRangePreset) => void
   onCustomStartChange?: (value: string) => void
   onCustomEndChange?: (value: string) => void
+  triggerClassName?: string
+  labelClassName?: string
 }) {
   const showCustom = Boolean(onCustomStartChange && onCustomEndChange)
 
   return (
     <div>
-      <label className="mb-2 block text-sm font-semibold text-foreground">{label}</label>
+      <label className={labelClassName || "mb-2 block text-sm font-semibold text-foreground"}>{label}</label>
       <Popover>
         <PopoverTrigger asChild>
-          <Button type="button" variant="outline" className="h-10 w-full justify-between px-3 font-normal">
+          <Button type="button" variant="outline" className={triggerClassName || "h-10 w-full justify-between px-3 font-normal"}>
             <span className="flex min-w-0 items-center gap-2 truncate">
               <Clock className="h-4 w-4 shrink-0 text-primary" />
               <span className="truncate">{selectedLabel}</span>

@@ -35,7 +35,7 @@ export function RequestsChart({
 }) {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <Card className="bg-card/95 border-border p-6">
+      <Card className="soft-card p-6">
         <h3 className="text-lg font-semibold mb-4">Requests Timeline</h3>
 
         <ResponsiveContainer width="100%" height={300}>
@@ -88,7 +88,7 @@ export function RequestsChart({
         </ResponsiveContainer>
       </Card>
 
-      <Card className="bg-card/95 border-border p-6">
+      <Card className="soft-card p-6">
         <h3 className="text-lg font-semibold mb-4">
           Response Status Distribution
         </h3>

@@ -79,11 +79,11 @@ export function RequestsView() {
   }, [methodFilter, hourFilter]);
 
   return (
-    <div className="flex-1 flex flex-col overflow-hidden">
-      <div className="page-header">
+    <div className="app-shell flex flex-col">
+      <div className="modern-page-header">
         <div>
-          <h1 className="text-2xl font-bold">Requests</h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <h1 className="page-title">Requests</h1>
+          <p className="page-subtitle">
             Detailed analysis of HTTP requests and responses
           </p>
         </div>
@@ -91,13 +91,14 @@ export function RequestsView() {
 
       <div className="flex-1 overflow-hidden flex">
         <div className="flex-1 flex flex-col overflow-hidden">
-          <div className="flex-1 overflow-auto">
-            <div className="p-6 space-y-6">
+          <div className="app-content">
+            <div className="app-section">
               {/* Search and Filters */}
-              <Card className="bg-card/95 border-border p-4">
+              <Card className="filter-card">
                 <div className="space-y-4">
-                  <div className=" flex gap-2 justify-between">
+                  <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
                     <div>
+                      <p className="field-label">Método</p>
                       <div className="flex gap-2 flex-wrap">
                         {["all", "GET", "POST", "PATCH", "PUT", "DELETE"].map(
                           (method) => (
@@ -115,8 +116,11 @@ export function RequestsView() {
                         )}
                       </div>
                     </div>
-                    <div className="w-64">
+                    <div className="w-full lg:w-72">
                       <TimeRangeFilter
+                        label="Período"
+                        labelClassName="field-label"
+                        triggerClassName="control-surface w-full justify-between px-4"
                         selectedLabel={getPresetLabel(DASHBOARD_TIME_PRESETS, hourFilter)}
                         presets={DASHBOARD_TIME_PRESETS}
                         onPresetSelect={applyTimePreset}
@@ -148,7 +152,7 @@ export function RequestsView() {
               <div>
                 <div className="flex flex-row gap-2">
                   <div className="w-full">
-                    <Card className="bg-card/95 border-border p-4 md:p-6 lg:col-span-2 mb-2 w-full">
+                    <Card className="soft-card p-4 md:p-6 lg:col-span-2 mb-2 w-full">
                       <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
                         Requests Over Time
                       </h3>
@@ -214,7 +218,7 @@ export function RequestsView() {
                   </div>
 
                   <div className="w-full">
-                    <Card className="bg-card/95 border-border p-4 md:p-6 mb-2 w-full">
+                    <Card className="soft-card p-4 md:p-6 mb-2 w-full">
                       <h3 className="text-base sm:text-lg font-semibold mb-3 md:mb-4">
                         Response Time
                       </h3>

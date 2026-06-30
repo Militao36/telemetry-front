@@ -1,19 +1,32 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { api } from "@/api/api"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Activity, AlertTriangle, ChevronRight, Clock, Copy, Database, Loader2, Search } from "lucide-react"
+import { Activity, AlertTriangle, ChevronRight, Clock, Copy, Database, Filter, Loader2, Plus, RotateCcw } from "lucide-react"
 import { formatOTelValue } from "@/lib/otel-format"
 import { toast } from "react-toastify"
 import { LOG_TIME_PRESETS, TimeRangeFilter, TimeRangePreset, getPresetMinutes, toDateTimeLocalValue } from "./time-range-filter"
 
 type DataType = "requests" | "queries"
-type HttpMethod = "ALL" | "GET" | "POST" | "PUT" | "PATCH" | "DELETE"
+type SearchWhereOperator = "eq" | "contains" | "startsWith" | "gt" | "gte" | "lt" | "lte" | "in" | "exists" | "notExists"
+
+type SearchWhereCondition = {
+  field: string
+  op: SearchWhereOperator
+  value?: string | number | boolean | Array<string | number | boolean>
+}
+
+type AdvancedFilter = {
+  id: string
+  field: string
+  op: SearchWhereOperator
+  value: string
+}
 
 type RequestItem = {
   traceId: string
@@ -69,11 +82,12 @@ function isRequest(item: SearchItem): item is RequestItem {
 
 export function SearchView() {
   const [dataType, setDataType] = useState<DataType>("requests")
-  const [method, setMethod] = useState<HttpMethod>("ALL")
-  const [statusCode, setStatusCode] = useState("ALL")
-  const [searchTerm, setSearchTerm] = useState("")
+  const [advancedField, setAdvancedField] = useState("path")
+  const [attributeKey, setAttributeKey] = useState("")
+  const [advancedOp, setAdvancedOp] = useState<SearchWhereOperator>("contains")
+  const [advancedValue, setAdvancedValue] = useState("")
+  const [advancedFilters, setAdvancedFilters] = useState<AdvancedFilter[]>([])
   const [traceId, setTraceId] = useState("")
-  const [tableName, setTableName] = useState("")
   const [startTimeFrom, setStartTimeFrom] = useState("")
   const [startTimeTo, setStartTimeTo] = useState("")
   const [selectedTimeLabel, setSelectedTimeLabel] = useState("Ultimas 3 horas")
@@ -88,22 +102,8 @@ export function SearchView() {
   const [loadingLinkedLogDetailKey, setLoadingLinkedLogDetailKey] = useState("")
   const [linkedLogDetailErrors, setLinkedLogDetailErrors] = useState<Record<string, string>>({})
 
-  const methods: HttpMethod[] = ["ALL", "GET", "POST", "PUT", "PATCH", "DELETE"]
-
-  const debouncedTerm = useDebounced(searchTerm, 350)
-  const debouncedTrace = useDebounced(traceId, 350)
-
-  const activeFilters = useMemo(() => {
-    const tags: string[] = []
-    if (dataType === "requests" && method !== "ALL") tags.push(`Metodo: ${method}`)
-    if (dataType === "requests" && statusCode !== "ALL") tags.push(`Status: ${statusCode}`)
-    if (dataType === "queries" && tableName.trim()) tags.push(`Tabela: ${tableName.trim()}`)
-    if (debouncedTerm.trim()) tags.push(`Busca: ${debouncedTerm.trim()}`)
-    if (debouncedTrace.trim()) tags.push(`Trace: ${debouncedTrace.trim().slice(0, 12)}...`)
-    if (startTimeFrom) tags.push(`De: ${startTimeFrom}`)
-    if (startTimeTo) tags.push(`Ate: ${startTimeTo}`)
-    return tags
-  }, [dataType, method, statusCode, tableName, debouncedTerm, debouncedTrace, startTimeFrom, startTimeTo])
+  const debouncedAdvancedFilters = useDebounced(advancedFilters, 350)
+  const debouncedTraceId = useDebounced(traceId, 350)
 
   async function fetchData() {
     setIsLoading(true)
@@ -114,26 +114,24 @@ export function SearchView() {
       params.set("limit", "40")
       params.set("offset", "0")
 
-      if (startTimeFrom) params.set("startTimeFrom", formatDateTimeParam(startTimeFrom))
-      if (startTimeTo) params.set("startTimeTo", formatDateTimeParam(startTimeTo))
+      const conditions: SearchWhereCondition[] = []
 
-      const normalizedTerm = debouncedTerm.trim()
-      const normalizedTrace = debouncedTrace.trim()
+      if (startTimeFrom) conditions.push({ field: "startTime", op: "gte", value: formatDateTimeParam(startTimeFrom) })
+      if (startTimeTo) conditions.push({ field: "startTime", op: "lte", value: formatDateTimeParam(startTimeTo) })
+      if (debouncedTraceId.trim()) conditions.push({ field: "traceId", op: "eq", value: debouncedTraceId.trim() })
 
-      if (normalizedTrace) params.set("traceId", normalizedTrace)
-
-      if (dataType === "requests") {
-        if (method !== "ALL") params.set("method", method)
-        if (statusCode !== "ALL") params.set("statusCode", statusCode)
-        if (normalizedTerm) {
-          params.set("pathContains", normalizedTerm)
-          params.set("q", normalizedTerm)
+      debouncedAdvancedFilters.forEach((filter) => {
+        if (["exists", "notExists"].includes(filter.op) || filter.value.trim()) {
+          conditions.push({
+            field: filter.field,
+            op: filter.op,
+            value: ["exists", "notExists"].includes(filter.op) ? undefined : normalizeFilterValue(filter.value),
+          })
         }
-      }
+      })
 
-      if (dataType === "queries") {
-        if (normalizedTerm) params.set("queryContains", normalizedTerm)
-        if (tableName.trim()) params.set("tableName", tableName.trim())
+      if (conditions.length > 0) {
+        params.set("where", JSON.stringify({ and: conditions }))
       }
 
       const response = await api.get(`/search?${params.toString()}`)
@@ -147,11 +145,12 @@ export function SearchView() {
   }
 
   function clearFilters() {
-    setMethod("ALL")
-    setStatusCode("ALL")
-    setSearchTerm("")
+    setAdvancedField(dataType === "requests" ? "path" : "query")
+    setAttributeKey("")
+    setAdvancedOp("contains")
+    setAdvancedValue("")
+    setAdvancedFilters([])
     setTraceId("")
-    setTableName("")
     setStartTimeFrom("")
     setStartTimeTo("")
     setSelectedTimeLabel("Ultimas 3 horas")
@@ -181,6 +180,28 @@ export function SearchView() {
     } else {
       setStartTimeTo(value)
     }
+  }
+
+  function addAdvancedFilter() {
+    const normalizedField = advancedField === "attributes" ? `attributes.${attributeKey.trim()}` : advancedField
+    const valueIsOptional = ["exists", "notExists"].includes(advancedOp)
+
+    if (!normalizedField || normalizedField === "attributes." || (!valueIsOptional && !advancedValue.trim())) return
+
+    setAdvancedFilters((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        field: normalizedField,
+        op: advancedOp,
+        value: valueIsOptional ? "" : advancedValue.trim(),
+      },
+    ])
+    setAdvancedValue("")
+  }
+
+  function removeAdvancedFilter(id: string) {
+    setAdvancedFilters((prev) => prev.filter((filter) => filter.id !== id))
   }
 
   async function fetchLinkedLogs(traceIdValue: string) {
@@ -279,35 +300,49 @@ export function SearchView() {
 
   useEffect(() => {
     setSelectedId("")
+    setAdvancedField(dataType === "requests" ? "path" : "query")
+    setAttributeKey("")
   }, [dataType])
 
   useEffect(() => {
     fetchData()
-  }, [dataType, method, statusCode, debouncedTerm, debouncedTrace, tableName, startTimeFrom, startTimeTo])
+  }, [dataType, startTimeFrom, startTimeTo, debouncedTraceId, debouncedAdvancedFilters])
 
   return (
-    <div className="flex flex-1 flex-col overflow-hidden">
-      <div className="page-header">
-        <h1 className="text-2xl font-bold">Searches</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Busca unificada de requests e queries com filtros diretos.</p>
+    <div className="app-shell flex flex-col">
+      <div className="modern-page-header">
+        <h1 className="page-title">Search</h1>
+        <p className="page-subtitle">Busca unificada de requests e queries com filtros compostos.</p>
       </div>
 
-      <div className="flex-1 overflow-auto p-5">
-        <Card className="mb-6 border-border/60 bg-card/95">
-          <CardContent className="space-y-5 p-5">
+      <div className="app-content">
+        <Card className="soft-card mb-3">
+          <CardContent className="space-y-4 p-4 sm:p-5">
             <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-semibold text-foreground">Filtros</p>
-                <p className="mt-1 text-xs text-muted-foreground">Combine periodo, trace e filtros especificos para encontrar requests ou queries.</p>
+              <div className="flex items-start gap-2.5">
+                <Filter className="mt-0.5 size-5 text-primary" />
+                <div>
+                  <p className="text-base font-bold text-slate-950 dark:text-foreground">Filtros</p>
+                  <p className="mt-0.5 text-xs font-medium text-slate-500 dark:text-muted-foreground">Escolha o tipo, período e adicione quantos filtros precisar.</p>
+                </div>
               </div>
-              <Button variant="ghost" size="sm" onClick={clearFilters}>Limpar filtros</Button>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" size="default" className="rounded-xl border-slate-200 bg-white px-4 font-semibold text-slate-700 shadow-sm hover:border-primary/50 dark:bg-secondary/70" onClick={clearFilters}>
+                  <RotateCcw className="size-4" />
+                  Limpar filtros
+                </Button>
+                <Button type="button" size="default" className="rounded-xl bg-primary px-4 font-semibold shadow-lg shadow-primary/25 hover:bg-primary/90" onClick={addAdvancedFilter}>
+                  <Plus className="size-4" />
+                  Filtro
+                </Button>
+              </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 xl:grid-cols-12">
-              <div className="xl:col-span-2">
-                <label className="mb-2 block text-sm font-medium text-foreground">Tipo</label>
+            <div className="grid grid-cols-1 items-end gap-x-4 gap-y-3 md:grid-cols-2 xl:grid-cols-12">
+              <div>
+                <label className="field-label">Tipo</label>
                 <Select value={dataType} onValueChange={(v) => setDataType(v as DataType)}>
-                  <SelectTrigger>
+                  <SelectTrigger className="control-surface w-full">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -319,6 +354,9 @@ export function SearchView() {
 
               <div className="xl:col-span-3">
                 <TimeRangeFilter
+                  label="Período"
+                  labelClassName="field-label"
+                  triggerClassName="control-surface w-full justify-between px-4"
                   selectedLabel={selectedTimeLabel}
                   presets={LOG_TIME_PRESETS}
                   customStart={startTimeFrom}
@@ -329,68 +367,69 @@ export function SearchView() {
                 />
               </div>
 
-              <div className="xl:col-span-7">
-                <label className="mb-2 block text-sm font-medium text-foreground">Trace ID</label>
-                <Input value={traceId} onChange={(e) => setTraceId(e.target.value)} placeholder="Cole o trace completo ou deixe vazio" />
+              <div className="xl:col-span-8">
+                <label className="field-label">Trace ID</label>
+                <Input className="control-surface font-medium" value={traceId} onChange={(e) => setTraceId(e.target.value)} placeholder="Trace completo" />
               </div>
 
-              <div className="xl:col-span-6">
-                <label className="mb-2 block text-sm font-medium text-foreground">
-                  {dataType === "requests" ? "Path contem" : "Query contem"}
-                </label>
-                <div className="relative">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder={dataType === "requests" ? "/api/users" : "SELECT * FROM"}
-                    className="pl-9"
-                  />
-                </div>
+              <div className={advancedField === "attributes" ? "xl:col-span-3" : "xl:col-span-4"}>
+                <label className="field-label">Campo</label>
+                <Select value={advancedField} onValueChange={setAdvancedField}>
+                  <SelectTrigger className="control-surface w-full border-primary/35">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getAdvancedFields(dataType).map((field) => (
+                      <SelectItem key={field.value} value={field.value}>{field.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
-              {dataType === "requests" && (
-                <>
-                  <div className="xl:col-span-4">
-                    <label className="mb-2 block text-sm font-medium text-foreground">Metodo</label>
-                    <div className="flex min-h-10 flex-wrap items-center gap-2">
-                      {methods.map((item) => (
-                        <Button
-                          key={item}
-                          size="sm"
-                          variant={method === item ? "default" : "outline"}
-                          className="h-8 px-3"
-                          onClick={() => setMethod(item)}
-                        >
-                          {item}
-                        </Button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="xl:col-span-2">
-                    <label className="mb-2 block text-sm font-medium text-foreground">Status</label>
-                    <Input
-                      value={statusCode === "ALL" ? "" : statusCode}
-                      onChange={(e) => setStatusCode(e.target.value ? e.target.value : "ALL")}
-                      placeholder="Ex: 500"
-                    />
-                  </div>
-                </>
-              )}
-
-              {dataType === "queries" && (
-                <div className="xl:col-span-6">
-                  <label className="mb-2 block text-sm font-medium text-foreground">Tabela</label>
-                  <Input value={tableName} onChange={(e) => setTableName(e.target.value)} placeholder="Ex: users" />
+              {advancedField === "attributes" && (
+                <div className="xl:col-span-3">
+                  <label className="field-label">Nome do atributo</label>
+                  <Input className="control-surface font-medium" value={attributeKey} onChange={(e) => setAttributeKey(e.target.value)} placeholder="http.target" />
                 </div>
               )}
+
+              <div className={advancedField === "attributes" ? "xl:col-span-2" : "xl:col-span-3"}>
+                <label className="field-label">Operador</label>
+                <Select value={advancedOp} onValueChange={(value) => setAdvancedOp(value as SearchWhereOperator)}>
+                  <SelectTrigger className="control-surface w-full">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {getOperators().map((op) => (
+                      <SelectItem key={op.value} value={op.value}>{op.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className={advancedField === "attributes" ? "xl:col-span-4" : "xl:col-span-5"}>
+                <label className="field-label">Valor</label>
+                <Input
+                  className="control-surface font-medium"
+                  value={advancedValue}
+                  onChange={(e) => setAdvancedValue(e.target.value)}
+                  placeholder={["exists", "notExists"].includes(advancedOp) ? "Opcional" : "Valor"}
+                  disabled={["exists", "notExists"].includes(advancedOp)}
+                />
+              </div>
+
             </div>
 
-            {activeFilters.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {activeFilters.map((tag) => (
-                  <Badge key={tag} variant="outline" className="bg-muted/40">{tag}</Badge>
+            {advancedFilters.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 border-t border-border/60 pt-3">
+                <span className="text-xs font-medium text-muted-foreground">Ativos</span>
+                {advancedFilters.map((filter) => (
+                  <Badge key={filter.id} variant="outline" className="gap-2 bg-muted/40">
+                    <span>{formatFilterLabel(filter)}</span>
+                    <button type="button" className="text-muted-foreground hover:text-foreground" onClick={() => removeAdvancedFilter(filter.id)}>
+                      x
+                    </button>
+                  </Badge>
                 ))}
               </div>
             )}
@@ -407,17 +446,17 @@ export function SearchView() {
         )}
 
         {isLoading ? (
-          <Card className="border-border/50">
-            <CardContent className="flex items-center justify-center gap-2 py-16 text-muted-foreground">
+          <Card className="soft-card">
+            <CardContent className="flex items-center justify-center gap-2 py-12 text-muted-foreground">
               <Loader2 className="size-4 animate-spin" />
               Carregando resultados...
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             {items.length === 0 ? (
-              <Card className="border-border/50">
-                <CardContent className="py-14 text-center">
+              <Card className="soft-card">
+                <CardContent className="py-12 text-center">
                   <p className="font-semibold">Nenhum resultado encontrado</p>
                   <p className="text-sm text-muted-foreground">Tente reduzir os filtros ou mudar o periodo.</p>
                 </CardContent>
@@ -426,39 +465,39 @@ export function SearchView() {
               items.map((item) => (
                 <Card
                   key={`${item.traceId}-${item.spanId}`}
-                  className="border-border/50 transition-all hover:border-border hover:shadow-none"
+                  className="soft-card transition-all hover:border-primary/30 hover:shadow-md hover:shadow-primary/10"
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-4 sm:p-5">
                     <button
                       type="button"
                       className="flex w-full cursor-pointer items-start justify-between gap-4 text-left"
                       onClick={() => handleToggle(item)}
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="mb-1 flex flex-wrap items-center gap-2">
+                        <div className="mb-2 flex flex-wrap items-center gap-2.5">
                           {isRequest(item) ? (
                             <>
-                              <Badge variant="outline" className="font-mono text-xs">{item.httpMethod}</Badge>
-                              <Badge className={getStatusColor(item.httpStatus)}>{item.httpStatus}</Badge>
-                              <code className="truncate text-sm">{item.httpTarget || "-"}</code>
+                              <Badge variant="outline" className="rounded-md border-primary/25 bg-primary/5 font-mono text-xs font-bold text-primary">{item.httpMethod}</Badge>
+                              <Badge className={`${getStatusColor(item.httpStatus)} rounded-md px-3 font-bold`}>{item.httpStatus}</Badge>
+                              <code className="truncate text-[15px] font-semibold text-slate-900 dark:text-foreground">{item.httpTarget || "-"}</code>
                             </>
                           ) : (
                             <>
-                              <Badge variant="outline" className="font-mono text-xs">{item.dbOperation || "QUERY"}</Badge>
-                              <Badge variant="outline">{item.dbTable || "-"}</Badge>
-                              <code className="truncate text-sm">{item.dbStatement || "-"}</code>
+                              <Badge variant="outline" className="rounded-md border-primary/25 bg-primary/5 font-mono text-xs font-bold text-primary">{item.dbOperation || "QUERY"}</Badge>
+                              <Badge variant="outline" className="rounded-md bg-slate-100 font-bold text-slate-700 dark:bg-secondary/70 dark:text-foreground">{item.dbTable || "-"}</Badge>
+                              <code className="truncate text-[15px] font-semibold text-slate-900 dark:text-foreground">{item.dbStatement || "-"}</code>
                             </>
                           )}
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                        <div className="flex flex-wrap items-center gap-5 text-xs font-medium text-slate-500 dark:text-muted-foreground">
                           <span className="flex items-center gap-1"><Clock className="size-3" />{formatWhen(item.startTime)}</span>
                           <span className="flex items-center gap-1"><Activity className="size-3" />{Math.round(item.durationNs / 1_000_000)}ms</span>
                           <span className="flex items-center gap-1"><Database className="size-3" />{item.serviceName}</span>
                         </div>
                       </div>
 
-                      <ChevronRight className={`size-4 shrink-0 transition-transform ${selectedId === item.spanId ? "rotate-90" : ""}`} />
+                      <ChevronRight className={`mt-1 size-5 shrink-0 text-primary transition-transform ${selectedId === item.spanId ? "rotate-90" : ""}`} />
                     </button>
 
                     {selectedId === item.spanId && (
@@ -775,6 +814,57 @@ function normalizeLogsResponse(value: unknown): { data: LinkedLogItem[]; nextCur
     data: payload?.data || [],
     nextCursor: payload?.nextCursor || null,
   }
+}
+
+function getAdvancedFields(dataType: DataType) {
+  const common = [
+    { value: "serviceName", label: "Service name" },
+    { value: "environment", label: "Environment" },
+    { value: "durationNs", label: "Duration ns" },
+    { value: "attributes", label: "Attributes.<chave>" },
+  ]
+
+  if (dataType === "requests") {
+    return [
+      { value: "path", label: "Path" },
+      { value: "method", label: "Metodo HTTP" },
+      { value: "statusCode", label: "Status code" },
+      ...common,
+    ]
+  }
+
+  return [
+    { value: "query", label: "SQL/query" },
+    { value: "tableName", label: "Tabela" },
+    { value: "operation", label: "Operacao" },
+    ...common,
+  ]
+}
+
+function getOperators(): Array<{ value: SearchWhereOperator; label: string }> {
+  return [
+    { value: "contains", label: "contem" },
+    { value: "eq", label: "igual" },
+    { value: "startsWith", label: "comeca com" },
+    { value: "gt", label: ">" },
+    { value: "gte", label: ">=" },
+    { value: "lt", label: "<" },
+    { value: "lte", label: "<=" },
+    { value: "exists", label: "existe" },
+    { value: "notExists", label: "nao existe" },
+  ]
+}
+
+function normalizeFilterValue(value: string) {
+  const trimmed = value.trim()
+  if (/^-?\d+(\.\d+)?$/.test(trimmed)) return Number(trimmed)
+  if (trimmed.toLowerCase() === "true") return true
+  if (trimmed.toLowerCase() === "false") return false
+  return trimmed
+}
+
+function formatFilterLabel(filter: AdvancedFilter) {
+  return `${filter.field} ${filter.op}${filter.value ? ` ${filter.value}` : ""}`
 }
 
 function formatDateTimeParam(value: string) {
