@@ -40,8 +40,8 @@ export function formatChartTick(value: string) {
   return DateTime.fromFormat(value, "yyyy-MM-dd HH:mm:ss").toFormat("dd/MM HH:mm");
 }
 
-export function formatChartTooltipLabel(value: string) {
-  return DateTime.fromFormat(value, "yyyy-MM-dd HH:mm:ss").toFormat("dd/MM/yyyy HH:mm:ss");
+export function formatChartTooltipLabel(value: unknown) {
+  return DateTime.fromFormat(String(value), "yyyy-MM-dd HH:mm:ss").toFormat("dd/MM/yyyy HH:mm:ss");
 }
 
 export function downsampleSeries<T>(data: T[], maxPoints = 180): T[] {
